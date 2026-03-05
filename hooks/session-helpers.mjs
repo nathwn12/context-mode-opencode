@@ -97,3 +97,16 @@ export function getSessionEventsPath(opts = CLAUDE_OPTS) {
   mkdirSync(dir, { recursive: true });
   return join(dir, `${hash}-events.md`);
 }
+
+/**
+ * Return the per-project cleanup flag path.
+ * Used to detect true fresh starts vs --continue (which fires startup+resume).
+ * Path: ~/<configDir>/context-mode/sessions/<SHA256(projectDir)[:16]>.cleanup
+ */
+export function getCleanupFlagPath(opts = CLAUDE_OPTS) {
+  const projectDir = getProjectDir(opts);
+  const hash = createHash("sha256").update(projectDir).digest("hex").slice(0, 16);
+  const dir = join(homedir(), opts.configDir, "context-mode", "sessions");
+  mkdirSync(dir, { recursive: true });
+  return join(dir, `${hash}.cleanup`);
+}

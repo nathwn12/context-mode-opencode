@@ -322,7 +322,9 @@ Every tool call passes through hooks that extract structured events:
 | **MCP Tools** | All `mcp__*` tool calls with usage counts | Normal (P3) | PostToolUse |
 | **Subagents** | Agent tool invocations | Normal (P3) | PostToolUse |
 | **Skills** | Slash command invocations | Normal (P3) | PostToolUse |
+| **Role** | Persona / behavioral directives ("act as senior engineer") | Normal (P3) | UserPromptSubmit |
 | **Intent** | Session mode classification (investigate, implement, debug) | Low (P4) | UserPromptSubmit |
+| **Data** | Large user-pasted data references (>1 KB) | Low (P4) | UserPromptSubmit |
 | **User Prompts** | Every user message (for last-prompt restore) | Critical (P1) | UserPromptSubmit |
 
 </details>
@@ -339,20 +341,31 @@ PreCompact fires
 SessionStart fires (source: "compact")
   → Retrieve stored snapshot
   → Write structured events file → auto-indexed into FTS5
+  → Build Session Guide with 15 categories
   → Inject <session_knowledge> directive into context
-  → Model calls search() on session index
-  → Model displays summary table + continues from last user prompt
+  → Model continues from last user prompt with full working state
 ```
 
 The snapshot is built in priority tiers — if the 2 KB budget is tight, lower-priority events (intent, MCP tool counts) are dropped first while critical state (active files, tasks, rules, decisions) is always preserved.
 
-After compaction, the model receives:
-- **Active files** — last 10 files with operation counts (read:3, edit:2, write:1)
-- **Task state** — current task list with statuses
-- **Project rules** — CLAUDE.md / GEMINI.md / AGENTS.md content
-- **User decisions** — corrections and preferences from the conversation
-- **Environment** — current working directory, git branch, active tools
-- **Last user prompt** — so the model continues without asking "what were we doing?"
+After compaction, the model receives a **Session Guide** — a structured narrative with actionable sections:
+
+- **Last Request** — user's last prompt, so the model continues without asking "what were we doing?"
+- **Tasks** — checkbox format with completion status (`[x]` completed, `[ ]` pending)
+- **Key Decisions** — user corrections and preferences ("use X instead", "don't do Y")
+- **Files Modified** — all files touched during the session
+- **Unresolved Errors** — errors that haven't been fixed
+- **Git** — operations performed (checkout, commit, push, status)
+- **Project Rules** — CLAUDE.md / GEMINI.md / AGENTS.md paths
+- **MCP Tools Used** — tool names with call counts
+- **Subagent Tasks** — delegated work summaries
+- **Skills Used** — slash commands invoked
+- **Environment** — working directory, env variables
+- **Data References** — large data pasted during the session
+- **Session Intent** — mode classification (implement, investigate, review, discuss)
+- **User Role** — behavioral directives set during the session
+
+Detailed event data is also indexed into FTS5 for on-demand retrieval via `search()`.
 
 </details>
 

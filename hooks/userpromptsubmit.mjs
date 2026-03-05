@@ -9,32 +9,34 @@
  */
 
 import { readStdin, getSessionId, getSessionDBPath } from "./session-helpers.mjs";
-import { appendFileSync } from "node:fs";
 import { join } from "node:path";
-import { homedir } from "node:os";
 
 const HOOK_DIR = new URL(".", import.meta.url).pathname;
-const PKG_SESSION = join(HOOK_DIR, "..", "packages", "session", "dist");
-const DEBUG_LOG = join(homedir(), ".claude", "context-mode", "userprompt-debug.log");
+const PKG_SESSION = join(HOOK_DIR, "..", "build", "session");
 
 try {
   const raw = await readStdin();
   const input = JSON.parse(raw);
 
-  // Debug: log the full input keys and prompt extraction
-  const keys = Object.keys(input);
-  appendFileSync(DEBUG_LOG, `[${new Date().toISOString()}] KEYS: ${keys.join(", ")}\n`);
-  appendFileSync(DEBUG_LOG, `[${new Date().toISOString()}] RAW: ${raw.substring(0, 500)}\n`);
-
   const prompt = input.prompt ?? input.message ?? "";
+  const trimmed = (prompt || "").trim();
 
-  if (prompt && prompt.trim().length > 0) {
+  // Skip system-generated messages — only capture genuine user prompts
+  const isSystemMessage = trimmed.startsWith("<task-notification>")
+    || trimmed.startsWith("<system-reminder>")
+    || trimmed.startsWith("<context_guidance>")
+    || trimmed.startsWith("<tool-result>");
+
+  if (trimmed.length > 0 && !isSystemMessage) {
     const { SessionDB } = await import(join(PKG_SESSION, "db.js"));
+    const { extractUserEvents } = await import(join(PKG_SESSION, "extract.js"));
     const dbPath = getSessionDBPath();
     const db = new SessionDB({ dbPath });
     const sessionId = getSessionId(input);
 
     db.ensureSession(sessionId, process.env.CLAUDE_PROJECT_DIR || process.cwd());
+
+    // 1. Always save the raw prompt
     db.insertEvent(sessionId, {
       type: "user_prompt",
       category: "prompt",
@@ -42,15 +44,14 @@ try {
       priority: 1,
     }, "UserPromptSubmit");
 
+    // 2. Extract decision/role/intent/data from user message
+    const userEvents = extractUserEvents(trimmed);
+    for (const ev of userEvents) {
+      db.insertEvent(sessionId, ev, "UserPromptSubmit");
+    }
+
     db.close();
-    appendFileSync(DEBUG_LOG, `[${new Date().toISOString()}] OK: stored prompt (${prompt.length} chars) session=${sessionId}\n`);
-  } else {
-    appendFileSync(DEBUG_LOG, `[${new Date().toISOString()}] SKIP: empty prompt. prompt field="${typeof input.prompt}" message field="${typeof input.message}"\n`);
   }
-} catch (err) {
-  try {
-    appendFileSync(DEBUG_LOG, `[${new Date().toISOString()}] ERR: ${err.message}\n`);
-  } catch {
-    // Silent fallback
-  }
+} catch {
+  // UserPromptSubmit must never block the session — silent fallback
 }
