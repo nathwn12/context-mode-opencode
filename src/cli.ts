@@ -111,8 +111,9 @@ export function toUnixPath(p: string): string {
 function getPluginRoot(): string {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  // build/cli.js → go up one level; cli.bundle.mjs at project root → stay here
-  if (__dirname.endsWith("/build") || __dirname.endsWith("\\build")) {
+  // build/cli.js or src/cli.ts → go up one level; cli.bundle.mjs at project root → stay here
+  if (__dirname.endsWith("/build") || __dirname.endsWith("\\build") ||
+      __dirname.endsWith("/src") || __dirname.endsWith("\\src")) {
     return resolve(__dirname, "..");
   }
   return __dirname;
