@@ -43,6 +43,7 @@ import type {
   SessionStartResponse,
   HookRegistration,
   RoutingInstructionsConfig,
+  PlatformId,
 } from "../types.js";
 
 // ─────────────────────────────────────────────────────────
@@ -79,8 +80,12 @@ import { HOOK_TYPES as OPENCODE_HOOK_NAMES } from "./hooks.js";
 // Adapter implementation
 // ─────────────────────────────────────────────────────────
 
+export type AdapterPlatformType = Extract<PlatformId, "opencode" | "kilo">;
+
 export class OpenCodeAdapter implements HookAdapter {
-  readonly name = "OpenCode";
+  get name(): string {
+    return this.platform === "kilo" ? "KiloCode" : "OpenCode";
+  }
   readonly paradigm: HookParadigm = "ts-plugin";
   private settingsPath?: string;
 
@@ -93,6 +98,12 @@ export class OpenCodeAdapter implements HookAdapter {
     canModifyOutput: true, // with TUI bug caveat for bash (#13575)
     canInjectSessionContext: false,
   };
+
+  private platform: AdapterPlatformType;
+
+  constructor(platform: AdapterPlatformType = "opencode") {
+    this.platform = platform;
+  }
 
   // ── Input parsing ──────────────────────────────────────
 
@@ -206,10 +217,18 @@ export class OpenCodeAdapter implements HookAdapter {
   // ── Configuration ──────────────────────────────────────
 
   getSettingsPath(): string {
-    return this.settingsPath ?? resolve("opencode.json");
+    // OpenCode uses opencode.json in the project root or .opencode/opencode.json
+    return this.settingsPath ?? resolve(`${this.platform}.json`);
   }
 
   private paths(): string[] {
+    if (this.platform === "kilo") {
+      return [
+        resolve("kilo.json"),
+        resolve(".kilocode", "kilo.json"),
+        join(homedir(), ".config", "kilo", "kilo.json"),
+      ];  
+    }
     return [
       resolve("opencode.json"),
       resolve(".opencode", "opencode.json"),
@@ -218,7 +237,7 @@ export class OpenCodeAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".config", "opencode", "context-mode", "sessions");
+    const dir = join(homedir(), ".config", this.platform, "context-mode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -281,6 +300,9 @@ export class OpenCodeAdapter implements HookAdapter {
   }
 
   readSettings(): Record<string, unknown> | null {
+    // Try project-local paths first, then global config
+    // const paths = this.getConfigFilePaths();
+    // for (const configPath of paths) {
     this.settingsPath = undefined;
     for (const configPath of this.paths()) {
       try {
@@ -295,6 +317,7 @@ export class OpenCodeAdapter implements HookAdapter {
   }
 
   writeSettings(settings: Record<string, unknown>): void {
+    // Write to opencode.json/kilo.json in current directory
     writeFileSync(
       this.getSettingsPath(),
       JSON.stringify(settings, null, 2) + "\n",
@@ -388,7 +411,7 @@ export class OpenCodeAdapter implements HookAdapter {
       const pkgPath = resolve(
         homedir(),
         ".cache",
-        "opencode",
+        this.platform,
         "node_modules",
         "context-mode",
         "package.json",
@@ -451,7 +474,7 @@ export class OpenCodeAdapter implements HookAdapter {
   getRoutingInstructionsConfig(): RoutingInstructionsConfig {
     return {
       fileName: "AGENTS.md",
-      globalPath: resolve(homedir(), ".config", "opencode", "AGENTS.md"),
+      globalPath: resolve(homedir(), ".config", this.platform, "AGENTS.md"),
       projectRelativePath: "AGENTS.md",
     };
   }
@@ -459,7 +482,7 @@ export class OpenCodeAdapter implements HookAdapter {
   writeRoutingInstructions(projectDir: string, pluginRoot: string): string | null {
     const config = this.getRoutingInstructionsConfig();
     const targetPath = resolve(projectDir, config.projectRelativePath);
-    const sourcePath = resolve(pluginRoot, "configs", "opencode", config.fileName);
+    const sourcePath = resolve(pluginRoot, "configs", this.platform, config.fileName);
 
     try {
       const content = readFileSync(sourcePath, "utf-8");
