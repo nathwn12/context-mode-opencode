@@ -77,21 +77,42 @@ redact() {
     -e 's|(https?://[^:]+:)[^@]+(@)|\1***REDACTED***\2|g'
 }
 
+# ─── JSONL accumulator ──────────────────────────────────────────────────────
+# All data goes to a JSONL temp file. At the end, node converts to final JSON.
+JSONL_FILE="$(mktemp)"
+CURRENT_SECTION=""
+PASS_TOTAL=0
+FAIL_TOTAL=0
+WARN_TOTAL=0
+
+_jesc() { printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g' | tr -d '\n'; }
+
 section() {
-  printf '\n### %s\n\n' "$1"
+  CURRENT_SECTION="$1"
 }
 
 check() {
   local label="$1" ok="$2"
   if [ "$ok" = "true" ]; then
-    printf -- '- [x] %s\n' "$label"
+    PASS_TOTAL=$((PASS_TOTAL + 1))
+    printf '{"t":"c","s":"%s","l":"%s","p":true}\n' "$CURRENT_SECTION" "$(_jesc "$label")" >> "$JSONL_FILE"
   else
-    printf -- '- [ ] %s\n' "$label"
+    FAIL_TOTAL=$((FAIL_TOTAL + 1))
+    printf '{"t":"c","s":"%s","l":"%s","p":false}\n' "$CURRENT_SECTION" "$(_jesc "$label")" >> "$JSONL_FILE"
   fi
 }
 
 kv() {
-  printf -- '- **%s**: `%s`\n' "$1" "$2"
+  printf '{"t":"i","s":"%s","k":"%s","v":"%s"}\n' "$CURRENT_SECTION" "$(_jesc "$1")" "$(_jesc "$2")" >> "$JSONL_FILE"
+}
+
+warn() {
+  WARN_TOTAL=$((WARN_TOTAL + 1))
+  printf '{"t":"w","s":"%s","m":"%s"}\n' "$CURRENT_SECTION" "$(_jesc "$1")" >> "$JSONL_FILE"
+}
+
+detail() {
+  printf '{"t":"d","s":"%s","m":"%s"}\n' "$CURRENT_SECTION" "$(_jesc "$1")" >> "$JSONL_FILE"
 }
 
 # detect_os — sets OS_TYPE to "macos", "linux", "windows", or "unknown".
@@ -120,18 +141,27 @@ abbrev_path() {
   fi
 }
 
-# config_file — check existence, print contents (redacted), limit to 60 lines.
+# config_file — check existence, capture contents (redacted) into JSON.
 config_file() {
   local label="$1" path="$2"
   local display
   display="$(abbrev_path "$path")"
   if [ -f "$path" ]; then
-    printf -- '- **%s** (`%s`): exists\n' "$label" "$display"
-    printf '  <details><summary>contents (redacted)</summary>\n\n  ```json\n'
-    head -60 "$path" 2>/dev/null | redact
-    printf '\n  ```\n  </details>\n'
+    kv "$label" "$display (exists)"
+    # Use node for proper JSON escaping of file content
+    local content_json
+    content_json="$(node -e "
+      const fs=require('fs');
+      let c=fs.readFileSync('$path','utf8').slice(0,3000);
+      // Redact secrets
+      c=c.replace(/(sk-[A-Za-z0-9_-]{4})[A-Za-z0-9_-]+/g,'\$1***');
+      c=c.replace(/(postgres(ql)?:\/\/[^:]+:)[^@]+(@)/g,'\$1***\$3');
+      c=c.replace(/(mongodb(\+srv)?:\/\/[^:]+:)[^@]+(@)/g,'\$1***\$3');
+      console.log(JSON.stringify(c));
+    " 2>/dev/null || echo '""')"
+    printf '{"t":"cfg","s":"%s","k":"%s","path":"%s","exists":true,"content":%s}\n' "$CURRENT_SECTION" "$(_jesc "$label")" "$(_jesc "$display")" "$content_json" >> "$JSONL_FILE"
   else
-    printf -- '- **%s** (`%s`): not found\n' "$label" "$display"
+    kv "$label" "$display (not found)"
   fi
 }
 
@@ -139,15 +169,14 @@ config_file() {
 
 TS="$(date +%s)"
 EFFECTIVE_TMP="${TMPDIR:-${TEMP:-${TMP:-/tmp}}}"
-REPORT_FILE="${EFFECTIVE_TMP}/ctx-debug-${TS}.md"
 JSON_FILE="${EFFECTIVE_TMP}/ctx-debug-${TS}.json"
 
 # Ensure node can find plugin dependencies
 export NODE_PATH="$PLUGIN_ROOT/node_modules:${NODE_PATH:-}"
 
-# Redirect all markdown output to report file — terminal stays clean
+# Redirect all stray stdout to /dev/null — only JSONL accumulation matters
 exec 3>&1          # save original stdout (terminal)
-exec 1>"$REPORT_FILE"  # stdout → file
+exec 1>/dev/null   # suppress stray output
 
 # ─── Begin Report ─────────────────────────────────────────────────────────────
 
@@ -209,7 +238,7 @@ if [ -n "$NODE_VER" ]; then
   esac
   kv "Node install method" "$NODE_INSTALL"
 else
-  printf -- '- [ ] **Node.js**: not found in PATH\n'
+  check "Node.js in PATH" "false"
 fi
 
 # Bun
@@ -253,7 +282,7 @@ if [ -f "$PKG_JSON" ]; then
   kv "Installed version" "${LOCAL_VER:-unknown}"
 else
   LOCAL_VER=""
-  printf -- '- [ ] package.json not found at plugin root\n'
+  check "package.json at plugin root" "false"
 fi
 
 kv "Plugin root" "$(abbrev_path "$PLUGIN_ROOT")"
@@ -279,7 +308,7 @@ NPM_LATEST="$(safe_cmd_quiet npm view context-mode version 2>/dev/null)"
 if [ -n "$NPM_LATEST" ]; then
   kv "npm latest" "$NPM_LATEST"
   if [ -n "$LOCAL_VER" ] && [ "$LOCAL_VER" != "$NPM_LATEST" ]; then
-    printf -- '- ⚠️  **Update available**: %s → %s\n' "$LOCAL_VER" "$NPM_LATEST"
+    warn "Update available: $LOCAL_VER → $NPM_LATEST"
   fi
 fi
 
@@ -307,7 +336,7 @@ NODE_ABI="$(safe_cmd_quiet node -e "console.log(process.versions.modules)")"
 # ignore-scripts check
 IGNORE_SCRIPTS="$(safe_cmd_quiet npm config get ignore-scripts)"
 if [ "$IGNORE_SCRIPTS" = "true" ]; then
-  printf -- '- ⚠️  `npm config get ignore-scripts` = **true** — this prevents native module compilation\n'
+  warn "npm ignore-scripts=true — prevents native module compilation"
 else
   check "npm ignore-scripts is false" "true"
 fi
@@ -459,7 +488,7 @@ if [ ${#HOOK_FILES[@]} -gt 0 ]; then
     fi
   done
 else
-  printf -- '- [ ] No hook files found in `%s/hooks/`\n' "$(abbrev_path "$PLUGIN_ROOT")"
+  check "Hook files in plugin" "false"
 fi
 
 # Check hooks.json in plugin root/hooks
@@ -497,7 +526,7 @@ if [ -f "$CLAUDE_SETTINGS" ]; then
   if [ ${#STALE_HOOKS[@]} -gt 0 ]; then
     printf '\n**Stale hook paths detected:**\n'
     for sp in "${STALE_HOOKS[@]}"; do
-      printf -- '- ⚠️  `%s` — file does not exist\n' "$sp"
+      warn "Stale hook path: $sp"
     done
   else
     printf '\n'
@@ -527,7 +556,7 @@ fi
 if [ "$OS_TYPE" = "windows" ]; then
   if [ -f "$CLAUDE_SETTINGS" ]; then
     if grep -q '\\\\' "$CLAUDE_SETTINGS" 2>/dev/null; then
-      printf -- '\n- ⚠️  **Backslash paths detected** in settings.json — use forward slashes on Windows\n'
+      warn "Backslash paths in settings.json — use forward slashes on Windows"
     else
       check "No backslash paths in settings.json" "true"
     fi
@@ -589,7 +618,7 @@ if [ "$CTX_COUNT" -gt 0 ]; then
 fi
 
 if [ "$CTX_COUNT" -gt 3 ]; then
-  printf -- '- ⚠️  Multiple context-mode processes detected — possible orphans\n'
+  warn "Multiple context-mode processes — possible orphans"
 fi
 
 # ─── 11. Session Databases ───────────────────────────────────────────────────
@@ -984,75 +1013,73 @@ if command -v df &>/dev/null; then
   fi
 fi
 
-# ─── Finalize report ─────────────────────────────────────────────────────────
-
-printf '\n---\n\n'
-printf '> ctx-debug.sh v%s — https://github.com/mksglu/context-mode/issues/new\n' "$CTX_DEBUG_VERSION"
-
-# ─── Restore stdout, generate JSON, print summary ─��──────────────────────────
+# ─── Restore stdout, generate JSON, print summary ───────────────────────────
 
 exec 1>&3  # restore stdout → terminal
 
-# Count results from the markdown report (tr -d to strip whitespace/newlines)
-PASS_N="$(grep -c '^\- \[x\]' "$REPORT_FILE" 2>/dev/null | tr -d ' \n' || true)"
-PASS_N="${PASS_N:-0}"
-FAIL_N="$(grep -c '^\- \[ \]' "$REPORT_FILE" 2>/dev/null | tr -d ' \n' || true)"
-FAIL_N="${FAIL_N:-0}"
-WARN_N="$(grep -c 'WARNING\|warning\|WARN' "$REPORT_FILE" 2>/dev/null | tr -d ' \n' || true)"
-WARN_N="${WARN_N:-0}"
-
-# Generate JSON from markdown
+# Generate JSON from JSONL
 node -e "
   const fs = require('fs');
-  const md = fs.readFileSync('$REPORT_FILE', 'utf8');
-  const result = { version: '$CTX_DEBUG_VERSION', generated: '$NOW', sections: {} };
-  let sec = '';
-  for (const line of md.split('\n')) {
-    if (line.startsWith('### ')) {
-      sec = line.replace(/^### \d+\.\s*/, '').trim();
-      result.sections[sec] = { checks: [], info: {} };
-    } else if (!sec) continue;
-    else if (line.startsWith('- [x] ')) {
-      result.sections[sec].checks.push({ pass: true, label: line.slice(6) });
-    } else if (line.startsWith('- [ ] ')) {
-      result.sections[sec].checks.push({ pass: false, label: line.slice(6) });
-    } else if (line.match(/^- \*\*(.+?)\*\*: \x60(.+?)\x60/)) {
-      const m = line.match(/^- \*\*(.+?)\*\*: \x60(.+?)\x60/);
-      result.sections[sec].info[m[1]] = m[2];
-    }
+  const lines = fs.readFileSync('$JSONL_FILE', 'utf8').trim().split('\n').filter(Boolean);
+  const result = { version: '$CTX_DEBUG_VERSION', generated: '$NOW', sections: {}, summary: {} };
+  let pass = 0, fail = 0, warns = 0;
+  for (const line of lines) {
+    try {
+      const e = JSON.parse(line);
+      if (!result.sections[e.s]) result.sections[e.s] = { checks: [], info: {}, configs: [], warnings: [], details: [] };
+      const sec = result.sections[e.s];
+      if (e.t === 'c') {
+        sec.checks.push({ pass: e.p, label: e.l });
+        if (e.p) pass++; else fail++;
+      } else if (e.t === 'i') {
+        sec.info[e.k] = e.v;
+      } else if (e.t === 'w') {
+        sec.warnings.push(e.m);
+        warns++;
+      } else if (e.t === 'd') {
+        sec.details.push(e.m);
+      } else if (e.t === 'cfg') {
+        sec.configs.push({ name: e.k, path: e.path, exists: e.exists, content: e.content || null });
+      }
+    } catch {}
   }
-  result.summary = { pass: $PASS_N, fail: $FAIL_N, warnings: $WARN_N };
+  result.summary = { pass, fail, warnings: warns, total: pass + fail };
   fs.writeFileSync('$JSON_FILE', JSON.stringify(result, null, 2));
 " 2>/dev/null || true
 
 # ─── Terminal summary ────────────────────────────────────────────────────────
 
 printf '\n'
-printf '  context-mode diagnostic report v%s\n' "$CTX_DEBUG_VERSION"
-printf '  ─────────────────────────────────\n'
-if [ "$FAIL_N" -eq 0 ]; then
-  printf '  ✓ All %s checks passed' "$PASS_N"
-  [ "$WARN_N" -gt 0 ] && printf ' (%s warnings)' "$WARN_N"
+printf '  context-mode diagnostic v%s\n' "$CTX_DEBUG_VERSION"
+printf '  ─────────────────────────────\n'
+if [ "$FAIL_TOTAL" -eq 0 ]; then
+  printf '  ✓ All %s checks passed' "$PASS_TOTAL"
+  [ "$WARN_TOTAL" -gt 0 ] && printf ' (%s warnings)' "$WARN_TOTAL"
   printf '\n'
 else
-  printf '  %s passed, %s failed' "$PASS_N" "$FAIL_N"
-  [ "$WARN_N" -gt 0 ] && printf ', %s warnings' "$WARN_N"
+  printf '  %s passed, %s failed' "$PASS_TOTAL" "$FAIL_TOTAL"
+  [ "$WARN_TOTAL" -gt 0 ] && printf ', %s warnings' "$WARN_TOTAL"
   printf '\n\n'
   printf '  Failed:\n'
-  grep '^\- \[ \]' "$REPORT_FILE" 2>/dev/null | while IFS= read -r line; do
-    printf '    %s\n' "$line"
-  done
+  node -e "
+    const r = JSON.parse(require('fs').readFileSync('$JSON_FILE','utf8'));
+    for (const [s,d] of Object.entries(r.sections)) {
+      for (const c of d.checks) { if (!c.pass) console.log('    ✗ ' + c.label); }
+    }
+  " 2>/dev/null || true
 fi
 printf '\n'
-printf '  Report: %s\n' "$REPORT_FILE"
-printf '  JSON:   %s\n' "$JSON_FILE"
+printf '  %s\n' "$JSON_FILE"
 printf '\n'
 # Copy hint
 if command -v pbcopy &>/dev/null; then
-  printf '  Copy:   cat %s | pbcopy\n' "$REPORT_FILE"
+  printf '  pbcopy: cat %s | pbcopy\n' "$JSON_FILE"
 elif command -v xclip &>/dev/null; then
-  printf '  Copy:   cat %s | xclip -selection clipboard\n' "$REPORT_FILE"
+  printf '  copy:   cat %s | xclip -selection clipboard\n' "$JSON_FILE"
 elif command -v clip &>/dev/null; then
-  printf '  Copy:   cat %s | clip\n' "$REPORT_FILE"
+  printf '  copy:   cat %s | clip\n' "$JSON_FILE"
 fi
 printf '\n'
+
+# Cleanup JSONL
+rm -f "$JSONL_FILE" 2>/dev/null
