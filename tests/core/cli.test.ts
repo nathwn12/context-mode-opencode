@@ -986,3 +986,38 @@ describe("Codex CLI hook dispatch (#225)", () => {
     expect(codexBlock).toContain('hookEventName: "PreToolUse"');
   });
 });
+
+// ── Upgrade skill sync to marketplace/cache directories ───────────────────
+
+describe("Upgrade syncs skills to active install path (#228)", () => {
+  const CLI_SOURCE = readFileSync(resolve(ROOT, "src/cli.ts"), "utf-8");
+  const upgradeStart = CLI_SOURCE.indexOf("async function upgrade");
+  const upgradeBody = CLI_SOURCE.slice(upgradeStart);
+
+  test("upgrade reads installed_plugins.json to find active install path", () => {
+    expect(upgradeBody).toContain("installed_plugins.json");
+    expect(upgradeBody).toContain("context-mode@context-mode");
+    expect(upgradeBody).toContain("installPath");
+  });
+
+  test("upgrade only syncs when installPath differs from pluginRoot", () => {
+    // Must check installPath !== pluginRoot before copying
+    expect(upgradeBody).toMatch(/installPath.*!==.*pluginRoot|installPath\s*&&\s*installPath\s*!==\s*pluginRoot/);
+  });
+
+  test("upgrade does NOT blindly copy to marketplace or cache directories", () => {
+    // No hardcoded marketplace/cache paths — only installPath from registry
+    const syncSection = upgradeBody.slice(upgradeBody.indexOf("installed_plugins.json"));
+    expect(syncSection).not.toContain('"marketplaces"');
+    expect(syncSection).not.toContain("readdirSync");
+  });
+
+  test("upgrade warns user to restart for new MCP tools", () => {
+    expect(upgradeBody).toMatch(/[Rr]estart.*MCP|new MCP tools/i);
+  });
+
+  test("restart hint is adapter-aware (Claude Code gets /reload-plugins)", () => {
+    expect(upgradeBody).toContain("reload-plugins");
+    expect(upgradeBody).toContain('adapter.name === "Claude Code"');
+  });
+});
