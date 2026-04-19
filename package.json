@@ -85,18 +85,18 @@
     "picocolors": "^1.1.1",
     "turndown": "^7.2.0",
     "turndown-plugin-gfm": "^1.0.2",
-    "zod": "^3.25.0"
+    "zod": "^4.3.6"
   },
   "optionalDependencies": {
     "better-sqlite3": "^12.6.2"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
-    "@types/node": "^22.19.11",
+    "@types/node": "^25.6.0",
     "@types/turndown": "^5.0.5",
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.28.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.7.0",
+    "typescript": "^6.0.3",
     "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
