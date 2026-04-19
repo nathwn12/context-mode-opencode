@@ -7,7 +7,7 @@
  *   - 5 hook events: PreToolUse, PostToolUse, SessionStart, UserPromptSubmit, Stop
  *   - Same wire protocol as Claude Code (JSON stdin → stdout)
  *   - Config: ~/.codex/hooks.json + ~/.codex/config.toml (TOML for MCP/features)
- *   - Session dir: ~/.codex/context-mode/sessions/
+ *   - Session dir: ~/.codex/context-mode-opencode/sessions/
  *
  * IMPORTANT: Hook dispatch is NOT yet active in Codex CLI (v0.118.0).
  * codex_hooks feature flag is Stage::UnderDevelopment — hooks are implemented
@@ -153,7 +153,7 @@ export class CodexAdapter implements HookAdapter {
           hookEventName: "PreToolUse",
           permissionDecision: "deny",
           permissionDecisionReason:
-            response.reason ?? "Blocked by context-mode hook",
+            response.reason ?? "Blocked by context-mode-opencode hook",
         },
       };
     }
@@ -208,7 +208,7 @@ export class CodexAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".codex", "context-mode", "sessions");
+    const dir = join(homedir(), ".codex", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -300,10 +300,10 @@ export class CodexAdapter implements HookAdapter {
   }
 
   checkPluginRegistration(): DiagnosticResult {
-    // Check for context-mode in [mcp_servers] section of config.toml
+    // Check for context-mode-opencode in [mcp_servers] section of config.toml
     try {
       const raw = readFileSync(this.getSettingsPath(), "utf-8");
-      const hasContextMode = raw.includes("context-mode");
+      const hasContextMode = raw.includes("context-mode-opencode");
       const hasMcpSection =
         raw.includes("[mcp_servers]") || raw.includes("[mcp_servers.");
 
@@ -311,7 +311,7 @@ export class CodexAdapter implements HookAdapter {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in [mcp_servers] config",
+          message: "context-mode-opencode found in [mcp_servers] config",
         };
       }
 
@@ -320,8 +320,8 @@ export class CodexAdapter implements HookAdapter {
           check: "MCP registration",
           status: "fail",
           message:
-            "[mcp_servers] section exists but context-mode not found",
-          fix: 'Add context-mode to [mcp_servers] in ~/.codex/config.toml',
+            "[mcp_servers] section exists but context-mode-opencode not found",
+          fix: 'Add context-mode-opencode to [mcp_servers] in ~/.codex/config.toml',
         };
       }
 
@@ -329,7 +329,7 @@ export class CodexAdapter implements HookAdapter {
         check: "MCP registration",
         status: "fail",
         message: "No [mcp_servers] section in config.toml",
-        fix: 'Add [mcp_servers.context-mode] to ~/.codex/config.toml',
+        fix: 'Add [mcp_servers.context-mode-opencode] to ~/.codex/config.toml',
       };
     } catch {
       return {
@@ -387,7 +387,7 @@ export class CodexAdapter implements HookAdapter {
       return readFileSync(instructionsPath, "utf-8");
     } catch {
       // Fallback inline instructions
-      return "# context-mode\n\nUse context-mode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of bash/cat/curl for data-heavy operations.";
+      return "# context-mode-opencode\n\nUse context-mode-opencode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of bash/cat/curl for data-heavy operations.";
     }
   }
 

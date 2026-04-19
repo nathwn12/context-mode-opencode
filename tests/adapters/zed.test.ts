@@ -118,10 +118,10 @@ describe("ZedAdapter", () => {
       );
     });
 
-    it("session dir is under ~/.config/zed/context-mode/sessions/", () => {
+    it("session dir is under ~/.config/zed/context-mode-opencode/sessions/", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir).toBe(
-        join(homedir(), ".config", "zed", "context-mode", "sessions"),
+        join(homedir(), ".config", "zed", "context-mode-opencode", "sessions"),
       );
     });
   });

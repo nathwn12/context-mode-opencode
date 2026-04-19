@@ -1,5 +1,5 @@
 /**
- * Pi coding agent extension for context-mode.
+ * Pi coding agent extension for context-mode-opencode.
  *
  * Follows the OpenClaw adapter pattern: imports shared session modules,
  * registers Pi-specific hooks. NO copy-paste of session logic.
@@ -56,13 +56,13 @@ let _sessionId = "";
 // ── Helpers ──────────────────────────────────────────────
 
 function getSessionDir(): string {
-  const dir = join(homedir(), ".pi", "context-mode", "sessions");
+  const dir = join(homedir(), ".pi", "context-mode-opencode", "sessions");
   mkdirSync(dir, { recursive: true });
   return dir;
 }
 
 function getDBPath(): string {
-  return join(getSessionDir(), "context-mode.db");
+  return join(getSessionDir(), "context-mode-opencode.db");
 }
 
 function getOrCreateDB(): SessionDB {
@@ -94,7 +94,7 @@ function buildStatsText(db: SessionDB, sessionId: string): string {
     const events = db.getEvents(sessionId);
     const stats = db.getSessionStats(sessionId);
     const lines: string[] = [
-      "## context-mode stats (Pi)",
+      "## context-mode-opencode stats (Pi)",
       "",
       `- Session: \`${sessionId.slice(0, 8)}...\``,
       `- Events captured: ${events.length}`,
@@ -123,7 +123,7 @@ function buildStatsText(db: SessionDB, sessionId: string): string {
 
     return lines.join("\n");
   } catch {
-    return "context-mode stats unavailable (session DB error)";
+    return "context-mode-opencode stats unavailable (session DB error)";
   }
 }
 
@@ -186,7 +186,7 @@ export default function piExtension(pi: any): void {
         return {
           block: true,
           reason:
-            "Use context-mode MCP tools (execute, fetch_and_index) instead of inline HTTP clients. " +
+            "Use context-mode-opencode MCP tools (execute, fetch_and_index) instead of inline HTTP clients. " +
             "Raw curl/wget/fetch output floods the context window.",
         };
       }
@@ -360,12 +360,12 @@ export default function piExtension(pi: any): void {
   // ── 8. Slash commands ──────────────────────────────────
 
   pi.registerCommand("ctx-stats", {
-    description: "Show context-mode session statistics",
+    description: "Show context-mode-opencode session statistics",
     handler: async (argsOrCtx: unknown, maybeCtx: unknown) => {
       const ctx = resolveCommandContext(argsOrCtx, maybeCtx);
       const text =
         !_db || !_sessionId
-          ? "context-mode: no active session"
+          ? "context-mode-opencode: no active session"
           : buildStatsText(_db, _sessionId);
 
       return handleCommandText(text, ctx);
@@ -373,7 +373,7 @@ export default function piExtension(pi: any): void {
   });
 
   pi.registerCommand("ctx-doctor", {
-    description: "Run context-mode diagnostics",
+    description: "Run context-mode-opencode diagnostics",
     handler: async (argsOrCtx: unknown, maybeCtx: unknown) => {
       const ctx = resolveCommandContext(argsOrCtx, maybeCtx);
       const dbPath = getDBPath();

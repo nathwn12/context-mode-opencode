@@ -417,7 +417,7 @@ export function formatReport(report: FullReport, version?: string, latestVersion
 
   // ── Fresh session: almost no activity ──
   if (totalKeptOut === 0) {
-    lines.push(`context-mode -- session (${duration})`);
+    lines.push(`context-mode-opencode -- session (${duration})`);
     lines.push("");
 
     if (totalCalls === 0) {
@@ -430,7 +430,7 @@ export function formatReport(report: FullReport, version?: string, latestVersion
     lines.push("");
     lines.push("Tip: Use ctx_execute to analyze files in sandbox -- savings start there.");
     lines.push("");
-    lines.push(version ? `v${version}` : "context-mode");
+    lines.push(version ? `v${version}` : "context-mode-opencode");
     if (version && latestVersion && latestVersion !== "unknown" && latestVersion !== version) {
       lines.push(`Update available: v${version} -> v${latestVersion}  |  Run: ctx_upgrade`);
     }
@@ -448,13 +448,13 @@ export function formatReport(report: FullReport, version?: string, latestVersion
   // ~4 bytes per token, ~1000 tokens per minute of context window capacity
   const minSaved = Math.round(totalKeptOut / 4 / 1000);
 
-  lines.push(`context-mode -- session (${duration})`);
+  lines.push(`context-mode-opencode -- session (${duration})`);
   lines.push("");
 
   // ── Before/after comparison ──
   const { withoutBar, withBar } = comparisonBars(grandTotal, totalReturned);
-  lines.push(`Without context-mode:  |${withoutBar}| ${kb(grandTotal)} in your conversation`);
-  lines.push(`With context-mode:     |${withBar}| ${kb(totalReturned)} in your conversation`);
+  lines.push(`Without context-mode-opencode:  |${withoutBar}| ${kb(grandTotal)} in your conversation`);
+  lines.push(`With context-mode-opencode:     |${withBar}| ${kb(totalReturned)} in your conversation`);
   lines.push("");
   const savingsLine = `${kb(totalKeptOut)} processed in sandbox, never entered your conversation. (${savingsPercent}% reduction)`;
   lines.push(savingsLine);
@@ -504,7 +504,7 @@ export function formatReport(report: FullReport, version?: string, latestVersion
       `${report.continuity.total_events} event${report.continuity.total_events !== 1 ? "s" : ""} preserved`,
     );
   }
-  const versionStr = version ? `v${version}` : "context-mode";
+  const versionStr = version ? `v${version}` : "context-mode-opencode";
   footerParts.push(versionStr);
   lines.push("");
   lines.push(footerParts.join("  |  "));

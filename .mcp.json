@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "context-mode": {
+    "context-mode-opencode": {
       "command": "node",
       "args": ["./start.mjs"]
     }

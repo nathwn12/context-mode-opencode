@@ -8,7 +8,7 @@
  *   - Config: ~/.config/zed/settings.json (JSON format)
  *   - MCP: full support via context_servers section in settings.json
  *   - All capabilities are false — MCP is the only integration path
- *   - Session dir: ~/.config/zed/context-mode/sessions/
+ *   - Session dir: ~/.config/zed/context-mode-opencode/sessions/
  */
 
 import { createHash } from "node:crypto";
@@ -104,7 +104,7 @@ export class ZedAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".config", "zed", "context-mode", "sessions");
+    const dir = join(homedir(), ".config", "zed", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -159,18 +159,18 @@ export class ZedAdapter implements HookAdapter {
   }
 
   checkPluginRegistration(): DiagnosticResult {
-    // Check for context-mode in context_servers section of settings.json
+    // Check for context-mode-opencode in context_servers section of settings.json
     try {
       const raw = readFileSync(this.getSettingsPath(), "utf-8");
       const settings = JSON.parse(raw);
       const hasContextServers = settings.context_servers !== undefined;
-      const hasContextMode = raw.includes("context-mode");
+      const hasContextMode = raw.includes("context-mode-opencode");
 
       if (hasContextServers && hasContextMode) {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in context_servers config",
+          message: "context-mode-opencode found in context_servers config",
         };
       }
 
@@ -179,8 +179,8 @@ export class ZedAdapter implements HookAdapter {
           check: "MCP registration",
           status: "fail",
           message:
-            "context_servers section exists but context-mode not found",
-          fix: 'Add context-mode to context_servers in ~/.config/zed/settings.json',
+            "context_servers section exists but context-mode-opencode not found",
+          fix: 'Add context-mode-opencode to context_servers in ~/.config/zed/settings.json',
         };
       }
 
@@ -188,7 +188,7 @@ export class ZedAdapter implements HookAdapter {
         check: "MCP registration",
         status: "fail",
         message: "No context_servers section in settings.json",
-        fix: 'Add context_servers.context-mode to ~/.config/zed/settings.json',
+        fix: 'Add context_servers.context-mode-opencode to ~/.config/zed/settings.json',
       };
     } catch {
       return {
@@ -200,7 +200,7 @@ export class ZedAdapter implements HookAdapter {
   }
 
   getInstalledVersion(): string {
-    // Zed has no marketplace or plugin system for context-mode
+    // Zed has no marketplace or plugin system for context-mode-opencode
     return "not installed";
   }
 
@@ -246,7 +246,7 @@ export class ZedAdapter implements HookAdapter {
       return readFileSync(instructionsPath, "utf-8");
     } catch {
       // Fallback inline instructions
-      return "# context-mode\n\nUse context-mode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of bash/cat/curl for data-heavy operations.";
+      return "# context-mode-opencode\n\nUse context-mode-opencode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of bash/cat/curl for data-heavy operations.";
     }
   }
 }

@@ -1,5 +1,5 @@
-# Codex CLI — context-mode MCP server configuration
+# Codex CLI — context-mode-opencode MCP server configuration
 # Add this to ~/.codex/config.toml
 
-[mcp_servers.context-mode]
-command = "context-mode"
+[mcp_servers.context-mode-opencode]
+command = "context-mode-opencode"

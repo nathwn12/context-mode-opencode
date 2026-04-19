@@ -50,26 +50,26 @@ if (process.platform === "win32" && process.env.npm_config_global === "true") {
 
     const actualPkgDir = pkgRoot;
 
-    // npm's .cmd shim uses %~dp0\node_modules\<pkg>\... to find the entry point.
+    // npm's .cmd shim uses %~dp0\node_modules\<scope>\<pkg>\... to find the entry point.
     // On nvm4w, stale shims at C:\nvm4w\nodejs\ may exist alongside correct ones
     // at the npm prefix. We create junctions at ALL known shim locations.
     const shimDirs = new Set([prefix]);
 
     // Detect stale shim locations via `where` command
     try {
-      const whereOutput = execSync("where context-mode.cmd", {
+      const whereOutput = execSync("where context-mode-opencode.cmd", {
         encoding: "utf-8",
         stdio: ["pipe", "pipe", "pipe"],
       }).trim();
       for (const line of whereOutput.split(/\r?\n/)) {
-        if (line.endsWith("context-mode.cmd")) {
+        if (line.endsWith("context-mode-opencode.cmd")) {
           shimDirs.add(dirname(line));
         }
       }
     } catch { /* where may fail if not installed yet */ }
 
     for (const shimDir of shimDirs) {
-      const expectedPkgDir = join(shimDir, "node_modules", "context-mode");
+      const expectedPkgDir = join(shimDir, "node_modules", "@nathwn12", "context-mode-opencode");
 
       if (
         resolve(expectedPkgDir).toLowerCase() !== resolve(actualPkgDir).toLowerCase() &&
@@ -79,17 +79,18 @@ if (process.platform === "win32" && process.env.npm_config_global === "true") {
         if (!existsSync(expectedNodeModules)) {
           mkdirSync(expectedNodeModules, { recursive: true });
         }
+        mkdirSync(dirname(expectedPkgDir), { recursive: true });
 
         // Create directory junction (no admin privileges needed on Windows 10+)
         // Validate paths to prevent cmd.exe injection via shell metacharacters
         if (!isSafeWindowsPath(expectedPkgDir) || !isSafeWindowsPath(actualPkgDir)) {
-          console.warn(`  context-mode: skipping junction — path contains unsafe characters`);
+          console.warn(`  context-mode-opencode: skipping junction — path contains unsafe characters`);
         } else {
           execSync(`mklink /J "${expectedPkgDir}" "${actualPkgDir}"`, {
             shell: "cmd.exe",
             stdio: "pipe",
           });
-          console.log(`\n  context-mode: created junction for nvm4w compatibility`);
+          console.log(`\n  context-mode-opencode: created junction for nvm4w compatibility`);
           console.log(`    ${expectedPkgDir} → ${actualPkgDir}\n`);
         }
       }
@@ -97,19 +98,19 @@ if (process.platform === "win32" && process.env.npm_config_global === "true") {
 
     // Also fix stale shims that reference old bin entry (build/cli.js → cli.bundle.mjs)
     try {
-      const whereOutput = execSync("where context-mode.cmd", {
+      const whereOutput = execSync("where context-mode-opencode.cmd", {
         encoding: "utf-8",
         stdio: ["pipe", "pipe", "pipe"],
       }).trim();
       for (const line of whereOutput.split(/\r?\n/)) {
-        if (line.endsWith("context-mode.cmd")) {
+        if (line.endsWith("context-mode-opencode.cmd")) {
           const content = readFileSync(line, "utf-8");
           if (content.includes("build\\cli.js") || content.includes("build/cli.js")) {
             // Rewrite stale shim to use cli.bundle.mjs
             const fixed = content
               .replace(/build[\\\/]cli\.js/g, "cli.bundle.mjs");
             writeFileSync(line, fixed);
-            console.log(`  context-mode: fixed stale shim at ${line}`);
+            console.log(`  context-mode-opencode: fixed stale shim at ${line}`);
           }
         }
       }

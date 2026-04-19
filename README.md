@@ -2,7 +2,7 @@
 
 **The other half of the context problem.**
 
-[![users](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fmksglu%2Fcontext-mode%40main%2Fstats.json&query=%24.message&label=users&color=brightgreen)](https://www.npmjs.com/package/context-mode) [![npm](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fmksglu%2Fcontext-mode%40main%2Fstats.json&query=%24.npm&label=npm&color=blue)](https://www.npmjs.com/package/context-mode) [![marketplace](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fmksglu%2Fcontext-mode%40main%2Fstats.json&query=%24.marketplace&label=marketplace&color=blue)](https://github.com/mksglu/context-mode) [![GitHub stars](https://img.shields.io/github/stars/mksglu/context-mode?style=flat&color=yellow)](https://github.com/mksglu/context-mode/stargazers) [![GitHub forks](https://img.shields.io/github/forks/mksglu/context-mode?style=flat&color=blue)](https://github.com/mksglu/context-mode/network/members) [![Last commit](https://img.shields.io/github/last-commit/mksglu/context-mode?color=green)](https://github.com/mksglu/context-mode/commits) [![License: ELv2](https://img.shields.io/badge/License-ELv2-blue.svg)](LICENSE)
+[![users](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fnathwn12%2Fcontext-mode-opencode%40main%2Fstats.json&query=%24.message&label=users&color=brightgreen)](https://www.npmjs.com/package/@nathwn12/context-mode-opencode) [![npm](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fnathwn12%2Fcontext-mode-opencode%40main%2Fstats.json&query=%24.npm&label=npm&color=blue)](https://www.npmjs.com/package/@nathwn12/context-mode-opencode) [![marketplace](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fcdn.jsdelivr.net%2Fgh%2Fnathwn12%2Fcontext-mode-opencode%40main%2Fstats.json&query=%24.marketplace&label=marketplace&color=blue)](https://github.com/nathwn12/context-mode-opencode) [![GitHub stars](https://img.shields.io/github/stars/nathwn12/context-mode-opencode?style=flat&color=yellow)](https://github.com/nathwn12/context-mode-opencode/stargazers) [![GitHub forks](https://img.shields.io/github/forks/nathwn12/context-mode-opencode?style=flat&color=blue)](https://github.com/nathwn12/context-mode-opencode/network/members) [![Last commit](https://img.shields.io/github/last-commit/nathwn12/context-mode-opencode?color=green)](https://github.com/nathwn12/context-mode-opencode/commits) [![License: ELv2](https://img.shields.io/badge/License-ELv2-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/1478479412700909750?label=Discord&logo=discord&color=5865f2)](https://discord.gg/DCN9jUgN5v)
 [![Hacker News #1](https://img.shields.io/badge/Hacker%20News-%231%20%E2%80%A2%20570%2B%20points-ff6600?logo=ycombinator&logoColor=white)](https://news.ycombinator.com/item?id=47193064)
 
@@ -36,12 +36,12 @@ Every MCP tool call dumps raw data into your context window. A Playwright snapsh
 Context Mode is an MCP server that solves all three sides of this problem:
 
 1. **Context Saving** — Sandbox tools keep raw data out of the context window. 315 KB becomes 5.4 KB. 98% reduction.
-2. **Session Continuity** — Every file edit, git operation, task, error, and user decision is tracked in SQLite. When the conversation compacts, context-mode doesn't dump this data back into context — it indexes events into FTS5 and retrieves only what's relevant via BM25 search. The model picks up exactly where you left off. If you don't `--continue`, previous session data is deleted immediately — a fresh session means a clean slate.
+2. **Session Continuity** — Every file edit, git operation, task, error, and user decision is tracked in SQLite. When the conversation compacts, context-mode-opencode doesn't dump this data back into context — it indexes events into FTS5 and retrieves only what's relevant via BM25 search. The model picks up exactly where you left off. If you don't `--continue`, previous session data is deleted immediately — a fresh session means a clean slate.
 3. **Think in Code** — The LLM should program the analysis, not compute it. Instead of reading 50 files into context to count functions, the agent writes a script that does the counting and `console.log()`s only the result. One script replaces ten tool calls and saves 100x context. This is a mandatory paradigm across all 12 platforms: stop treating the LLM as a data processor, treat it as a code generator.
 
 <a href="https://www.youtube.com/watch?v=QUHrntlfPo4">
   <picture>
-    <img src="https://img.youtube.com/vi/QUHrntlfPo4/maxresdefault.jpg" alt="Watch context-mode demo on YouTube" width="100%">
+    <img src="https://img.youtube.com/vi/QUHrntlfPo4/maxresdefault.jpg" alt="Watch context-mode-opencode demo on YouTube" width="100%">
   </picture>
 </a>
 <p align="center"><a href="https://www.youtube.com/watch?v=QUHrntlfPo4"><img src="https://img.shields.io/badge/%E2%96%B6%EF%B8%8F_Watch_Demo-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch on YouTube"></a></p>
@@ -58,8 +58,8 @@ Platforms are grouped by install complexity. Hook-capable platforms get automati
 **Install:**
 
 ```bash
-/plugin marketplace add mksglu/context-mode
-/plugin install context-mode@context-mode
+/plugin marketplace add nathwn12/context-mode-opencode
+/plugin install context-mode-opencode@context-mode-opencode
 ```
 
 Restart Claude Code (or run `/reload-plugins`).
@@ -67,7 +67,7 @@ Restart Claude Code (or run `/reload-plugins`).
 **Verify:**
 
 ```
-/context-mode:ctx-doctor
+/context-mode-opencode:ctx-doctor
 ```
 
 All checks should show `[x]`. The doctor validates runtimes, hooks, FTS5, and plugin registration.
@@ -76,11 +76,11 @@ All checks should show `[x]`. The doctor validates runtimes, hooks, FTS5, and pl
 
 | Slash Command | What it does |
 |---|---|
-| `/context-mode:ctx-stats` | Context savings — per-tool breakdown, tokens consumed, savings ratio. |
-| `/context-mode:ctx-doctor` | Diagnostics — runtimes, hooks, FTS5, plugin registration, versions. |
-| `/context-mode:ctx-upgrade` | Pull latest, rebuild, migrate cache, fix hooks. |
-| `/context-mode:ctx-purge` | Permanently delete all indexed content from the knowledge base. |
-| `/context-mode:ctx-insight` | Personal analytics dashboard — 15+ metrics on tool usage, session activity, error rate, parallel work patterns, and mastery curve. Opens a local web UI. |
+| `/context-mode-opencode:ctx-stats` | Context savings — per-tool breakdown, tokens consumed, savings ratio. |
+| `/context-mode-opencode:ctx-doctor` | Diagnostics — runtimes, hooks, FTS5, plugin registration, versions. |
+| `/context-mode-opencode:ctx-upgrade` | Pull latest, rebuild, migrate cache, fix hooks. |
+| `/context-mode-opencode:ctx-purge` | Permanently delete all indexed content from the knowledge base. |
+| `/context-mode-opencode:ctx-insight` | Personal analytics dashboard — 15+ metrics on tool usage, session activity, error rate, parallel work patterns, and mastery curve. Opens a local web UI. |
 
 > **Note:** Slash commands are a Claude Code plugin feature. On other platforms, type `ctx stats`, `ctx doctor`, `ctx upgrade`, or `ctx insight` in the chat — the model calls the MCP tool automatically. See [Utility Commands](#utility-commands).
 
@@ -88,7 +88,7 @@ All checks should show `[x]`. The doctor validates runtimes, hooks, FTS5, and pl
 <summary>Alternative — MCP-only install (no hooks or slash commands)</summary>
 
 ```bash
-claude mcp add context-mode -- npx -y context-mode
+claude mcp add context-mode-opencode -- npx -y @nathwn12/context-mode-opencode
 ```
 
 This gives you the 6 sandbox tools without automatic routing. The model can still use them — it just won't be nudged to prefer them over raw Bash/Read/WebFetch. Good for trying it out before committing to the full plugin.
@@ -104,10 +104,10 @@ This gives you the 6 sandbox tools without automatic routing. The model can stil
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add the following to `~/.gemini/settings.json`. This single file registers the MCP server and all four hooks:
@@ -115,33 +115,33 @@ This gives you the 6 sandbox tools without automatic routing. The model can stil
    ```json
    {
      "mcpServers": {
-       "context-mode": {
-         "command": "context-mode"
+       "context-mode-opencode": {
+         "command": "context-mode-opencode"
        }
      },
      "hooks": {
        "BeforeTool": [
          {
-           "matcher": "run_shell_command|read_file|read_many_files|grep_search|search_file_content|web_fetch|activate_skill|mcp__plugin_context-mode",
-           "hooks": [{ "type": "command", "command": "context-mode hook gemini-cli beforetool" }]
+           "matcher": "run_shell_command|read_file|read_many_files|grep_search|search_file_content|web_fetch|activate_skill|mcp__plugin_context-mode-opencode",
+           "hooks": [{ "type": "command", "command": "context-mode-opencode hook gemini-cli beforetool" }]
          }
        ],
        "AfterTool": [
          {
            "matcher": "",
-           "hooks": [{ "type": "command", "command": "context-mode hook gemini-cli aftertool" }]
+           "hooks": [{ "type": "command", "command": "context-mode-opencode hook gemini-cli aftertool" }]
          }
        ],
        "PreCompress": [
          {
            "matcher": "",
-           "hooks": [{ "type": "command", "command": "context-mode hook gemini-cli precompress" }]
+           "hooks": [{ "type": "command", "command": "context-mode-opencode hook gemini-cli precompress" }]
          }
        ],
        "SessionStart": [
          {
            "matcher": "",
-           "hooks": [{ "type": "command", "command": "context-mode hook gemini-cli sessionstart" }]
+           "hooks": [{ "type": "command", "command": "context-mode-opencode hook gemini-cli sessionstart" }]
          }
        ]
      }
@@ -156,11 +156,11 @@ This gives you the 6 sandbox tools without automatic routing. The model can stil
 /mcp list
 ```
 
-You should see `context-mode: ... - Connected`.
+You should see `context-mode-opencode: ... - Connected`.
 
 **Routing:** Automatic. The SessionStart hook injects routing instructions at runtime — no `GEMINI.md` file is written to your project. All four hooks (BeforeTool, AfterTool, PreCompress, SessionStart) handle enforcement programmatically.
 
-> **Why the BeforeTool matcher?** It targets only tools that produce large output (`run_shell_command`, `read_file`, `read_many_files`, `grep_search`, `search_file_content`, `web_fetch`, `activate_skill`) plus context-mode's own tools (`mcp__plugin_context-mode`). This avoids unnecessary hook overhead on lightweight tools while intercepting every tool that could flood your context window.
+> **Why the BeforeTool matcher?** It targets only tools that produce large output (`run_shell_command`, `read_file`, `read_many_files`, `grep_search`, `search_file_content`, `web_fetch`, `activate_skill`) plus context-mode-opencode's own tools (`mcp__plugin_context-mode-opencode`). This avoids unnecessary hook overhead on lightweight tools while intercepting every tool that could flood your context window.
 
 Full config reference: [`configs/gemini-cli/settings.json`](configs/gemini-cli/settings.json)
 
@@ -173,10 +173,10 @@ Full config reference: [`configs/gemini-cli/settings.json`](configs/gemini-cli/s
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Create `.vscode/mcp.json` in your project root:
@@ -184,26 +184,26 @@ Full config reference: [`configs/gemini-cli/settings.json`](configs/gemini-cli/s
    ```json
    {
      "servers": {
-       "context-mode": {
-         "command": "context-mode"
+       "context-mode-opencode": {
+         "command": "context-mode-opencode"
        }
      }
    }
    ```
 
-3. Create `.github/hooks/context-mode.json`:
+3. Create `.github/hooks/context-mode-opencode.json`:
 
    ```json
    {
      "hooks": {
        "PreToolUse": [
-         { "type": "command", "command": "context-mode hook vscode-copilot pretooluse" }
+         { "type": "command", "command": "context-mode-opencode hook vscode-copilot pretooluse" }
        ],
        "PostToolUse": [
-         { "type": "command", "command": "context-mode hook vscode-copilot posttooluse" }
+         { "type": "command", "command": "context-mode-opencode hook vscode-copilot posttooluse" }
        ],
        "SessionStart": [
-         { "type": "command", "command": "context-mode hook vscode-copilot sessionstart" }
+         { "type": "command", "command": "context-mode-opencode hook vscode-copilot sessionstart" }
        ]
      }
    }
@@ -211,7 +211,7 @@ Full config reference: [`configs/gemini-cli/settings.json`](configs/gemini-cli/s
 
 4. Restart VS Code.
 
-**Verify:** Open Copilot Chat and type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** Open Copilot Chat and type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** Automatic. The SessionStart hook injects routing instructions at runtime — no `copilot-instructions.md` file is written to your project.
 
@@ -226,10 +226,10 @@ Full hook config including PreCompact: [`configs/vscode-copilot/hooks.json`](con
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Create `.cursor/mcp.json` in your project root (or `~/.cursor/mcp.json` for global):
@@ -237,8 +237,8 @@ Full hook config including PreCompact: [`configs/vscode-copilot/hooks.json`](con
    ```json
    {
      "mcpServers": {
-       "context-mode": {
-         "command": "context-mode"
+       "context-mode-opencode": {
+         "command": "context-mode-opencode"
        }
      }
    }
@@ -252,18 +252,18 @@ Full hook config including PreCompact: [`configs/vscode-copilot/hooks.json`](con
      "hooks": {
        "preToolUse": [
          {
-           "command": "context-mode hook cursor pretooluse",
+           "command": "context-mode-opencode hook cursor pretooluse",
            "matcher": "Shell|Read|Grep|WebFetch|Task|MCP:ctx_execute|MCP:ctx_execute_file|MCP:ctx_batch_execute"
          }
        ],
        "postToolUse": [
          {
-           "command": "context-mode hook cursor posttooluse"
+           "command": "context-mode-opencode hook cursor posttooluse"
          }
        ],
        "stop": [
          {
-           "command": "context-mode hook cursor stop"
+           "command": "context-mode-opencode hook cursor stop"
          }
        ]
      }
@@ -276,18 +276,18 @@ Full hook config including PreCompact: [`configs/vscode-copilot/hooks.json`](con
 
    ```bash
    mkdir -p .cursor/rules
-   cp node_modules/context-mode/configs/cursor/context-mode.mdc .cursor/rules/context-mode.mdc
+   cp node_modules/@nathwn12/context-mode-opencode/configs/cursor/context-mode-opencode.mdc .cursor/rules/context-mode-opencode.mdc
    ```
 
 5. Restart Cursor or open a new agent session.
 
-**Verify:** Open Cursor Settings > MCP and confirm "context-mode" shows as connected. In agent chat, type `ctx stats`.
+**Verify:** Open Cursor Settings > MCP and confirm "context-mode-opencode" shows as connected. In agent chat, type `ctx stats`.
 
-**Routing:** Hooks enforce routing programmatically via `preToolUse`/`postToolUse`/`stop`. The `.cursor/rules/context-mode.mdc` file provides routing instructions at session start since Cursor's `sessionStart` hook is currently rejected by their validator ([forum report](https://forum.cursor.com/t/unknown-hook-type-sessionstart/149566)). Project `.cursor/hooks.json` overrides `~/.cursor/hooks.json`.
+**Routing:** Hooks enforce routing programmatically via `preToolUse`/`postToolUse`/`stop`. The `.cursor/rules/context-mode-opencode.mdc` file provides routing instructions at session start since Cursor's `sessionStart` hook is currently rejected by their validator ([forum report](https://forum.cursor.com/t/unknown-hook-type-sessionstart/149566)). Project `.cursor/hooks.json` overrides `~/.cursor/hooks.json`.
 
 **Known limitation:** Cursor accepts `additional_context` in hook responses but does not surface it to the model ([forum #155689](https://forum.cursor.com/t/native-posttooluse-hooks-accept-and-log-additional-context-successfully-but-the-injected-context-is-not-surfaced-to-the-model/155689)). Routing relies on the `.mdc` rules file instead of hook context injection.
 
-Full configs: [`configs/cursor/hooks.json`](configs/cursor/hooks.json) | [`configs/cursor/mcp.json`](configs/cursor/mcp.json) | [`configs/cursor/context-mode.mdc`](configs/cursor/context-mode.mdc)
+Full configs: [`configs/cursor/hooks.json`](configs/cursor/hooks.json) | [`configs/cursor/mcp.json`](configs/cursor/mcp.json) | [`configs/cursor/context-mode-opencode.mdc`](configs/cursor/context-mode-opencode.mdc)
 
 </details>
 
@@ -298,13 +298,9 @@ Full configs: [`configs/cursor/hooks.json`](configs/cursor/hooks.json) | [`confi
 
 **Install:**
 
-1. Install context-mode globally:
+1. Add the npm package directly in `opencode.json`:
 
-   ```bash
-   npm install -g context-mode
-   ```
-
-2. Add to `opencode.json` in your project root (or `~/.config/opencode/opencode.json` for global):
+   Put this in your project root, or in `~/.config/opencode/opencode.json` for global use:
 
    ```json
    {
@@ -312,26 +308,26 @@ Full configs: [`configs/cursor/hooks.json`](configs/cursor/hooks.json) | [`confi
      "mcp": {
        "context-mode": {
          "type": "local",
-         "command": ["context-mode"]
+         "command": ["npx", "-y", "@nathwn12/context-mode-opencode"]
        }
      },
-     "plugin": ["context-mode"]
+     "plugin": ["@nathwn12/context-mode-opencode"]
    }
    ```
 
    The `mcp` entry registers the 6 sandbox tools. The `plugin` entry enables hooks — OpenCode calls the plugin's TypeScript functions directly before and after each tool execution, blocking dangerous commands and enforcing sandbox routing.
 
-3. *(Optional)* Copy the routing rules file. OpenCode lacks a SessionStart hook, so the model needs an `AGENTS.md` file for routing awareness:
+2. *(Optional)* Copy the routing rules file. OpenCode lacks a SessionStart hook, so the model needs an `AGENTS.md` file for routing awareness:
 
    ```bash
-   cp node_modules/context-mode/configs/opencode/AGENTS.md AGENTS.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/opencode/AGENTS.md AGENTS.md
    ```
 
    This tells the model which tools to use and which commands are blocked. Without it, hooks still enforce routing — but the model won't know *why* a command was denied.
 
-4. Restart OpenCode.
+3. Restart OpenCode.
 
-**Verify:** In the OpenCode session, type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** In the OpenCode session, type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** Hooks enforce routing programmatically via `tool.execute.before` and `tool.execute.after`. The optional [`AGENTS.md`](configs/opencode/AGENTS.md) file provides routing instructions for model awareness. The `experimental.session.compacting` hook builds resume snapshots when the conversation compacts.
 
@@ -348,10 +344,10 @@ Full configs: [`configs/opencode/opencode.json`](configs/opencode/opencode.json)
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add to `kilo.json` in your project root (or `~/.config/kilo/kilo.json` for global):
@@ -360,12 +356,12 @@ Full configs: [`configs/opencode/opencode.json`](configs/opencode/opencode.json)
    {
      "$schema": "https://app.kilo.ai/config.json",
      "mcp": {
-       "context-mode": {
+       "context-mode-opencode": {
          "type": "local",
-         "command": ["context-mode"]
+         "command": ["context-mode-opencode"]
        }
      },
-     "plugin": ["context-mode"]
+     "plugin": ["context-mode-opencode"]
    }
    ```
 
@@ -374,12 +370,12 @@ Full configs: [`configs/opencode/opencode.json`](configs/opencode/opencode.json)
 3. *(Optional)* Copy the routing rules file. KiloCode shares the OpenCode plugin architecture and lacks SessionStart, so the model needs an `AGENTS.md` file for routing awareness:
 
    ```bash
-   cp node_modules/context-mode/configs/opencode/AGENTS.md AGENTS.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/opencode/AGENTS.md AGENTS.md
    ```
 
 4. Restart KiloCode.
 
-**Verify:** In the KiloCode session, type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** In the KiloCode session, type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** Hooks enforce routing programmatically via `tool.execute.before` and `tool.execute.after`. The optional [`AGENTS.md`](configs/opencode/AGENTS.md) file provides routing instructions for model awareness. The `experimental.session.compacting` hook builds resume snapshots when the conversation compacts.
 
@@ -392,15 +388,15 @@ Full configs: [`configs/opencode/opencode.json`](configs/opencode/opencode.json)
 
 **Prerequisites:** OpenClaw gateway running ([>2026.1.29](https://github.com/openclaw/openclaw/pull/9761)), Node.js 22+.
 
-context-mode runs as a native [OpenClaw](https://github.com/openclaw) gateway plugin, targeting **Pi Agent** sessions (Read/Write/Edit/Bash tools). Unlike other platforms, there's no separate MCP server — the plugin registers directly into the gateway runtime via OpenClaw's [plugin API](https://docs.openclaw.ai/tools/plugin).
+context-mode-opencode runs as a native [OpenClaw](https://github.com/openclaw) gateway plugin, targeting **Pi Agent** sessions (Read/Write/Edit/Bash tools). Unlike other platforms, there's no separate MCP server — the plugin registers directly into the gateway runtime via OpenClaw's [plugin API](https://docs.openclaw.ai/tools/plugin).
 
 **Install:**
 
 1. Clone and install:
 
    ```bash
-   git clone https://github.com/mksglu/context-mode.git
-   cd context-mode
+   git clone https://github.com/nathwn12/context-mode-opencode.git
+   cd context-mode-opencode
    npm run install:openclaw
    ```
 
@@ -433,17 +429,17 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add to `~/.codex/config.toml`:
 
    ```toml
-   [mcp_servers.context-mode]
-   command = "context-mode"
+   [mcp_servers.context-mode-opencode]
+   command = "context-mode-opencode"
    ```
 
 3. *(Waiting for upstream)* Enable the hooks feature flag. Add to `~/.codex/config.toml`:
@@ -460,9 +456,9 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
    ```json
    {
      "hooks": {
-       "PreToolUse": [{ "hooks": [{ "type": "command", "command": "context-mode hook codex pretooluse" }] }],
-       "PostToolUse": [{ "hooks": [{ "type": "command", "command": "context-mode hook codex posttooluse" }] }],
-       "SessionStart": [{ "hooks": [{ "type": "command", "command": "context-mode hook codex sessionstart" }] }]
+       "PreToolUse": [{ "hooks": [{ "type": "command", "command": "context-mode-opencode hook codex pretooluse" }] }],
+       "PostToolUse": [{ "hooks": [{ "type": "command", "command": "context-mode-opencode hook codex posttooluse" }] }],
+       "SessionStart": [{ "hooks": [{ "type": "command", "command": "context-mode-opencode hook codex sessionstart" }] }]
      }
    }
    ```
@@ -474,14 +470,14 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
 5. Copy routing instructions (recommended even with hooks for full routing awareness):
 
    ```bash
-   cp node_modules/context-mode/configs/codex/AGENTS.md ./AGENTS.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/codex/AGENTS.md ./AGENTS.md
    ```
 
-   For global use: `cp node_modules/context-mode/configs/codex/AGENTS.md ~/.codex/AGENTS.md`. Global applies to all projects. If both exist, Codex CLI merges them.
+   For global use: `cp node_modules/@nathwn12/context-mode-opencode/configs/codex/AGENTS.md ~/.codex/AGENTS.md`. Global applies to all projects. If both exist, Codex CLI merges them.
 
 6. Restart Codex CLI.
 
-**Verify:** Start a session and type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** Start a session and type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** MCP tools work. Hook-based routing is ready but waiting for Codex to enable hook dispatch. The `AGENTS.md` file provides routing instructions for model awareness in the meantime.
 
@@ -496,10 +492,10 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add to `~/.gemini/antigravity/mcp_config.json`:
@@ -507,8 +503,8 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
    ```json
    {
      "mcpServers": {
-       "context-mode": {
-         "command": "context-mode"
+       "context-mode-opencode": {
+         "command": "context-mode-opencode"
        }
      }
    }
@@ -517,12 +513,12 @@ Full documentation: [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md)
 3. Copy routing instructions (Antigravity has no hook support):
 
    ```bash
-   cp node_modules/context-mode/configs/antigravity/GEMINI.md ./GEMINI.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/antigravity/GEMINI.md ./GEMINI.md
    ```
 
 4. Restart Antigravity.
 
-**Verify:** In an Antigravity session, type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** In an Antigravity session, type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** Manual. The `GEMINI.md` file is the only enforcement method (~60% compliance). There is no programmatic interception. Auto-detected via MCP protocol handshake (`clientInfo.name`) — no manual platform configuration needed.
 
@@ -537,10 +533,10 @@ Full configs: [`configs/antigravity/mcp_config.json`](configs/antigravity/mcp_co
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add to `.kiro/settings/mcp.json` in your project (or `~/.kiro/settings/mcp.json` for global):
@@ -548,25 +544,25 @@ Full configs: [`configs/antigravity/mcp_config.json`](configs/antigravity/mcp_co
    ```json
    {
      "mcpServers": {
-       "context-mode": {
-         "command": "context-mode"
+       "context-mode-opencode": {
+         "command": "context-mode-opencode"
        }
      }
    }
    ```
 
-3. Create `.kiro/hooks/context-mode.json`:
+3. Create `.kiro/hooks/context-mode-opencode.json`:
 
    ```json
    {
-     "name": "context-mode",
-     "description": "Context-mode hooks for context window protection",
+     "name": "context-mode-opencode",
+     "description": "Context-mode-opencode hooks for context window protection",
      "hooks": {
        "preToolUse": [
-         { "matcher": "*", "command": "context-mode hook kiro pretooluse" }
+         { "matcher": "*", "command": "context-mode-opencode hook kiro pretooluse" }
        ],
        "postToolUse": [
-         { "matcher": "*", "command": "context-mode hook kiro posttooluse" }
+         { "matcher": "*", "command": "context-mode-opencode hook kiro posttooluse" }
        ]
      }
    }
@@ -575,14 +571,14 @@ Full configs: [`configs/antigravity/mcp_config.json`](configs/antigravity/mcp_co
 4. Copy routing instructions. Kiro's `agentSpawn` (SessionStart) is not yet implemented, so the model needs a routing file at session start:
 
    ```bash
-   cp node_modules/context-mode/configs/kiro/KIRO.md ./KIRO.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/kiro/KIRO.md ./KIRO.md
    ```
 
 5. Restart Kiro.
 
-**Verify:** Open the Kiro panel > MCP Servers tab and confirm "context-mode" shows a green status indicator. In chat, type `ctx stats`.
+**Verify:** Open the Kiro panel > MCP Servers tab and confirm "context-mode-opencode" shows a green status indicator. In chat, type `ctx stats`.
 
-**Routing:** Hooks enforce routing programmatically via `preToolUse`/`postToolUse`. The `KIRO.md` file provides routing instructions since `agentSpawn` (SessionStart equivalent) is not yet wired. Tool names appear as `@context-mode/ctx_batch_execute`, `@context-mode/ctx_search`, etc. Auto-detected via MCP protocol handshake.
+**Routing:** Hooks enforce routing programmatically via `preToolUse`/`postToolUse`. The `KIRO.md` file provides routing instructions since `agentSpawn` (SessionStart equivalent) is not yet wired. Tool names appear as `@context-mode-opencode/ctx_batch_execute`, `@context-mode-opencode/ctx_search`, etc. Auto-detected via MCP protocol handshake.
 
 Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/agent.json`](configs/kiro/agent.json) | [`configs/kiro/KIRO.md`](configs/kiro/KIRO.md)
 
@@ -595,10 +591,10 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
 
 **Install:**
 
-1. Install context-mode globally:
+1. Install context-mode-opencode globally:
 
    ```bash
-   npm install -g context-mode
+   npm install -g @nathwn12/context-mode-opencode
    ```
 
 2. Add to `~/.config/zed/settings.json` (Windows: `%APPDATA%\Zed\settings.json`):
@@ -606,9 +602,9 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
    ```json
    {
      "context_servers": {
-       "context-mode": {
+       "context-mode-opencode": {
          "command": {
-           "path": "context-mode"
+           "path": "context-mode-opencode"
          }
        }
      }
@@ -620,14 +616,14 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
 3. Copy routing instructions (Zed has no hook support):
 
    ```bash
-   cp node_modules/context-mode/configs/zed/AGENTS.md ./AGENTS.md
+   cp node_modules/@nathwn12/context-mode-opencode/configs/zed/AGENTS.md ./AGENTS.md
    ```
 
 4. Restart Zed (or save `settings.json` — Zed auto-restarts context servers on config change).
 
-**Verify:** Open the Agent Panel (`Cmd+Shift+A`), go to settings, and check the indicator dot next to "context-mode" — green means active. Type `ctx stats` in the agent chat.
+**Verify:** Open the Agent Panel (`Cmd+Shift+A`), go to settings, and check the indicator dot next to "context-mode-opencode" — green means active. Type `ctx stats` in the agent chat.
 
-**Routing:** Manual. The `AGENTS.md` file is the only enforcement method (~60% compliance). There is no programmatic interception. Tool names appear as `mcp:context-mode:ctx_batch_execute`, `mcp:context-mode:ctx_search`, etc. Auto-detected via MCP protocol handshake.
+**Routing:** Manual. The `AGENTS.md` file is the only enforcement method (~60% compliance). There is no programmatic interception. Tool names appear as `mcp:context-mode-opencode:ctx_batch_execute`, `mcp:context-mode-opencode:ctx_search`, etc. Auto-detected via MCP protocol handshake.
 
 </details>
 
@@ -641,8 +637,8 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
 1. Clone the extension:
 
    ```bash
-   git clone https://github.com/mksglu/context-mode.git ~/.pi/extensions/context-mode
-   cd ~/.pi/extensions/context-mode
+   git clone https://github.com/nathwn12/context-mode-opencode.git ~/.pi/extensions/context-mode-opencode
+   cd ~/.pi/extensions/context-mode-opencode
    npm install
    npm run build
    ```
@@ -652,9 +648,9 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
    ```json
    {
      "mcpServers": {
-       "context-mode": {
+       "context-mode-opencode": {
          "command": "node",
-         "args": ["/home/youruser/.pi/extensions/context-mode/node_modules/context-mode/start.mjs"]
+         "args": ["/home/youruser/.pi/extensions/context-mode-opencode/node_modules/@nathwn12/context-mode-opencode/start.mjs"]
        }
      }
    }
@@ -664,7 +660,7 @@ Full configs: [`configs/kiro/mcp.json`](configs/kiro/mcp.json) | [`configs/kiro/
 
 3. Restart Pi.
 
-**Verify:** In a Pi session, type `ctx stats`. Context-mode tools should appear and respond.
+**Verify:** In a Pi session, type `ctx stats`. Context-mode-opencode tools should appear and respond.
 
 **Routing:** Automatic. The extension registers all key lifecycle events (`tool_call`, `tool_result`, `session_start`, `session_before_compact`), providing full session continuity and routing enforcement.
 
@@ -685,7 +681,7 @@ On older glibc systems (CentOS 7/8, RHEL 8, Debian 10), prebuilt binaries don't 
 
 ```bash
 dnf install -y gcc-toolset-10-gcc gcc-toolset-10-gcc-c++ make python3 python3-setuptools
-scl enable gcc-toolset-10 'npm install -g context-mode'
+scl enable gcc-toolset-10 'npm install -g @nathwn12/context-mode-opencode'
 ```
 
 **CentOS 7 / RHEL 7** (glibc 2.17):
@@ -694,7 +690,7 @@ scl enable gcc-toolset-10 'npm install -g context-mode'
 yum install -y centos-release-scl
 yum install -y devtoolset-10-gcc devtoolset-10-gcc-c++ make python3
 pip3 install setuptools
-scl enable devtoolset-10 'npm install -g context-mode'
+scl enable devtoolset-10 'npm install -g @nathwn12/context-mode-opencode'
 ```
 
 **Alpine Linux:**
@@ -703,7 +699,7 @@ Alpine prebuilt binaries (musl) are available in better-sqlite3 v12.8.0+. With t
 
 ```bash
 apk add build-base python3 py3-setuptools
-npm install -g context-mode
+npm install -g @nathwn12/context-mode-opencode
 ```
 
 </details>
@@ -762,7 +758,7 @@ Search results use intelligent extraction instead of truncation. Instead of retu
 
 ### TTL Cache
 
-Indexed content persists in a per-project SQLite database at `~/.context-mode/content/`. When `ctx_fetch_and_index` is called for a URL that was already indexed within the last 24 hours, the fetch is skipped entirely. The model searches the existing index directly.
+Indexed content persists in a per-project SQLite database at `~/.context-mode-opencode/content/`. When `ctx_fetch_and_index` is called for a URL that was already indexed within the last 24 hours, the fetch is skipped entirely. The model searches the existing index directly.
 
 - **Fresh (<24h):** Returns a cache hint (0.3KB) instead of re-fetching (48KB+). Model proceeds to `ctx_search`.
 - **Stale (>24h):** Re-fetches silently. No user action needed.
@@ -910,26 +906,26 @@ Detailed event data is also indexed into FTS5 for on-demand retrieval via `searc
 >
 > **KiloCode** shares the same TypeScript plugin architecture as OpenCode via the OpenCodeAdapter, with platform-specific configuration paths (`kilo.json` instead of `opencode.json`, `~/.config/kilo/` instead of `~/.config/opencode/`). Hook capabilities depend on KiloCode's implementation of the plugin interface.
 >
-> **OpenClaw** runs context-mode as a native gateway plugin targeting Pi Agent sessions. Hooks register via `api.on()` (tool/lifecycle) and `api.registerHook()` (commands). All tool interception and compaction hooks are supported. See [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md).
+> **OpenClaw** runs context-mode-opencode as a native gateway plugin targeting Pi Agent sessions. Hooks register via `api.on()` (tool/lifecycle) and `api.registerHook()` (commands). All tool interception and compaction hooks are supported. See [`docs/adapters/openclaw.md`](docs/adapters/openclaw.md).
 >
 > **Codex CLI** hooks are implemented but dispatch is not yet active (`codex_hooks` is `Stage::UnderDevelopment`). MCP tools work. Hook scripts are ready and will activate once Codex enables dispatch ([openai/codex#16685](https://github.com/openai/codex/issues/16685)). PreToolUse supports `permissionDecision: "deny"` only — `additionalContext` is not supported in PreToolUse (context injection works via PostToolUse and SessionStart instead; the codex formatter handles this automatically). See the Codex install section for setup. **Antigravity** and **Zed** do not support hooks. They rely solely on manually-copied routing instruction files (`AGENTS.md` / `GEMINI.md`) for enforcement (~60% compliance). See each platform's install section for copy instructions. Antigravity and Zed are auto-detected via MCP protocol handshake — no manual platform configuration needed.
 >
 > **Kiro** supports native `preToolUse` and `postToolUse` hooks for routing enforcement and tool event capture. `agentSpawn` (SessionStart equivalent) and `stop` are not yet wired. Requires manually copying `KIRO.md` to your project root. Kiro is auto-detected via MCP protocol handshake (`clientInfo.name`).
 >
-> **Pi Coding Agent** runs context-mode as an extension with full hook support. The extension registers `tool_call`, `tool_result`, `session_start`, and `session_before_compact` events, providing high session continuity coverage. The MCP server provides the 6 sandbox tools.
+> **Pi Coding Agent** runs context-mode-opencode as an extension with full hook support. The extension registers `tool_call`, `tool_result`, `session_start`, and `session_before_compact` events, providing high session continuity coverage. The MCP server provides the 6 sandbox tools.
 
 ### Routing Enforcement
 
 Hooks intercept tool calls programmatically — they can block dangerous commands and redirect them to the sandbox before execution. Instruction files guide the model via prompt instructions but cannot block anything. **Always enable hooks where supported.**
 
-> **Note:** Routing instruction files were previously auto-written to project directories on first session start. This was disabled to prevent git tree pollution ([#158](https://github.com/mksglu/context-mode/issues/158), [#164](https://github.com/mksglu/context-mode/issues/164)). Hook-capable platforms (Claude Code, Gemini CLI, VS Code Copilot, Cursor, OpenCode, OpenClaw, Codex CLI) inject routing via hooks and need no file. Non-hook platforms (Zed, Kiro, Antigravity) require a one-time manual copy — see each platform's install section.
+> **Note:** Routing instruction files were previously auto-written to project directories on first session start. This was disabled to prevent git tree pollution ([#158](https://github.com/nathwn12/context-mode-opencode/issues/158), [#164](https://github.com/nathwn12/context-mode-opencode/issues/164)). Hook-capable platforms (Claude Code, Gemini CLI, VS Code Copilot, Cursor, OpenCode, OpenClaw, Codex CLI) inject routing via hooks and need no file. Non-hook platforms (Zed, Kiro, Antigravity) require a one-time manual copy — see each platform's install section.
 
 | Platform | Hooks | Instruction File | With Hooks | Without Hooks |
 |---|:---:|---|:---:|:---:|
 | Claude Code | Yes (auto) | [`CLAUDE.md`](configs/claude-code/CLAUDE.md) | **~98% saved** | ~60% saved |
 | Gemini CLI | Yes | [`GEMINI.md`](configs/gemini-cli/GEMINI.md) | **~98% saved** | ~60% saved |
 | VS Code Copilot | Yes | [`copilot-instructions.md`](configs/vscode-copilot/copilot-instructions.md) | **~98% saved** | ~60% saved |
-| Cursor | Yes | [`context-mode.mdc`](configs/cursor/context-mode.mdc) | **~98% saved** | ~60% saved |
+| Cursor | Yes | [`context-mode-opencode.mdc`](configs/cursor/context-mode-opencode.mdc) | **~98% saved** | ~60% saved |
 | OpenCode | Plugin | [`AGENTS.md`](configs/opencode/AGENTS.md) | **~98% saved** | ~60% saved |
 | OpenClaw | Plugin | [`AGENTS.md`](configs/openclaw/AGENTS.md) | **~98% saved** | ~60% saved |
 | Codex CLI | Yes | [`AGENTS.md`](configs/codex/AGENTS.md) | **~98% saved** | ~60% saved |
@@ -957,9 +953,9 @@ ctx insight     → personal analytics dashboard (opens local web UI)
 **From your terminal** — run directly without an AI session:
 
 ```bash
-context-mode doctor
-context-mode upgrade
-context-mode insight          # opens analytics dashboard in browser
+context-mode-opencode doctor
+context-mode-opencode upgrade
+context-mode-opencode insight          # opens analytics dashboard in browser
 bash scripts/ctx-debug.sh    # full diagnostic report for bug reports
 ```
 
@@ -986,38 +982,38 @@ Over a full session: 315 KB of raw output becomes 5.4 KB. Session time extends f
 
 ## Try It
 
-These prompts work out of the box. Run `/context-mode:ctx-stats` after each to see the savings.
+These prompts work out of the box. Run `/context-mode-opencode:ctx-stats` after each to see the savings.
 
 **Deep repo research** — 5 calls, 62 KB context (raw: 986 KB, 94% saved)
 ```
 Research https://github.com/modelcontextprotocol/servers — architecture, tech stack,
-top contributors, open issues, and recent activity. Then run /context-mode:ctx-stats.
+top contributors, open issues, and recent activity. Then run /context-mode-opencode:ctx-stats.
 ```
 
 **Git history analysis** — 1 call, 5.6 KB context
 ```
 Clone https://github.com/facebook/react and analyze the last 500 commits:
 top contributors, commit frequency by month, and most changed files.
-Then run /context-mode:ctx-stats.
+Then run /context-mode-opencode:ctx-stats.
 ```
 
 **Web scraping** — 1 call, 3.2 KB context
 ```
 Fetch the Hacker News front page, extract all posts with titles, scores,
-and domains. Group by domain. Then run /context-mode:ctx-stats.
+and domains. Group by domain. Then run /context-mode-opencode:ctx-stats.
 ```
 
 **Large JSON API** — 7.5 MB raw → 0.9 KB context (99% saved)
 ```
 Create a local server that returns a 7.5 MB JSON with 20,000 records and a secret
 hidden at index 13000. Fetch the endpoint, find the hidden record, and show me
-exactly what's in it. Then run /context-mode:ctx-stats.
+exactly what's in it. Then run /context-mode-opencode:ctx-stats.
 ```
 
 **Documentation search** — 2 calls, 1.8 KB context
 ```
 Fetch the React useEffect docs, index them, and find the cleanup pattern
-with code examples. Then run /context-mode:ctx-stats.
+with code examples. Then run /context-mode-opencode:ctx-stats.
 ```
 
 **Session continuity** — compaction recovery with full state
@@ -1072,8 +1068,8 @@ Commands chained with `&&`, `;`, or `|` are split — each part is checked separ
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and TDD guidelines.
 
 ```bash
-git clone https://github.com/mksglu/context-mode.git
-cd context-mode && npm install && npm test
+git clone https://github.com/nathwn12/context-mode-opencode.git
+cd context-mode-opencode && npm install && npm test
 ```
 
 ## License

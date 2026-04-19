@@ -1,5 +1,5 @@
 /**
- * OpenClaw plugin entry point for context-mode.
+ * OpenClaw plugin entry point for context-mode-opencode.
  *
  * This thin wrapper delegates to the compiled plugin logic.
  * OpenClaw loads this file via jiti (TypeScript runtime) when

@@ -1,6 +1,6 @@
 ---
-name: context-mode-ops
-description: Manage context-mode GitHub issues, PRs, releases, and marketing with parallel subagent army. Orchestrates 10-20 dynamic agents per task. Use when triaging issues, reviewing PRs, releasing versions, writing LinkedIn posts, announcing releases, fixing bugs, merging contributions, validating ENV vars, testing adapters, or syncing branches.
+name: context-mode-opencode-ops
+description: Manage context-mode-opencode GitHub issues, PRs, releases, and marketing with parallel subagent army. Orchestrates 10-20 dynamic agents per task. Use when triaging issues, reviewing PRs, releasing versions, writing LinkedIn posts, announcing releases, fixing bugs, merging contributions, validating ENV vars, testing adapters, or syncing branches.
 ---
 
 # Context Mode Ops
@@ -107,7 +107,7 @@ Never use curl/wget to GitHub API. `gh` handles auth, pagination, and rate limit
 3. Build agent roster from [agent-teams.md](agent-teams.md) — context-driven, not static
 4. Spawn ALL agents in ONE message with multiple `Agent` tool calls
 5. Every code-changing agent gets `isolation: "worktree"`
-6. Use context-mode MCP tools inside agents for large output
+6. Use context-mode-opencode MCP tools inside agents for large output
 
 ## Validation (Every Workflow)
 
@@ -142,11 +142,11 @@ Follow [communication.md](communication.md) — be warm, technical, and always p
 
 ```shell
 # Install via skills CLI
-npx skills add mksglu/context-mode --skill context-mode-ops
+npx skills add nathwn12/context-mode-opencode --skill context-mode-opencode-ops
 
-# Or install all context-mode skills
-npx skills add mksglu/context-mode
+# Or install all context-mode-opencode skills
+npx skills add nathwn12/context-mode-opencode
 
 # Or direct path
-npx skills add https://github.com/mksglu/context-mode/tree/main/skills/context-mode-ops
+npx skills add https://github.com/nathwn12/context-mode-opencode/tree/main/skills/context-mode-opencode-ops
 ```

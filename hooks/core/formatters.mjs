@@ -22,7 +22,7 @@ export const formatters = {
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "allow",
-        permissionDecisionReason: "Routed to context-mode sandbox",
+        permissionDecisionReason: "Routed to context-mode-opencode sandbox",
         updatedInput,
       },
     }),
@@ -57,7 +57,7 @@ export const formatters = {
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "allow",
-        permissionDecisionReason: "Routed to context-mode sandbox",
+        permissionDecisionReason: "Routed to context-mode-opencode sandbox",
         updatedInput,
       },
     }),

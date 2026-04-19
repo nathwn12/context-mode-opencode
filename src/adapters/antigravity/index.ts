@@ -8,7 +8,7 @@
  *   - Config: ~/.gemini/antigravity/mcp_config.json (JSON format)
  *   - MCP: full support via mcpServers in mcp_config.json
  *   - All capabilities are false — MCP is the only integration path
- *   - Session dir: ~/.gemini/context-mode/sessions/
+ *   - Session dir: ~/.gemini/context-mode-opencode/sessions/
  *   - Routing file: GEMINI.md (shared with Gemini CLI filename, different content)
  *
  * Sources:
@@ -110,7 +110,7 @@ export class AntigravityAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".gemini", "context-mode", "sessions");
+    const dir = join(homedir(), ".gemini", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -170,19 +170,19 @@ export class AntigravityAdapter implements HookAdapter {
       const config = JSON.parse(raw);
       const mcpServers = config?.mcpServers ?? {};
 
-      if ("context-mode" in mcpServers) {
+      if ("context-mode-opencode" in mcpServers) {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in mcpServers config",
+          message: "context-mode-opencode found in mcpServers config",
         };
       }
 
       return {
         check: "MCP registration",
         status: "fail",
-        message: "context-mode not found in mcpServers",
-        fix: "Add context-mode to mcpServers in ~/.gemini/antigravity/mcp_config.json",
+        message: "context-mode-opencode not found in mcpServers",
+        fix: "Add context-mode-opencode to mcpServers in ~/.gemini/antigravity/mcp_config.json",
       };
     } catch {
       return {
@@ -199,7 +199,7 @@ export class AntigravityAdapter implements HookAdapter {
         homedir(),
         ".gemini",
         "extensions",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -248,7 +248,7 @@ export class AntigravityAdapter implements HookAdapter {
     try {
       return readFileSync(instructionsPath, "utf-8");
     } catch {
-      return "# context-mode\n\nUse context-mode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of run_command/view_file for data-heavy operations.";
+      return "# context-mode-opencode\n\nUse context-mode-opencode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of run_command/view_file for data-heavy operations.";
     }
   }
 }

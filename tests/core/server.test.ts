@@ -1233,12 +1233,12 @@ describe("Platform-aware session paths via adapter", () => {
   });
 
   // ── Content DB is platform-isolated (not shared) ──
-  test("getStorePath uses platform-specific dir, not shared ~/.context-mode/", () => {
+  test("getStorePath uses platform-specific dir, not shared ~/.context-mode-opencode/", () => {
     const fn = serverSrc.match(/function getStorePath[\s\S]*?^}/m);
     expect(fn).not.toBeNull();
     const body = fn![0];
     // Must NOT use the shared platform-agnostic directory
-    expect(body).not.toContain('".context-mode"');
+    expect(body).not.toContain('".context-mode-opencode"');
     // Must derive content dir from adapter/session dir (platform-specific)
     expect(body).toContain("getSessionDir()");
   });
@@ -1432,7 +1432,7 @@ describe("Version outdated warning in trackResponse", () => {
 
   test("fetchLatestVersion function exists and uses npm registry", () => {
     expect(serverSrc).toContain("function fetchLatestVersion");
-    expect(serverSrc).toContain("registry.npmjs.org/context-mode");
+    expect(serverSrc).toContain("registry.npmjs.org/@nathwn12%2Fcontext-mode-opencode");
   });
 
   test("version check fires in main() after server.connect", () => {
@@ -1460,7 +1460,7 @@ describe("Version outdated warning in trackResponse", () => {
     // Claude Code gets slash command
     expect(serverSrc).toMatch(/claude.code.*ctx.upgrade|ctx.upgrade.*claude.code/i);
     // npm platforms get npm update
-    expect(serverSrc).toContain("npm update -g context-mode");
+    expect(serverSrc).toContain("npm update -g @nathwn12/context-mode-opencode");
     // OpenClaw gets its own command
     expect(serverSrc).toContain("npm run install:openclaw");
   });
@@ -1639,7 +1639,7 @@ describe("ctx_doctor — resource cleanup regression (#247)", () => {
     expect(call).toBeDefined();
     expect(call!.error).toBeUndefined();
     const text = call!.result?.content?.[0]?.text ?? "";
-    expect(text).toContain("context-mode doctor");
+    expect(text).toContain("context-mode-opencode doctor");
     expect(text).toMatch(/Server test:/);
     expect(text).toMatch(/FTS5 \/ SQLite:/);
   }, 30_000);
@@ -1651,7 +1651,7 @@ describe("ctx_doctor — resource cleanup regression (#247)", () => {
     for (const c of calls) {
       expect(c, "missing ctx_doctor response — server likely crashed").toBeDefined();
       expect(c!.error).toBeUndefined();
-      expect(c!.result?.content?.[0]?.text).toContain("context-mode doctor");
+      expect(c!.result?.content?.[0]?.text).toContain("context-mode-opencode doctor");
     }
   }, 35_000);
 });

@@ -416,7 +416,7 @@ export function buildSessionDirective(source, eventMeta, toolNamer) {
 
   // Search on demand — detailed data lives in FTS5
   block += `\n<session_search>`;
-  block += `\nDetailed session data is indexed in context-mode FTS5 (source: "session-events").`;
+  block += `\nDetailed session data is indexed in context-mode-opencode FTS5 (source: "session-events").`;
   const searchTool = toolNamer ? toolNamer("ctx_search") : "ctx_search";
   block += `\nUse ${searchTool}(queries: [...], source: "session-events") when you need specifics.`;
   block += `\nDo NOT call ctx_index() — data is already indexed.`;

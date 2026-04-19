@@ -8,7 +8,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_FILE="${RUNNER_TEMP:-/tmp}/e2e-output.log"
 cd "$REPO_ROOT"
 
-echo "=== context-mode OpenClaw E2E Synthetic Test ===" | tee "$LOG_FILE"
+echo "=== context-mode-opencode OpenClaw E2E Synthetic Test ===" | tee "$LOG_FILE"
 echo "Repo:    $REPO_ROOT" | tee -a "$LOG_FILE"
 echo "Node:    $(node --version)" | tee -a "$LOG_FILE"
 echo "Version: $(node -e "console.log(require('./package.json').version)" 2>/dev/null)" | tee -a "$LOG_FILE"
@@ -47,7 +47,7 @@ try {
 // ── 1. Plugin metadata ────────────────────────────────────
 section("Phase 2: Plugin metadata");
 [
-  ["id === 'context-mode'",        plugin.id === "context-mode"],
+  ["id === 'context-mode-opencode'",        plugin.id === "context-mode-opencode"],
   ["name defined",                 !!plugin.name],
   ["configSchema is object",       typeof plugin.configSchema === "object"],
   ["register is function",         typeof plugin.register === "function"],
@@ -112,9 +112,9 @@ promptHandlers.length >= 2
   ? pass(`before_prompt_build has ${promptHandlers.length} handlers (resume p=10 + routing p=5)`)
   : warn(`before_prompt_build has only ${promptHandlers.length} handler(s) — expected 2`);
 
-contextEngineId === "context-mode"
-  ? pass("registerContextEngine('context-mode') called")
-  : fail("registerContextEngine('context-mode') called", `got: ${contextEngineId}`);
+contextEngineId === "context-mode-opencode"
+  ? pass("registerContextEngine('context-mode-opencode') called")
+  : fail("registerContextEngine('context-mode-opencode') called", `got: ${contextEngineId}`);
 
 ["/ctx-stats", "/ctx-doctor", "/ctx-upgrade"].forEach(name => {
   commands.has(name.slice(1))
@@ -225,7 +225,7 @@ section("Phase 6: SQLite DB verification");
 
 await new Promise(r => setTimeout(r, 300));
 
-const sessionDir = join(homedir(), ".openclaw", "context-mode", "sessions");
+const sessionDir = join(homedir(), ".openclaw", "context-mode-opencode", "sessions");
 if (!existsSync(sessionDir)) {
   fail("session directory exists", sessionDir);
   process.exit(1);

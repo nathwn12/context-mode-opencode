@@ -148,7 +148,7 @@ describe("OpenClawAdapter", () => {
       });
       expect(result).toEqual({
         block: true,
-        blockReason: "Blocked by context-mode hook",
+        blockReason: "Blocked by context-mode-opencode hook",
       });
     });
 
@@ -182,7 +182,7 @@ describe("OpenClawAdapter", () => {
     it("returns undefined for context decision", () => {
       const result = adapter.formatPreToolUseResponse({
         decision: "context",
-        additionalContext: "Use context-mode",
+        additionalContext: "Use context-mode-opencode",
       });
       expect(result).toBeUndefined();
     });
@@ -241,17 +241,17 @@ describe("OpenClawAdapter", () => {
       expect(adapter.getSettingsPath()).toBe(resolve("openclaw.json"));
     });
 
-    it("session dir is under ~/.openclaw/context-mode/sessions/", () => {
+    it("session dir is under ~/.openclaw/context-mode-opencode/sessions/", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir).toBe(
-        join(homedir(), ".openclaw", "context-mode", "sessions"),
+        join(homedir(), ".openclaw", "context-mode-opencode", "sessions"),
       );
     });
 
     it("session DB path includes project hash", () => {
       const dbPath = adapter.getSessionDBPath("/test/project");
       expect(dbPath).toContain(".openclaw");
-      expect(dbPath).toContain("context-mode");
+      expect(dbPath).toContain("context-mode-opencode");
       expect(dbPath).toContain("sessions");
       expect(dbPath).toMatch(/\.db$/);
     });

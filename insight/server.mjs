@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * context-mode Insight — Local analytics dashboard.
+ * context-mode-opencode Insight — Local analytics dashboard.
  * Cross-platform: works with Bun (bun:sqlite) or Node.js (better-sqlite3).
  *
  * Usage:
@@ -38,8 +38,8 @@ if (isBun) {
     if (msg.includes("incompatible architecture") || msg.includes("dlopen")) {
       const cacheHint = process.env.INSIGHT_SESSION_DIR
         ? join(dirname(process.env.INSIGHT_SESSION_DIR), "insight-cache", "node_modules")
-        : join("~", ".claude", "context-mode", "insight-cache", "node_modules");
-      console.error(`\n  Fix: rm -rf ${cacheHint} && context-mode insight`);
+        : join("~", ".claude", "context-mode-opencode", "insight-cache", "node_modules");
+      console.error(`\n  Fix: rm -rf ${cacheHint} && context-mode-opencode insight`);
     } else {
       console.error("  Install it: npm install better-sqlite3");
     }
@@ -48,8 +48,8 @@ if (isBun) {
 }
 
 // ── Paths ────────────────────────────────────────────────
-const SESSION_DIR = process.env.INSIGHT_SESSION_DIR || join(homedir(), ".claude", "context-mode", "sessions");
-const CONTENT_DIR = process.env.INSIGHT_CONTENT_DIR || join(homedir(), ".claude", "context-mode", "content");
+const SESSION_DIR = process.env.INSIGHT_SESSION_DIR || join(homedir(), ".claude", "context-mode-opencode", "sessions");
+const CONTENT_DIR = process.env.INSIGHT_CONTENT_DIR || join(homedir(), ".claude", "context-mode-opencode", "content");
 const DIST_DIR = join(__dirname, "dist");
 
 // ── SQLite helpers ───────────────────────────────────────
@@ -291,7 +291,7 @@ function apiAnalytics() {
         WHEN type = 'file_write' THEN 'Write/Edit'
         WHEN type = 'file_glob' THEN 'Glob'
         WHEN type = 'file_search' THEN 'Grep'
-        WHEN type = 'mcp' THEN 'context-mode'
+        WHEN type = 'mcp' THEN 'context-mode-opencode'
         WHEN type = 'git' THEN 'Git'
         WHEN type = 'subagent' THEN 'Agent'
         WHEN type = 'task' THEN 'Task'
@@ -449,7 +449,7 @@ function apiAnalytics() {
       GROUP BY sm.session_id`)
   );
 
-  // 3. Sandbox Adoption — context-mode MCP tool usage vs total
+  // 3. Sandbox Adoption — context-mode-opencode MCP tool usage vs total
   const sandboxAdoption = queryAllSessionDBs(db =>
     safeAll(db, `SELECT
       SUM(CASE WHEN type = 'mcp' THEN 1 ELSE 0 END) as sandbox_calls,
@@ -637,6 +637,6 @@ if (isBun) {
   server.listen(PORT, "127.0.0.1");
 }
 
-console.log(`\n  context-mode Insight`);
+console.log(`\n  context-mode-opencode Insight`);
 console.log(`  http://localhost:${PORT}`);
 console.log(`  Runtime: ${isBun ? "Bun" : "Node.js"}\n`);

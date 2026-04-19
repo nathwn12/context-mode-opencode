@@ -3,7 +3,7 @@
  * Server writes sentinel (containing its PID) after connect(),
  * hooks check before denying tools that redirect to MCP alternatives.
  *
- * Sentinel path: ${tmpdir()}/context-mode-mcp-ready-${process.ppid}
+ * Sentinel path: ${tmpdir()}/context-mode-opencode-mcp-ready-${process.ppid}
  * Both hooks and MCP server share the same ppid (Claude Code process).
  */
 import { readFileSync } from "node:fs";
@@ -12,7 +12,7 @@ import { resolve } from "node:path";
 
 /** Compute the sentinel file path, scoped to session via parent PID. */
 export function sentinelPath() {
-  return resolve(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+  return resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 }
 
 /**

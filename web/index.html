@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>context-mode — Save 98% of your AI coding agent's context window</title>
+<title>context-mode-opencode — Save 98% of your AI coding agent's context window</title>
 <meta name="description" content="MCP plugin for Claude Code, Cursor, Copilot, and 12 platforms. Sandbox tool output, index it into FTS5, search on demand. 66,000+ developers. Open source.">
 <meta name="keywords" content="claude code context window, ai coding agent limit, context window optimization, mcp plugin, think in code, claude code limit fix, cursor context, copilot context">
-<link rel="canonical" href="https://context-mode.pages.dev">
+<link rel="canonical" href="https://context-mode-opencode.pages.dev">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="context-mode — The other half of the context problem">
-<meta property="og:description" content="Your AI coding agent burns through context in 20 minutes. context-mode keeps 98% of tool output out of the conversation. 66,000+ developers across 12 platforms.">
-<meta property="og:url" content="https://context-mode.pages.dev">
-<meta property="og:site_name" content="context-mode">
+<meta property="og:title" content="context-mode-opencode — The other half of the context problem">
+<meta property="og:description" content="Your AI coding agent burns through context in 20 minutes. context-mode-opencode keeps 98% of tool output out of the conversation. 66,000+ developers across 12 platforms.">
+<meta property="og:url" content="https://context-mode-opencode.pages.dev">
+<meta property="og:site_name" content="context-mode-opencode">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="context-mode — Save 98% of your AI coding agent's context window">
+<meta name="twitter:title" content="context-mode-opencode — Save 98% of your AI coding agent's context window">
 <meta name="twitter:description" content="MCP plugin that sandboxes tool output and indexes it into FTS5. Your limit lasts 30x longer. Open source, 12 platforms.">
 <meta name="twitter:creator" content="@AcikAnaliz">
 
@@ -26,18 +26,18 @@
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "context-mode",
+  "name": "context-mode-opencode",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "macOS, Linux, Windows",
   "description": "MCP plugin that saves 98% of AI coding agent context window by sandboxing tool output and indexing it into FTS5 for on-demand search.",
-  "url": "https://github.com/mksglu/context-mode",
+  "url": "https://github.com/nathwn12/context-mode-opencode",
   "author": {
     "@type": "Person",
     "name": "B. Mert Köseoğlu",
     "url": "https://mksg.lu"
   },
-  "license": "https://github.com/mksglu/context-mode/blob/main/LICENSE",
-  "downloadUrl": "https://www.npmjs.com/package/context-mode",
+  "license": "https://github.com/nathwn12/context-mode-opencode/blob/main/LICENSE",
+  "downloadUrl": "https://www.npmjs.com/package/@nathwn12/context-mode-opencode",
   "softwareVersion": "1.0.71",
   "aggregateRating": {
     "@type": "AggregateRating",
@@ -140,7 +140,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
 <!-- Hero -->
 <section class="hero rev">
   <p style="font-size:13px;color:var(--text-4);margin-bottom:1rem">by <a href="https://mksg.lu" style="color:var(--text-3)">B. Mert Köseoğlu</a> · <span class="avail"><span class="dot"></span><span style="color:var(--green);font-size:12px">open to new opportunities</span><span class="avail-tip"><strong>Founding Engineer · AI · Tech Lead</strong><br>Fully remote preferred.<br>UK &amp; NL: sponsorship + competitive comp.</span></span></p>
-  <h1 class="hero-title">context-mode</h1>
+  <h1 class="hero-title">context-mode-opencode</h1>
   <p class="hero-sub">The other half of the context problem.</p>
   <div class="hero-stats">
     <div class="hero-stat"><div class="val" id="stat-users">—</div><div class="lbl">users</div></div>
@@ -149,8 +149,8 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
     <div class="hero-stat"><div class="val">12</div><div class="lbl">platforms</div></div>
   </div>
   <div class="hero-cta">
-    <a href="https://github.com/mksglu/context-mode#install" class="pri">Get Started →</a>
-    <a href="https://github.com/mksglu/context-mode" class="sec">View Source</a>
+    <a href="https://github.com/nathwn12/context-mode-opencode#install" class="pri">Get Started →</a>
+    <a href="https://github.com/nathwn12/context-mode-opencode" class="sec">View Source</a>
   </div>
 </section>
 
@@ -212,7 +212,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
   <h2 class="section-title">Intercept, sandbox, index</h2>
   <div class="rule"></div>
 
-  <p class="body-text">context-mode is an MCP server that sits between your agent and its tools. When a tool call would dump large output into the conversation, context-mode intercepts it and runs it in a sandboxed subprocess instead. The raw data never touches context. It goes into a local FTS5 database with BM25 ranking. The agent searches it when it needs to. Only a short summary enters the conversation.</p>
+  <p class="body-text">context-mode-opencode is an MCP server that sits between your agent and its tools. When a tool call would dump large output into the conversation, context-mode-opencode intercepts it and runs it in a sandboxed subprocess instead. The raw data never touches context. It goes into a local FTS5 database with BM25 ranking. The agent searches it when it needs to. Only a short summary enters the conversation.</p>
 
   <p class="body-text">The plugin hooks into five points in the session lifecycle:</p>
 
@@ -244,7 +244,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
     <div class="bench-item"><div class="n">98%</div><div class="d">315 KB → 5.4 KB</div><div class="l">Full Session</div></div>
   </div>
 
-  <p class="body-text">Without context-mode, those 20 tool calls put 600 KB into the conversation. Over 50 turns, 30 MB re-sent. With it, the same calls produce 20 KB. Over 50 turns, 1 MB. <strong>Same work. Same answers. 30 times fewer tokens.</strong></p>
+  <p class="body-text">Without context-mode-opencode, those 20 tool calls put 600 KB into the conversation. Over 50 turns, 30 MB re-sent. With it, the same calls produce 20 KB. Over 50 turns, 1 MB. <strong>Same work. Same answers. 30 times fewer tokens.</strong></p>
 </section>
 
 <hr class="sep">
@@ -285,7 +285,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
   <h2 class="section-title">Your AI never starts from scratch</h2>
   <div class="rule"></div>
 
-  <p class="body-text">Most tools lose everything when context compacts. context-mode doesn't. Every file operation, every decision, every error and its fix gets written to a local SQLite database. Next session, it loads back in.</p>
+  <p class="body-text">Most tools lose everything when context compacts. context-mode-opencode doesn't. Every file operation, every decision, every error and its fix gets written to a local SQLite database. Next session, it loads back in.</p>
 
   <p class="body-text">PostToolUse captures events across 15 categories as they happen. PreCompact builds a reference-based snapshot right before the wipe. SessionStart restores it on the next turn. The agent picks up mid-thought.</p>
 
@@ -323,7 +323,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
     <div><span class="ck">✓</span> Mastery curve</div>
   </div>
 
-  <p class="body-text">Available as MCP tool (<code>ctx_insight</code>), CLI command (<code>context-mode insight</code>), or slash command (<code>/ctx-insight</code>). Built with TanStack Router and shadcn/ui. Runs on 127.0.0.1, works with both Node.js and Bun.</p>
+  <p class="body-text">Available as MCP tool (<code>ctx_insight</code>), CLI command (<code>context-mode-opencode insight</code>), or slash command (<code>/ctx-insight</code>). Built with TanStack Router and shadcn/ui. Runs on 127.0.0.1, works with both Node.js and Bun.</p>
 </section>
 
 <hr class="sep">
@@ -349,7 +349,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
   <h2 class="section-title">Privacy-first. Your code never leaves your machine.</h2>
   <div class="rule"></div>
 
-  <p class="body-text">context-mode runs entirely on your local machine. No cloud. No telemetry. No accounts. No tracking. No analytics. Your code, your prompts, your file paths, your session data stays on your disk. Nothing is sent anywhere, ever. The plugin is source-available under the Elastic License 2.0. You can read every line, audit every hook, verify every claim.</p>
+  <p class="body-text">context-mode-opencode runs entirely on your local machine. No cloud. No telemetry. No accounts. No tracking. No analytics. Your code, your prompts, your file paths, your session data stays on your disk. Nothing is sent anywhere, ever. The plugin is source-available under the Elastic License 2.0. You can read every line, audit every hook, verify every claim.</p>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1.5rem 0">
     <div style="padding:14px 16px;border:1px solid var(--border-light);border-radius:6px;font-size:14px;line-height:1.6">
@@ -381,11 +381,11 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
 
   <div class="install pri">
     <div class="il">Claude Code <span class="tag g" style="font-size:10px;padding:2px 8px;vertical-align:middle">recommended</span></div>
-    <code>/plugin marketplace add mksglu/context-mode</code>
+    <code>/plugin marketplace add nathwn12/context-mode-opencode</code>
   </div>
   <div class="install">
     <div class="il">All platforms</div>
-    <code>npm install -g context-mode</code>
+    <code>npm install -g @nathwn12/context-mode-opencode</code>
   </div>
 
   <p class="body-text" style="font-size:14px;color:var(--text-4);margin-top:1.2rem">Open source · Elastic License 2.0 · Node.js 18+ · Works with Bun</p>
@@ -396,7 +396,7 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
 <!-- Enterprise -->
 <div class="rev" style="background:#0f1419;border-radius:12px;padding:48px 40px;margin-top:48px;margin-bottom:40px">
   <p style="font-size:11px;font-weight:600;color:#4b7bec;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.4rem">For teams</p>
-  <h2 style="font-family:var(--serif);font-size:clamp(1.4rem,3.5vw,2rem);font-weight:400;color:#fff;line-height:1.2;letter-spacing:-.01em;margin-bottom:.3rem">context-mode for Enterprise</h2>
+  <h2 style="font-family:var(--serif);font-size:clamp(1.4rem,3.5vw,2rem);font-weight:400;color:#fff;line-height:1.2;letter-spacing:-.01em;margin-bottom:.3rem">context-mode-opencode for Enterprise</h2>
   <div style="width:48px;height:2px;background:#4b7bec;margin:.4rem 0 1.5rem;border-radius:1px"></div>
 
   <p style="font-size:15px;color:#9ca8b6;line-height:1.7;margin-bottom:1.5rem">The open source plugin handles individual developers. For teams that need visibility, continuity across devices, and compliance, we're building a managed layer.</p>
@@ -451,9 +451,9 @@ code{font-family:var(--mono);font-size:.88em;background:var(--bg-code);color:var
 <!-- Footer -->
 <footer style="padding:60px 0;text-align:center;border-top:1px solid var(--border-light)">
   <p style="font-family:var(--serif);font-size:clamp(1.2rem,3vw,1.6rem);font-style:italic;color:var(--text);margin-bottom:1.2rem;padding:0 24px">Stop feeding your context window raw bytes.<br>Feed it answers.</p>
-  <p style="font-size:14px;color:var(--text-3)"><a href="https://github.com/mksglu/context-mode">github.com/mksglu/context-mode</a></p>
+  <p style="font-size:14px;color:var(--text-3)"><a href="https://github.com/nathwn12/context-mode-opencode">github.com/nathwn12/context-mode-opencode</a></p>
   <p style="margin-top:1rem;font-size:13px;color:var(--text-4)">Built by <a href="https://mksg.lu" style="color:var(--text-3)">B. Mert Köseoğlu</a> · <span class="avail"><span class="dot"></span><span style="color:var(--green);font-size:12px">open to new opportunities</span><span class="avail-tip"><strong>Founding Engineer · AI · Tech Lead</strong><br>Fully remote preferred.<br>UK &amp; NL: sponsorship + competitive comp.</span></span></p>
-  <p style="margin-top:.6rem"><a href="https://github.com/mksglu/context-mode/issues/134" style="color:var(--text-4);font-size:12px">Liked this? Help a solo dev out →</a></p>
+  <p style="margin-top:.6rem"><a href="https://github.com/nathwn12/context-mode-opencode/issues/134" style="color:var(--text-4);font-size:12px">Liked this? Help a solo dev out →</a></p>
   <p style="margin-top:2rem;font-size:11px;color:var(--text-4);line-height:1.6">MKSF LTD · Suite 8805 5 Brayford Square · London, E1 0SG · United Kingdom</p>
 </footer>
 
@@ -463,7 +463,7 @@ const o=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target
 document.querySelectorAll('.rev').forEach(e=>o.observe(e));
 
 // Dynamic stats from GitHub
-fetch('https://raw.githubusercontent.com/mksglu/context-mode/main/stats.json')
+fetch('https://raw.githubusercontent.com/nathwn12/context-mode-opencode/main/stats.json')
   .then(r=>r.json())
   .then(d=>{
     document.getElementById('stat-users').textContent=d.message||'66.3k+';

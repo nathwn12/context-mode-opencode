@@ -16,7 +16,7 @@
  *   - Config: ~/.gemini/settings.json (user), .gemini/settings.json (project)
  *   - Session ID: session_id field
  *   - Project dir env: GEMINI_PROJECT_DIR (also CLAUDE_PROJECT_DIR alias)
- *   - Session dir: ~/.gemini/context-mode/sessions/
+ *   - Session dir: ~/.gemini/context-mode-opencode/sessions/
  */
 
 import { createHash } from "node:crypto";
@@ -158,7 +158,7 @@ export class GeminiCLIAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         decision: "deny",
-        reason: response.reason ?? "Blocked by context-mode hook",
+        reason: response.reason ?? "Blocked by context-mode-opencode hook",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -221,7 +221,7 @@ export class GeminiCLIAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".gemini", "context-mode", "sessions");
+    const dir = join(homedir(), ".gemini", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -321,7 +321,7 @@ export class GeminiCLIAdapter implements HookAdapter {
         check: "BeforeTool hook",
         status: "fail",
         message: "Could not read ~/.gemini/settings.json",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
       return results;
     }
@@ -334,22 +334,22 @@ export class GeminiCLIAdapter implements HookAdapter {
       | undefined;
     if (beforeTool && beforeTool.length > 0) {
       const hasHook = beforeTool.some((entry) =>
-        entry.hooks?.some((h) => h.command?.includes("context-mode")),
+        entry.hooks?.some((h) => h.command?.includes("context-mode-opencode")),
       );
       results.push({
         check: "BeforeTool hook",
         status: hasHook ? "pass" : "fail",
         message: hasHook
           ? "BeforeTool hook configured"
-          : "BeforeTool exists but does not point to context-mode",
-        fix: hasHook ? undefined : "context-mode upgrade",
+          : "BeforeTool exists but does not point to context-mode-opencode",
+        fix: hasHook ? undefined : "context-mode-opencode upgrade",
       });
     } else {
       results.push({
         check: "BeforeTool hook",
         status: "fail",
         message: "No BeforeTool hooks found",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
     }
 
@@ -359,22 +359,22 @@ export class GeminiCLIAdapter implements HookAdapter {
       | undefined;
     if (sessionStart && sessionStart.length > 0) {
       const hasHook = sessionStart.some((entry) =>
-        entry.hooks?.some((h) => h.command?.includes("context-mode")),
+        entry.hooks?.some((h) => h.command?.includes("context-mode-opencode")),
       );
       results.push({
         check: "SessionStart hook",
         status: hasHook ? "pass" : "fail",
         message: hasHook
           ? "SessionStart hook configured"
-          : "SessionStart exists but does not point to context-mode",
-        fix: hasHook ? undefined : "context-mode upgrade",
+          : "SessionStart exists but does not point to context-mode-opencode",
+        fix: hasHook ? undefined : "context-mode-opencode upgrade",
       });
     } else {
       results.push({
         check: "SessionStart hook",
         status: "fail",
         message: "No SessionStart hooks found",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
     }
 
@@ -391,7 +391,7 @@ export class GeminiCLIAdapter implements HookAdapter {
       };
     }
 
-    // Check in extensions or settings for context-mode
+    // Check in extensions or settings for context-mode-opencode
     const extensions = settings.extensions as
       | Record<string, unknown>
       | Array<unknown>
@@ -401,15 +401,15 @@ export class GeminiCLIAdapter implements HookAdapter {
       const hasPlugin = Array.isArray(extensions)
         ? extensions.some(
             (e) =>
-              typeof e === "string" && e.includes("context-mode"),
+              typeof e === "string" && e.includes("context-mode-opencode"),
           )
-        : Object.keys(extensions).some((k) => k.includes("context-mode"));
+        : Object.keys(extensions).some((k) => k.includes("context-mode-opencode"));
 
       if (hasPlugin) {
         return {
           check: "Plugin registration",
           status: "pass",
-          message: "context-mode found in extensions",
+          message: "context-mode-opencode found in extensions",
         };
       }
     }
@@ -417,18 +417,18 @@ export class GeminiCLIAdapter implements HookAdapter {
     return {
       check: "Plugin registration",
       status: "warn",
-      message: "context-mode not found in extensions (might be using standalone MCP mode)",
+      message: "context-mode-opencode not found in extensions (might be using standalone MCP mode)",
     };
   }
 
   getInstalledVersion(): string {
-    // Check ~/.gemini/ extension cache for context-mode
+    // Check ~/.gemini/ extension cache for context-mode-opencode
     try {
       const cachePath = resolve(
         homedir(),
         ".gemini",
         "extensions",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(cachePath, "utf-8"));
@@ -466,7 +466,7 @@ export class GeminiCLIAdapter implements HookAdapter {
       if (existing && Array.isArray(existing)) {
         const idx = existing.findIndex((e) => {
           const entryHooks = e.hooks as Array<{ command?: string }> | undefined;
-          return entryHooks?.some((h) => h.command?.includes("context-mode"));
+          return entryHooks?.some((h) => h.command?.includes("context-mode-opencode"));
         });
         if (idx >= 0) {
           existing[idx] = entry;
@@ -523,7 +523,7 @@ export class GeminiCLIAdapter implements HookAdapter {
         homedir(),
         ".gemini",
         "extensions",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));

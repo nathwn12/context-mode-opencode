@@ -1,11 +1,11 @@
 ---
 name: ctx-insight
 description: |
-  Open the context-mode Insight analytics dashboard in the browser.
+  Open the context-mode-opencode Insight analytics dashboard in the browser.
   Shows personal metrics: session activity, tool usage, error rate,
   parallel work patterns, project focus, and actionable insights.
   First run installs dependencies (~30s). Subsequent runs open instantly.
-  Trigger: /context-mode:ctx-insight
+  Trigger: /context-mode-opencode:ctx-insight
 user-invocable: true
 ---
 

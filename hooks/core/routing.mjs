@@ -41,7 +41,7 @@ const _guidanceShown = new Set();
 const _guidanceId = process.env.VITEST_WORKER_ID
   ? `${process.ppid}-w${process.env.VITEST_WORKER_ID}`
   : String(process.ppid);
-const _guidanceDir = resolve(tmpdir(), `context-mode-guidance-${_guidanceId}`);
+const _guidanceDir = resolve(tmpdir(), `context-mode-opencode-guidance-${_guidanceId}`);
 
 function guidanceOnce(type, content) {
   // Fast path: in-memory (same process)
@@ -186,7 +186,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
       }
     }
 
-    // Stage 2: Context-mode routing (existing behavior)
+    // Stage 2: Context-mode-opencode routing (existing behavior)
 
     // curl/wget detection: strip quoted content first to avoid false positives
     // like `gh issue edit --body "text with curl in it"` (Issue #63).
@@ -232,7 +232,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
         return mcpRedirect({
           action: "modify",
           updatedInput: {
-            command: `echo "context-mode: curl/wget blocked. Think in Code — use ${t("ctx_execute")}(language, code) to write code that fetches, processes, and prints only the answer. Or use ${t("ctx_fetch_and_index")}(url, source) to fetch and index. Write pure JS with try/catch, no npm deps. Do NOT retry with curl/wget."`,
+            command: `echo "context-mode-opencode: curl/wget blocked. Think in Code — use ${t("ctx_execute")}(language, code) to write code that fetches, processes, and prints only the answer. Or use ${t("ctx_fetch_and_index")}(url, source) to fetch and index. Write pure JS with try/catch, no npm deps. Do NOT retry with curl/wget."`,
           },
         });
       }
@@ -254,7 +254,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
       return mcpRedirect({
         action: "modify",
         updatedInput: {
-          command: `echo "context-mode: Inline HTTP blocked. Think in Code — use ${t("ctx_execute")}(language, code) to write code that fetches, processes, and console.log() only the result. Write robust pure JS with try/catch, no npm deps. Do NOT retry with Bash."`,
+          command: `echo "context-mode-opencode: Inline HTTP blocked. Think in Code — use ${t("ctx_execute")}(language, code) to write code that fetches, processes, and console.log() only the result. Write robust pure JS with try/catch, no npm deps. Do NOT retry with Bash."`,
         },
       });
     }
@@ -266,7 +266,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
       return mcpRedirect({
         action: "modify",
         updatedInput: {
-          command: `echo "context-mode: Build tool redirected. Think in Code — use ${t("ctx_execute")}(language: \\"shell\\", code: \\"${safeCmd} 2>&1 | tail -30\\") to run and print only errors/summary. Do NOT retry with Bash."`,
+          command: `echo "context-mode-opencode: Build tool redirected. Think in Code — use ${t("ctx_execute")}(language: \\"shell\\", code: \\"${safeCmd} 2>&1 | tail -30\\") to run and print only errors/summary. Do NOT retry with Bash."`,
         },
       });
     }
@@ -290,11 +290,11 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
     const url = toolInput.url ?? "";
     return mcpRedirect({
       action: "deny",
-      reason: `context-mode: WebFetch blocked. Think in Code — use ${t("ctx_fetch_and_index")}(url: "${url}", source: "...") to fetch and index, then ${t("ctx_search")}(queries: [...]) to query. Or use ${t("ctx_execute")}(language, code) to fetch, process, and console.log() only what you need. Write pure JS, no npm deps. Do NOT use curl, wget, or WebFetch.`,
+      reason: `context-mode-opencode: WebFetch blocked. Think in Code — use ${t("ctx_fetch_and_index")}(url: "${url}", source: "...") to fetch and index, then ${t("ctx_search")}(queries: [...]) to query. Or use ${t("ctx_execute")}(language, code) to fetch, process, and console.log() only what you need. Write pure JS, no npm deps. Do NOT use curl, wget, or WebFetch.`,
     });
   }
 
-  // ─── Agent: inject context-mode routing into subagent prompts ───
+  // ─── Agent: inject context-mode-opencode routing into subagent prompts ───
   // Subagents cannot use ctx commands (stats/doctor/upgrade/purge) — omit that section (#233)
   if (canonical === "Agent") {
     const subagentType = toolInput.subagent_type ?? "";
@@ -316,7 +316,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
   // Match both __execute and __ctx_execute (prefixed tool names)
   // Cursor can also surface the tool as MCP:ctx_execute_file.
   if (
-    (toolName.includes("context-mode") && /(?:__|\/)(ctx_)?execute$/.test(toolName)) ||
+    (toolName.includes("context-mode-opencode") && /(?:__|\/)(ctx_)?execute$/.test(toolName)) ||
     /^MCP:(ctx_)?execute$/.test(toolName)
   ) {
     if (security && toolInput.language === "shell") {
@@ -338,7 +338,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
   // ─── MCP execute_file: check file path + code against deny patterns ───
   // Cursor can also surface the tool as MCP:ctx_execute_file.
   if (
-    (toolName.includes("context-mode") && /(?:__|\/)(ctx_)?execute_file$/.test(toolName)) ||
+    (toolName.includes("context-mode-opencode") && /(?:__|\/)(ctx_)?execute_file$/.test(toolName)) ||
     /^MCP:(ctx_)?execute_file$/.test(toolName)
   ) {
     if (security) {
@@ -370,7 +370,7 @@ export function routePreToolUse(toolName, toolInput, projectDir, platform) {
   }
 
   // ─── MCP batch_execute: check each command individually ───
-  if (toolName.includes("context-mode") && /(?:__|\/)(ctx_)?batch_execute$/.test(toolName)) {
+  if (toolName.includes("context-mode-opencode") && /(?:__|\/)(ctx_)?batch_execute$/.test(toolName)) {
     if (security) {
       const commands = toolInput.commands ?? [];
       const policies = security.readBashPolicies(projectDir);

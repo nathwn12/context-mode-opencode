@@ -1,10 +1,10 @@
 # Platform Support Matrix
 
-This document provides a comprehensive comparison of all platforms supported by context-mode, including their hook paradigms, capabilities, configuration, and known limitations.
+This document provides a comprehensive comparison of all platforms supported by context-mode-opencode, including their hook paradigms, capabilities, configuration, and known limitations.
 
 ## Overview
 
-context-mode supports eight platforms across three hook paradigms:
+context-mode-opencode supports eight platforms across three hook paradigms:
 
 | Paradigm | Platforms |
 |----------|-----------|
@@ -19,13 +19,13 @@ The MCP server layer is 100% portable and needs no adapter. Only the hook layer 
 All platforms (except Claude Code plugin install) require a global install:
 
 ```bash
-npm install -g context-mode
+npm install -g @nathwn12/context-mode-opencode
 ```
 
-This puts the `context-mode` binary in PATH, which is required for:
-- **MCP server:** `"command": "context-mode"` (replaces ephemeral `npx -y context-mode`)
-- **Hook dispatcher:** `context-mode hook <platform> <event>` (replaces `node ./node_modules/...` paths)
-- **Utility commands:** `context-mode doctor`, `context-mode upgrade`
+This puts the `context-mode-opencode` binary in PATH, which is required for:
+- **MCP server:** `"command": "context-mode-opencode"` (replaces ephemeral `npx -y @nathwn12/context-mode-opencode`)
+- **Hook dispatcher:** `context-mode-opencode hook <platform> <event>` (replaces `node ./node_modules/...` paths)
+- **Utility commands:** `context-mode-opencode doctor`, `context-mode-opencode upgrade`
 - **Persistent upgrades:** `ctx-upgrade` updates the global binary in-place
 
 ---
@@ -48,11 +48,11 @@ This puts the `context-mode` binary in PATH, which is required for:
 | **Session ID field** | `session_id` | `session_id` | `sessionId` (camelCase) | `conversation_id` | `sessionID` (camelCase) | N/A | N/A | N/A |
 | **Project dir env** | `CLAUDE_PROJECT_DIR` | `GEMINI_PROJECT_DIR` | `CLAUDE_PROJECT_DIR` | stdin `workspace_roots` | `ctx.directory` (plugin init) | N/A | N/A | N/A |
 | **MCP tool naming** | `mcp__server__tool` | `mcp__server__tool` | `f1e_` prefix | `MCP:<tool>` in hook payloads | `mcp__server__tool` | `mcp__server__tool` | `mcp__server__tool` | `mcp__server__tool` |
-| **Hook command format** | `context-mode hook claude-code <event>` | `context-mode hook gemini-cli <event>` | `context-mode hook vscode-copilot <event>` | `context-mode hook cursor <event>` | TS plugin (no command) | `context-mode hook codex <event>` | N/A | N/A |
+| **Hook command format** | `context-mode-opencode hook claude-code <event>` | `context-mode-opencode hook gemini-cli <event>` | `context-mode-opencode hook vscode-copilot <event>` | `context-mode-opencode hook cursor <event>` | TS plugin (no command) | `context-mode-opencode hook codex <event>` | N/A | N/A |
 | **Hook registration** | settings.json hooks object | settings.json hooks object | `.github/hooks/*.json` | `hooks.json` native hook arrays | opencode.json plugin array | `~/.codex/hooks.json` | N/A | N/A |
-| **MCP server command** | `context-mode` (or plugin auto) | `context-mode` | `context-mode` | `context-mode` | `context-mode` | `context-mode` | `context-mode` | `context-mode` |
+| **MCP server command** | `context-mode-opencode` (or plugin auto) | `context-mode-opencode` | `context-mode-opencode` | `context-mode-opencode` | `context-mode-opencode` | `context-mode-opencode` | `context-mode-opencode` | `context-mode-opencode` |
 | **Plugin distribution** | Claude plugin registry | npm global | npm global | npm global | npm global | npm global | npm global | npm global |
-| **Session dir** | `~/.claude/context-mode/sessions/` | `~/.gemini/context-mode/sessions/` | `.github/context-mode/sessions/` or `~/.vscode/context-mode/sessions/` | `~/.cursor/context-mode/sessions/` | `~/.config/opencode/context-mode/sessions/` | `~/.codex/context-mode/sessions/` | `~/.gemini/context-mode/sessions/` | `~/.kiro/context-mode/sessions/` |
+| **Session dir** | `~/.claude/context-mode-opencode/sessions/` | `~/.gemini/context-mode-opencode/sessions/` | `.github/context-mode-opencode/sessions/` or `~/.vscode/context-mode-opencode/sessions/` | `~/.cursor/context-mode-opencode/sessions/` | `~/.config/opencode/context-mode-opencode/sessions/` | `~/.codex/context-mode-opencode/sessions/` | `~/.gemini/context-mode-opencode/sessions/` | `~/.kiro/context-mode-opencode/sessions/` |
 
 ### Legend
 
@@ -70,7 +70,7 @@ This puts the `context-mode` binary in PATH, which is required for:
 
 **Hook Paradigm:** JSON stdin/stdout
 
-Claude Code is the primary platform for context-mode. All hooks communicate via JSON on stdin/stdout. The adapter reads raw JSON input, normalizes it into platform-agnostic events, and formats responses back into Claude Code's expected output format.
+Claude Code is the primary platform for context-mode-opencode. All hooks communicate via JSON on stdin/stdout. The adapter reads raw JSON input, normalizes it into platform-agnostic events, and formats responses back into Claude Code's expected output format.
 
 **Hook Names:**
 - `PreToolUse` -- fires before a tool is executed
@@ -93,11 +93,11 @@ Claude Code is the primary platform for context-mode. All hooks communicate via 
 
 **Hook Commands:**
 ```
-context-mode hook claude-code pretooluse
-context-mode hook claude-code posttooluse
-context-mode hook claude-code precompact
-context-mode hook claude-code sessionstart
-context-mode hook claude-code userpromptsubmit
+context-mode-opencode hook claude-code pretooluse
+context-mode-opencode hook claude-code posttooluse
+context-mode-opencode hook claude-code precompact
+context-mode-opencode hook claude-code sessionstart
+context-mode-opencode hook claude-code userpromptsubmit
 ```
 
 **Known Issues:** None significant.
@@ -130,10 +130,10 @@ Gemini CLI uses the same JSON stdin/stdout paradigm as Claude Code but with diff
 
 **Hook Commands:**
 ```
-context-mode hook gemini-cli beforetool
-context-mode hook gemini-cli aftertool
-context-mode hook gemini-cli precompress
-context-mode hook gemini-cli sessionstart
+context-mode-opencode hook gemini-cli beforetool
+context-mode-opencode hook gemini-cli aftertool
+context-mode-opencode hook gemini-cli precompress
+context-mode-opencode hook gemini-cli sessionstart
 ```
 
 **Known Issues / Caveats:**
@@ -204,9 +204,9 @@ Codex CLI's Rust backend (codex-rs) includes a full hook system with 5 events, u
 
 **Hook Commands:**
 ```
-context-mode hook codex pretooluse
-context-mode hook codex posttooluse
-context-mode hook codex sessionstart
+context-mode-opencode hook codex pretooluse
+context-mode-opencode hook codex posttooluse
+context-mode-opencode hook codex sessionstart
 ```
 
 **Known Issues / Caveats:**
@@ -266,7 +266,7 @@ Google Antigravity is an AI-powered IDE by Google/DeepMind. It shares the `~/.ge
 
 **Hook Paradigm:** MCP-only
 
-Kiro is an AWS agentic IDE and CLI. It supports MCP servers via `~/.kiro/settings/mcp.json` using the standard `mcpServers` JSON format. Hook support for Kiro CLI (JSON stdin + exit code 2 blocking, `preToolUse`/`postToolUse`) is verified in the Kiro CLI docs but not yet implemented in context-mode — planned for Phase 2.
+Kiro is an AWS agentic IDE and CLI. It supports MCP servers via `~/.kiro/settings/mcp.json` using the standard `mcpServers` JSON format. Hook support for Kiro CLI (JSON stdin + exit code 2 blocking, `preToolUse`/`postToolUse`) is verified in the Kiro CLI docs but not yet implemented in context-mode-opencode — planned for Phase 2.
 
 **Detection:**
 - Auto-detected via MCP protocol handshake (`clientInfo.name: "Kiro CLI"`)
@@ -281,7 +281,7 @@ Kiro is an AWS agentic IDE and CLI. It supports MCP servers via `~/.kiro/setting
 **Hook System (Phase 2 — not yet implemented):**
 - Kiro CLI supports `preToolUse`/`postToolUse` hooks via JSON stdin
 - Blocking: exit code 2 (similar to Gemini CLI pattern)
-- Hook format verified in Kiro CLI docs but context-mode adapter is not yet built
+- Hook format verified in Kiro CLI docs but context-mode-opencode adapter is not yet built
 
 **Built-in Tools:**
 - `fs_read` / `read`, `fs_write` / `write`, `execute_bash` / `shell`, `use_aws` / `aws`
@@ -352,10 +352,10 @@ VS Code Copilot uses the same JSON stdin/stdout paradigm as Claude Code with Pas
 
 **Hook Commands:**
 ```
-context-mode hook vscode-copilot pretooluse
-context-mode hook vscode-copilot posttooluse
-context-mode hook vscode-copilot precompact
-context-mode hook vscode-copilot sessionstart
+context-mode-opencode hook vscode-copilot pretooluse
+context-mode-opencode hook vscode-copilot posttooluse
+context-mode-opencode hook vscode-copilot precompact
+context-mode-opencode hook vscode-copilot sessionstart
 ```
 
 **Known Issues / Caveats:**
@@ -372,7 +372,7 @@ context-mode hook vscode-copilot sessionstart
 
 **Hook Paradigm:** JSON stdin/stdout
 
-Cursor uses native lower-camel hook names and flat hook entries in `.cursor/hooks.json` or `~/.cursor/hooks.json`. context-mode treats Cursor as a first-class adapter and does not rely on Claude-compat wrappers for official support.
+Cursor uses native lower-camel hook names and flat hook entries in `.cursor/hooks.json` or `~/.cursor/hooks.json`. context-mode-opencode treats Cursor as a first-class adapter and does not rely on Claude-compat wrappers for official support.
 
 **Hook Names:**
 - `preToolUse` -- fires before a tool is executed
@@ -406,9 +406,9 @@ Cursor uses native lower-camel hook names and flat hook entries in `.cursor/hook
 
 **Hook Commands:**
 ```
-context-mode hook cursor pretooluse
-context-mode hook cursor posttooluse
-context-mode hook cursor stop
+context-mode-opencode hook cursor pretooluse
+context-mode-opencode hook cursor posttooluse
+context-mode-opencode hook cursor stop
 ```
 
 **Known Issues / Caveats:**
@@ -484,7 +484,7 @@ context-mode hook cursor stop
 All hook-based platforms use the CLI dispatcher pattern instead of direct `node` paths:
 
 ```
-context-mode hook <platform> <event>
+context-mode-opencode hook <platform> <event>
 ```
 
 The dispatcher resolves the hook script relative to the installed package and dynamically imports it. Stdin/stdout flow through naturally since it runs in the same process.
@@ -492,7 +492,7 @@ The dispatcher resolves the hook script relative to the installed package and dy
 **Advantages over `node ./node_modules/...` paths:**
 - Works from any directory (no per-project `npm install` needed)
 - Single global install serves all projects
-- `context-mode upgrade` updates hooks in-place
+- `context-mode-opencode upgrade` updates hooks in-place
 - Short, portable command strings in settings files
 
 **Supported dispatches:**
@@ -513,7 +513,7 @@ OpenCode uses a TS plugin paradigm (no command dispatcher). Antigravity and Kiro
 
 ## SQLite Backend Selection
 
-context-mode automatically selects the best SQLite backend at runtime based on the environment:
+context-mode-opencode automatically selects the best SQLite backend at runtime based on the environment:
 
 | Priority | Condition | Backend | Why |
 |----------|-----------|---------|-----|
@@ -523,7 +523,7 @@ context-mode automatically selects the best SQLite backend at runtime based on t
 
 **Why node:sqlite on Linux?** Node.js's V8 garbage collector can call `madvise(MADV_DONTNEED)` on memory ranges that overlap `better-sqlite3`'s native addon `.got.plt` section, corrupting resolved symbol addresses and causing sporadic SIGSEGV crashes (1-4/hour on Node v22-v24). `node:sqlite` is compiled into the Node.js binary itself — no separate `.node` file, no `dlopen()`, no `.got.plt` to corrupt.
 
-**Fallback:** If `node:sqlite` is unavailable (Node < 22.13), context-mode silently falls back to `better-sqlite3`. No user configuration needed.
+**Fallback:** If `node:sqlite` is unavailable (Node < 22.13), context-mode-opencode silently falls back to `better-sqlite3`. No user configuration needed.
 
 **Override:** Not currently supported — backend selection is automatic. If you need to force a specific backend, open an issue.
 

@@ -32,7 +32,7 @@ async function createTestPlugin(tempDir: string) {
 // ── Tests ─────────────────────────────────────────────────
 
 // MCP readiness sentinel — routing.mjs checks process.ppid in-process
-const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 
 beforeEach(() => { writeFileSync(mcpSentinel, String(process.pid)); });
 afterEach(() => { try { unlinkSync(mcpSentinel); } catch {} });
@@ -89,10 +89,10 @@ describe("ContextModePlugin", () => {
         await plugin["tool.execute.before"](input, output);
         // If it didn't throw, the command was modified in output.args
         expect(output.args.command).toMatch(/^echo /);
-        expect(output.args.command).toContain("context-mode");
+        expect(output.args.command).toContain("context-mode-opencode");
       } catch (e: any) {
         // deny/ask action throws — still correct behavior
-        expect(e.message).toContain("context-mode");
+        expect(e.message).toContain("context-mode-opencode");
       }
     });
 
@@ -104,9 +104,9 @@ describe("ContextModePlugin", () => {
       try {
         await plugin["tool.execute.before"](input, output);
         expect(output.args.command).toMatch(/^echo /);
-        expect(output.args.command).toContain("context-mode");
+        expect(output.args.command).toContain("context-mode-opencode");
       } catch (e: any) {
-        expect(e.message).toContain("context-mode");
+        expect(e.message).toContain("context-mode-opencode");
       }
     });
 
@@ -294,11 +294,11 @@ describe("ContextModePlugin", () => {
       try {
         await plugin["tool.execute.before"](beforeInput, beforeOutput);
         // If modified (not thrown), the command was replaced
-        expect(beforeOutput.args.command).toContain("context-mode");
+        expect(beforeOutput.args.command).toContain("context-mode-opencode");
       } catch (e: any) {
         // deny action throws
         blocked = true;
-        expect(e.message).toContain("context-mode");
+        expect(e.message).toContain("context-mode-opencode");
       }
 
       if (!blocked) {

@@ -92,7 +92,7 @@ npm run typecheck
 **Validation Engineer:**
 ```javascript
 // For each ENV var mentioned in the PR:
-// 1. Grep for it in context-mode source
+// 1. Grep for it in context-mode-opencode source
 // 2. WebSearch: "{PLATFORM_NAME} {ENV_VAR} environment variable"
 // 3. Context7: resolve-library-id for the platform, then query-docs
 

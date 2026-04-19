@@ -45,7 +45,7 @@ export const HOOK_SCRIPTS: Record<HookType, string> = {
 // Hook validation
 // ─────────────────────────────────────────────────────────
 
-/** Required hooks that must be configured for context-mode to function. */
+/** Required hooks that must be configured for context-mode-opencode to function. */
 export const REQUIRED_HOOKS: HookType[] = [
   HOOK_TYPES.BEFORE_TOOL,
   HOOK_TYPES.SESSION_START,
@@ -58,9 +58,9 @@ export const OPTIONAL_HOOKS: HookType[] = [
 ];
 
 /**
- * Check if a hook entry points to a context-mode hook script.
+ * Check if a hook entry points to a context-mode-opencode hook script.
  * Matches both legacy format (node .../beforetool.mjs) and
- * CLI dispatcher format (context-mode hook gemini-cli beforetool).
+ * CLI dispatcher format (context-mode-opencode hook gemini-cli beforetool).
  */
 export function isContextModeHook(
   entry: { hooks?: Array<{ command?: string }> },
@@ -85,5 +85,5 @@ export function buildHookCommand(hookType: HookType, pluginRoot?: string): strin
   if (pluginRoot && scriptName) {
     return `node "${pluginRoot}/hooks/${scriptName}"`;
   }
-  return `context-mode hook gemini-cli ${hookType.toLowerCase()}`;
+  return `context-mode-opencode hook gemini-cli ${hookType.toLowerCase()}`;
 }

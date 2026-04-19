@@ -152,13 +152,13 @@ describe(".mcp.json — MCP server config", () => {
     const plugin = JSON.parse(
       readFileSync(resolve(ROOT, ".claude-plugin", "plugin.json"), "utf-8"),
     );
-    const args = plugin.mcpServers["context-mode"].args;
+    const args = plugin.mcpServers["context-mode-opencode"].args;
     expect(args[0]).toContain("CLAUDE_PLUGIN_ROOT");
   });
 
   it("repo-root .mcp.json uses relative path to silence CLAUDE_PLUGIN_ROOT warning", () => {
     const mcp = JSON.parse(readFileSync(resolve(ROOT, ".mcp.json"), "utf-8"));
-    const args = mcp.mcpServers["context-mode"].args;
+    const args = mcp.mcpServers["context-mode-opencode"].args;
     expect(args[0]).not.toContain("CLAUDE_PLUGIN_ROOT");
     expect(args[0]).toMatch(/^\.\/|^start\.mjs$/);
   });
@@ -181,7 +181,7 @@ describe("CLI Hook Path Tests", () => {
   });
 
   test("toUnixPath: leaves forward-slash paths unchanged", () => {
-    const input = "/home/user/.claude/plugins/context-mode/hooks/pretooluse.mjs";
+    const input = "/home/user/.claude/plugins/context-mode-opencode/hooks/pretooluse.mjs";
     const result = toUnixPath(input);
     assert.equal(result, input);
   });
@@ -195,7 +195,7 @@ describe("CLI Hook Path Tests", () => {
   test("toUnixPath: hook command string has no backslashes", () => {
     // Simulate what upgrade() does: "node " + resolve(...)
     // On Windows, resolve() returns backslashes — toUnixPath must normalize them
-    const windowsPath = "C:\\Users\\xxx\\.claude\\plugins\\cache\\context-mode\\hooks\\pretooluse.mjs";
+    const windowsPath = "C:\\Users\\xxx\\.claude\\plugins\\cache\\context-mode-opencode\\hooks\\pretooluse.mjs";
     const command = "node " + toUnixPath(windowsPath);
     assert.ok(
       !command.includes("\\"),
@@ -204,7 +204,7 @@ describe("CLI Hook Path Tests", () => {
   });
 
   test("toUnixPath: sessionstart path has no backslashes", () => {
-    const windowsPath = "C:\\Users\\xxx\\.claude\\plugins\\cache\\context-mode\\hooks\\sessionstart.mjs";
+    const windowsPath = "C:\\Users\\xxx\\.claude\\plugins\\cache\\context-mode-opencode\\hooks\\sessionstart.mjs";
     const command = "node " + toUnixPath(windowsPath);
     assert.ok(
       !command.includes("\\"),
@@ -725,7 +725,7 @@ describe("Bin entry uses cli.bundle.mjs", () => {
   const pkg = JSON.parse(readFileSync(resolve(ROOT, "package.json"), "utf-8"));
 
   it("package.json bin points to cli.bundle.mjs, not build/cli.js", () => {
-    expect(pkg.bin["context-mode"]).toBe("./cli.bundle.mjs");
+    expect(pkg.bin["context-mode-opencode"]).toBe("./cli.bundle.mjs");
   });
 
   it("package.json exports ./cli points to cli.bundle.mjs", () => {
@@ -980,14 +980,14 @@ describe("Self-heal covers all hook types (#187)", () => {
     expect(selfHealSection).toMatch(/Object\.keys|for\s*\(\s*const\s+\w+\s+(of|in)\s+.*hooks/);
   });
 
-  test("pretooluse.mjs self-heal fixes all context-mode hook scripts", () => {
+  test("pretooluse.mjs self-heal fixes all context-mode-opencode hook scripts", () => {
     const selfHealSection = PRETOOLUSE_SOURCE.slice(
       PRETOOLUSE_SOURCE.indexOf("Update hook path"),
       PRETOOLUSE_SOURCE.indexOf("lazy cleanup"),
     );
     // Must match any .mjs hook script, not just pretooluse.mjs
     expect(selfHealSection).toMatch(/\.mjs/);
-    expect(selfHealSection).toContain("context-mode");
+    expect(selfHealSection).toContain("context-mode-opencode");
   });
 });
 
@@ -1124,8 +1124,8 @@ describe("Codex CLI hook dispatch (#225)", () => {
     for (const [eventType, entries] of Object.entries(hooksJson.hooks)) {
       for (const entry of entries as any[]) {
         for (const hook of entry.hooks) {
-          // Command must use "context-mode hook codex <event>"
-          expect(hook.command).toMatch(/context-mode hook codex \w+/);
+          // Command must use "context-mode-opencode hook codex <event>"
+          expect(hook.command).toMatch(/context-mode-opencode hook codex \w+/);
         }
       }
     }
@@ -1178,7 +1178,7 @@ describe("Upgrade syncs skills to active install path (#228)", () => {
 
   test("upgrade reads installed_plugins.json to find active install path", () => {
     expect(upgradeBody).toContain("installed_plugins.json");
-    expect(upgradeBody).toContain("context-mode@context-mode");
+    expect(upgradeBody).toContain("context-mode-opencode@context-mode-opencode");
     expect(upgradeBody).toContain("installPath");
   });
 

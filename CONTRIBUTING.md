@@ -1,4 +1,4 @@
-# Contributing to context-mode
+# Contributing to context-mode-opencode
 
 This project is licensed under the Elastic License 2.0 (ELv2) and moves forward with your support. Every issue, every PR, every idea matters.
 
@@ -14,7 +14,7 @@ This guide covers the local development workflow so you can test changes in a li
 
 ## Architecture Overview
 
-context-mode uses a flat `src/` structure:
+context-mode-opencode uses a flat `src/` structure:
 
 ```
 src/
@@ -57,12 +57,12 @@ configs/             → Per-platform install files (settings.json, mcp.json, CL
 
 Session events flow through a two-database system:
 
-1. **SessionDB** (persistent, per-project): `~/.claude/context-mode/sessions/<hash>.db`
+1. **SessionDB** (persistent, per-project): `~/.claude/context-mode-opencode/sessions/<hash>.db`
    - PostToolUse hook captures events in real-time
    - PreCompact hook builds resume snapshots
    - UserPromptSubmit hook captures user prompts
 
-2. **ContentStore** (ephemeral, per-process): `/tmp/context-mode-<PID>.db`
+2. **ContentStore** (ephemeral, per-process): `/tmp/context-mode-opencode-<PID>.db`
    - FTS5 full-text search index for tool outputs
    - Auto-indexes session events file written by SessionStart hook
    - Dies when MCP server process exits
@@ -82,15 +82,15 @@ Raw session events are **never injected into context**. Only a compact summary t
 
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed
 - Node.js 20+ or [Bun](https://bun.sh/) (recommended for speed)
-- context-mode plugin installed via marketplace
+- context-mode-opencode plugin installed via marketplace
 
 ## Local Development Setup
 
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/mksglu/context-mode.git
-cd context-mode
+git clone https://github.com/nathwn12/context-mode-opencode.git
+cd context-mode-opencode
 npm install
 npm run build  # tsc compiles src/ → build/
 ```
@@ -102,7 +102,7 @@ Claude Code's plugin system manages `~/.claude/plugins/installed_plugins.json` a
 First, find your cached version:
 
 ```bash
-ls ~/.claude/plugins/cache/context-mode/context-mode/
+ls ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/
 # Example output: 0.9.23
 ```
 
@@ -110,15 +110,15 @@ Then replace it with a symlink:
 
 ```bash
 # Back up the cache (use your actual version number)
-mv ~/.claude/plugins/cache/context-mode/context-mode/0.9.23 \
-   ~/.claude/plugins/cache/context-mode/context-mode/0.9.23.bak
+mv ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23 \
+   ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23.bak
 
 # Symlink to your local clone
-ln -s /path/to/your/clone/context-mode \
-   ~/.claude/plugins/cache/context-mode/context-mode/0.9.23
+ln -s /path/to/your/clone/context-mode-opencode \
+   ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23
 ```
 
-Replace `/path/to/your/clone/context-mode` with your actual local path.
+Replace `/path/to/your/clone/context-mode-opencode` with your actual local path.
 
 > **Why symlink?** The plugin system overwrites `installed_plugins.json` on every session start, reverting any manual path changes. A symlink lets the plugin system keep its managed path while the actual code resolves to your local clone.
 
@@ -133,11 +133,11 @@ The symlink in step 2 ensures `hooks.json` (which registers PostToolUse, PreComp
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Bash|Read|Grep|WebFetch|Agent|mcp__plugin_context-mode_context-mode__ctx_execute|mcp__plugin_context-mode_context-mode__ctx_execute_file|mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+        "matcher": "Bash|Read|Grep|WebFetch|Agent|mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute|mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file|mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
         "hooks": [
           {
             "type": "command",
-            "command": "node /path/to/your/clone/context-mode/hooks/pretooluse.mjs"
+            "command": "node /path/to/your/clone/context-mode-opencode/hooks/pretooluse.mjs"
           }
         ]
       }
@@ -146,7 +146,7 @@ The symlink in step 2 ensures `hooks.json` (which registers PostToolUse, PreComp
 }
 ```
 
-Replace `/path/to/your/clone/context-mode` with your actual local path.
+Replace `/path/to/your/clone/context-mode-opencode` with your actual local path.
 
 > **Important:** Do NOT add PostToolUse, PreCompact, SessionStart, or UserPromptSubmit to `settings.json` — they are already registered in `hooks.json` and the symlink makes them resolve to your local clone. Adding them to both causes double invocations, split session IDs, and SQLite locking errors.
 
@@ -171,11 +171,11 @@ npm run build
 ### 5. Kill cached MCP processes and restart
 
 ```bash
-# Kill any running context-mode processes
-pkill -f "context-mode.*start.mjs"
+# Kill any running context-mode-opencode processes
+pkill -f "context-mode-opencode.*start.mjs"
 
 # Verify no processes remain
-ps aux | grep context-mode | grep -v grep
+ps aux | grep context-mode-opencode | grep -v grep
 # Should return nothing
 ```
 
@@ -183,7 +183,7 @@ Restart Claude Code (`/exit` then `claude`).
 
 ### 6. Verify local dev mode
 
-Run `/context-mode:ctx-doctor` in Claude Code. You should see your dev version:
+Run `/context-mode-opencode:ctx-doctor` in Claude Code. You should see your dev version:
 
 ```
 npm (MCP): WARN — local v0.9.23-dev, latest v0.9.23
@@ -197,9 +197,9 @@ To switch back to the marketplace version:
 
 ```bash
 # Remove symlink and restore backup
-rm ~/.claude/plugins/cache/context-mode/context-mode/0.9.23
-mv ~/.claude/plugins/cache/context-mode/context-mode/0.9.23.bak \
-   ~/.claude/plugins/cache/context-mode/context-mode/0.9.23
+rm ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23
+mv ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23.bak \
+   ~/.claude/plugins/cache/context-mode-opencode/context-mode-opencode/0.9.23
 ```
 
 Then revert hooks in `~/.claude/settings.json` and restart Claude Code.
@@ -257,10 +257,10 @@ After rebuilding, restart your Claude Code session. The MCP server reloads on se
 
 We follow test-driven development. Every PR must include tests.
 
-**We strongly recommend installing the context-mode-ops skill** — it includes TDD enforcement, issue triage, PR review, and release automation with parallel subagent orchestration:
+**We strongly recommend installing the context-mode-opencode-ops skill** — it includes TDD enforcement, issue triage, PR review, and release automation with parallel subagent orchestration:
 
 ```bash
-npx skills add mksglu/context-mode --skill context-mode-ops
+npx skills add nathwn12/context-mode-opencode --skill context-mode-opencode-ops
 ```
 
 ### Red-Green-Refactor
@@ -361,13 +361,13 @@ Required information:
 
 | Task | Command |
 |---|---|
-| Check version | `/context-mode:ctx-doctor` |
-| Upgrade plugin | `/context-mode:ctx-upgrade` |
-| View session stats | `/context-mode:ctx-stats` |
-| Purge knowledge base | `/context-mode:ctx-purge` |
+| Check version | `/context-mode-opencode:ctx-doctor` |
+| Upgrade plugin | `/context-mode-opencode:ctx-upgrade` |
+| View session stats | `/context-mode-opencode:ctx-stats` |
+| Purge knowledge base | `/context-mode-opencode:ctx-purge` |
 | Run diagnostics | `bash scripts/ctx-debug.sh` |
 | See background steps | `Ctrl+O` |
-| Kill cached server | `pkill -f "context-mode.*start.mjs"` |
+| Kill cached server | `pkill -f "context-mode-opencode.*start.mjs"` |
 | Rebuild after changes | `npm run build` |
 | Run all tests | `npm test` |
 | Watch mode | `npm run test:watch` |

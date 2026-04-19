@@ -13,7 +13,7 @@
  *   - Session ID: input.sessionID (camelCase!)
  *   - Project dir: ctx.directory in plugin init (no env var)
  *   - Config: opencode.json plugin array, .opencode/plugins/*.ts
- *   - Session dir: ~/.config/opencode/context-mode/sessions/
+ *   - Session dir: ~/.config/opencode/context-mode-opencode/sessions/
  */
 
 import { createHash } from "node:crypto";
@@ -82,6 +82,10 @@ interface OpenCodeHookInput {
 // ─────────────────────────────────────────────────────────
 
 import { HOOK_TYPES as OPENCODE_HOOK_NAMES } from "./hooks.js";
+
+const OPENCODE_PACKAGE = "@nathwn12/context-mode-opencode";
+const OPENCODE_MCP_SERVER = "context-mode";
+const OPENCODE_NPX_COMMAND = ["npx", "-y", OPENCODE_PACKAGE] as const;
 
 // ─────────────────────────────────────────────────────────
 // Adapter implementation
@@ -180,7 +184,7 @@ export class OpenCodeAdapter implements HookAdapter {
     if (response.decision === "deny") {
       // OpenCode TS plugin paradigm: throw Error to block
       throw new Error(
-        response.reason ?? "Blocked by context-mode hook",
+        response.reason ?? "Blocked by context-mode-opencode hook",
       );
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -256,7 +260,7 @@ export class OpenCodeAdapter implements HookAdapter {
     } else {
       configDir = process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
     }
-    const dir = join(configDir, this.platform, "context-mode", "sessions");
+    const dir = join(configDir, this.platform, "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -288,7 +292,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: OPENCODE_PACKAGE,
             },
           ],
         },
@@ -299,7 +303,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: OPENCODE_PACKAGE,
             },
           ],
         },
@@ -310,7 +314,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: OPENCODE_PACKAGE,
             },
           ],
         },
@@ -374,30 +378,30 @@ export class OpenCodeAdapter implements HookAdapter {
         check: "Plugin configuration",
         status: "fail",
         message: `Could not read ${this.platform}.json or ${this.platform}.jsonc`,
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
       return results;
     }
 
-    // Check for "context-mode" in plugin array
+    // Check for the npm package in the plugin array.
     const hasPlugin = this.hasContextModePlugin(settings);
     if (Array.isArray(settings.plugin)) {
       results.push({
         check: "Plugin registration",
         status: hasPlugin ? "pass" : "fail",
         message: hasPlugin
-          ? "context-mode found in plugin array"
-          : "context-mode not found in plugin array",
+          ? `${OPENCODE_PACKAGE} found in plugin array`
+          : `${OPENCODE_PACKAGE} not found in plugin array`,
         fix: hasPlugin
           ? undefined
-          : "context-mode upgrade",
+          : "context-mode-opencode upgrade",
       });
     } else {
       results.push({
         check: "Plugin registration",
         status: "fail",
         message: `No plugin array found in ${this.platform}.json or ${this.platform}.jsonc`,
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
     }
 
@@ -426,27 +430,28 @@ export class OpenCodeAdapter implements HookAdapter {
       return {
         check: "Plugin registration",
         status: "pass",
-        message: "context-mode found in plugin array",
+        message: `${OPENCODE_PACKAGE} found in plugin array`,
       };
     }
 
     return {
       check: "Plugin registration",
       status: "fail",
-      message: `context-mode not found in ${this.platform}.json plugin array`,
-      fix: "context-mode upgrade",
+      message: `${OPENCODE_PACKAGE} not found in ${this.platform}.json plugin array`,
+      fix: "context-mode-opencode upgrade",
     };
   }
 
   getInstalledVersion(): string {
-    // Check ~/.cache/opencode/node_modules/ for context-mode
+    // Check ~/.cache/opencode/node_modules/ for context-mode-opencode
     try {
       const pkgPath = resolve(
         homedir(),
         ".cache",
         this.platform,
         "node_modules",
-        "context-mode",
+        "@nathwn12",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -463,16 +468,33 @@ export class OpenCodeAdapter implements HookAdapter {
     const settings = this.readSettings() ?? {};
     const changes: string[] = [];
 
-    // Add "context-mode" to the plugin array
+    // Add the npm package to the plugin array.
     const plugins = (settings.plugin ?? []) as string[];
-    if (!plugins.some((p) => p.includes("context-mode"))) {
-      plugins.push("context-mode");
-      changes.push("Added context-mode to plugin array");
+    if (!plugins.some((p) => p.includes("context-mode-opencode"))) {
+      plugins.push(OPENCODE_PACKAGE);
+      changes.push(`Added ${OPENCODE_PACKAGE} to plugin array`);
     } else {
-      changes.push("context-mode already in plugin array");
+      changes.push(`${OPENCODE_PACKAGE} already in plugin array`);
     }
 
     settings.plugin = plugins;
+
+    const mcp = (settings.mcp && typeof settings.mcp === "object" && !Array.isArray(settings.mcp))
+      ? settings.mcp as Record<string, unknown>
+      : {};
+    const desiredMcp = {
+      type: "local",
+      command: [...OPENCODE_NPX_COMMAND],
+    };
+    const currentMcp = mcp[OPENCODE_MCP_SERVER];
+    if (JSON.stringify(currentMcp) !== JSON.stringify(desiredMcp)) {
+      mcp[OPENCODE_MCP_SERVER] = desiredMcp;
+      changes.push(`Set ${OPENCODE_MCP_SERVER} MCP server to npx ${OPENCODE_PACKAGE}`);
+    } else {
+      changes.push(`${OPENCODE_MCP_SERVER} MCP server already configured`);
+    }
+    settings.mcp = mcp;
+
     this.writeSettings(settings);
     return changes;
   }
@@ -508,11 +530,11 @@ export class OpenCodeAdapter implements HookAdapter {
   // ── Internal helpers ───────────────────────────────────
 
   /**
-   * Check whether a settings object has the context-mode plugin registered.
+   * Check whether a settings object has the context-mode-opencode plugin registered.
    */
   private hasContextModePlugin(settings: Record<string, unknown>): boolean {
     const plugins = settings.plugin;
-    return Array.isArray(plugins) && plugins.some((p: unknown) => typeof p === "string" && p.includes("context-mode"));
+    return Array.isArray(plugins) && plugins.some((p: unknown) => typeof p === "string" && p.includes("context-mode-opencode"));
   }
 
   /**

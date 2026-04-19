@@ -47,7 +47,7 @@ const PERSONAS = [
     badge: "bg-cyan-500/15 text-cyan-400",
     insights: [
       "42% of devs quit the tool after 3 days",
-      "New hire ramp: 6 weeks to 2 weeks with context-mode",
+      "New hire ramp: 6 weeks to 2 weeks with context-mode-opencode",
     ],
     roi: "6wk to 2wk onboarding",
   },
@@ -189,7 +189,7 @@ function EnterprisePage() {
               <Building2 className="h-6 w-6 text-blue-500" />
             </div>
             <div>
-              <h2 className="text-xl font-bold">context-mode for Enterprise</h2>
+              <h2 className="text-xl font-bold">context-mode-opencode for Enterprise</h2>
               <p className="text-sm text-muted-foreground">56 metrics · 8 personas · 143 actionable insights</p>
             </div>
           </div>
@@ -302,7 +302,7 @@ function EnterprisePage() {
               </p>
             </div>
             <a
-              href="mailto:bm.ksglu@gmail.com?subject=context-mode%20Enterprise%20—%20Design%20Partner"
+              href="mailto:bm.ksglu@gmail.com?subject=context-mode-opencode%20Enterprise%20—%20Design%20Partner"
               className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors shrink-0"
             >
               <Mail className="h-4 w-4" />

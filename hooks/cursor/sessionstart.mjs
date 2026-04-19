@@ -2,7 +2,7 @@
 import "../suppress-stderr.mjs";
 import "../ensure-deps.mjs";
 /**
- * Cursor sessionStart hook for context-mode.
+ * Cursor sessionStart hook for context-mode-opencode.
  */
 
 import { createRoutingBlock } from "../routing-block.mjs";

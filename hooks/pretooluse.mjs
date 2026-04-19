@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import "./suppress-stderr.mjs";
 /**
- * Unified PreToolUse hook for context-mode (Claude Code)
- * Redirects data-fetching tools to context-mode MCP tools
+ * Unified PreToolUse hook for context-mode-opencode (Claude Code)
+ * Redirects data-fetching tools to context-mode-opencode MCP tools
  *
  * Cross-platform (Windows/macOS/Linux) — no bash/jq dependency.
  *
@@ -38,7 +38,7 @@ try {
   const myVersion = myPkg.version ?? "unknown";
   const myDirName = basename(myRoot);
   const cacheParent = dirname(myRoot);
-  const marker = resolve(tmpdir(), `context-mode-healed-${myVersion}`);
+  const marker = resolve(tmpdir(), `context-mode-opencode-healed-${myVersion}`);
 
   // Only self-heal inside plugin cache dirs — skip in dev/CI environments
   const isInPluginCache = myRoot.includes("/plugins/cache/") || myRoot.includes("\\plugins\\cache\\");
@@ -77,7 +77,7 @@ try {
     if (existsSync(ipPath)) {
       const ip = JSON.parse(readFileSync(ipPath, "utf-8"));
       for (const [key, entries] of Object.entries(ip.plugins || {})) {
-        if (!key.toLowerCase().includes("context-mode")) continue;
+        if (!key.toLowerCase().includes("context-mode-opencode")) continue;
         for (const entry of entries) {
           entry.installPath = targetDir;
           entry.version = myVersion;
@@ -97,7 +97,7 @@ try {
       let changed = false;
 
       // If hooks.json is present, the plugin system owns hook registration.
-      // Remove any settings.json context-mode entries to prevent duplicate concurrent
+      // Remove any settings.json context-mode-opencode entries to prevent duplicate concurrent
       // hook processes that cause "non-blocking hook error" on every tool call.
       const hooksJsonPath = resolve(myRoot, "hooks", "hooks.json");
       if (existsSync(hooksJsonPath)) {
@@ -107,7 +107,7 @@ try {
           const filtered = entries.filter(
             (entry) =>
               !entry.hooks?.some(
-                (h) => h.command?.includes(".mjs") && h.command?.includes("context-mode"),
+                (h) => h.command?.includes(".mjs") && h.command?.includes("context-mode-opencode"),
               ),
           );
           if (filtered.length !== entries.length) {
@@ -127,9 +127,9 @@ try {
               entry.matcher = entry.matcher.replace("Task", "Agent|Task");
               changed = true;
             }
-            // Rewrite stale context-mode hook paths to point to current version
+            // Rewrite stale context-mode-opencode hook paths to point to current version
             for (const h of (entry.hooks || [])) {
-              if (h.command && h.command.includes(".mjs") && h.command.includes("context-mode") && !h.command.includes(targetDir)) {
+              if (h.command && h.command.includes(".mjs") && h.command.includes("context-mode-opencode") && !h.command.includes(targetDir)) {
                 // Extract the script filename (e.g., sessionstart.mjs, pretooluse.mjs)
                 const scriptMatch = h.command.match(/([a-z]+\.mjs)\s*"?\s*$/);
                 if (scriptMatch) {

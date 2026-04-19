@@ -70,7 +70,7 @@ This single command does ALL of the following automatically:
    - `.openclaw-plugin/openclaw.plugin.json`
    - `.openclaw-plugin/package.json`
    - `openclaw.plugin.json`
-   - `.pi/extensions/context-mode/package.json`
+   - `.pi/extensions/context-mode-opencode/package.json`
 4. Stages the manifest files via `git add`
 5. Creates a git commit and `v{VERSION}` tag
 
@@ -119,7 +119,7 @@ npm publish
 
 Verify publication:
 ```bash
-npm view context-mode version  # should show new version
+npm view context-mode-opencode version  # should show new version
 ```
 
 ### 6. Sync Branches
@@ -181,7 +181,7 @@ Before declaring release complete:
 - [ ] `npm publish` — package on npm registry
 - [ ] `next` branch synced with `main`
 - [ ] Stale remote branches cleaned (user approved)
-- [ ] Verify: `npm view context-mode version` shows new version
+- [ ] Verify: `npm view context-mode-opencode version` shows new version
 
 ## Rollback Plan
 
@@ -189,10 +189,10 @@ If something goes wrong after publish:
 
 ```bash
 # Unpublish within 72 hours (npm policy)
-npm unpublish context-mode@{BAD_VERSION}
+npm unpublish context-mode-opencode@{BAD_VERSION}
 
 # Or deprecate
-npm deprecate context-mode@{BAD_VERSION} "Known issue: {description}"
+npm deprecate context-mode-opencode@{BAD_VERSION} "Known issue: {description}"
 
 # Revert git
 git revert HEAD
@@ -206,7 +206,7 @@ After successful release:
 1. Comment on all issues fixed in this release:
    ```
    Released in v{VERSION}! Please update and test:
-   npm update -g context-mode
+   npm update -g @nathwn12/context-mode-opencode
    ```
 
 2. Update Discord if there are noteworthy changes

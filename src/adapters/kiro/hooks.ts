@@ -34,7 +34,7 @@ export const OPTIONAL_HOOKS: string[] = [
 ];
 
 /**
- * Check if a hook entry points to a context-mode hook script.
+ * Check if a hook entry points to a context-mode-opencode hook script.
  */
 export function isContextModeHook(
   entry: { command?: string },
@@ -42,7 +42,7 @@ export function isContextModeHook(
 ): boolean {
   const scriptName = HOOK_SCRIPTS[hookType];
   if (!scriptName) return false;
-  return entry.command?.includes(scriptName) || entry.command?.includes("context-mode hook kiro") || false;
+  return entry.command?.includes(scriptName) || entry.command?.includes("context-mode-opencode hook kiro") || false;
 }
 
 /**
@@ -53,5 +53,5 @@ export function buildHookCommand(hookType: string, pluginRoot?: string): string 
   if (pluginRoot && scriptName) {
     return `node "${pluginRoot}/hooks/kiro/${scriptName}"`;
   }
-  return `context-mode hook kiro ${hookType.toLowerCase()}`;
+  return `context-mode-opencode hook kiro ${hookType.toLowerCase()}`;
 }

@@ -21,7 +21,7 @@ const PROJECT_ROOT = join(__dirname, "..");
 let fakePluginDir: string;
 let fakeProjectDir: string;
 let fakeHomeDir: string;
-/** Where getSessionDBPath() actually writes: <fakeHome>/.claude/context-mode/sessions/ */
+/** Where getSessionDBPath() actually writes: <fakeHome>/.claude/context-mode-opencode/sessions/ */
 let sessionDBDir: string;
 
 beforeAll(() => {
@@ -47,7 +47,7 @@ beforeAll(() => {
 
   // Fake HOME so getSessionDBPath() writes to an isolated location
   fakeHomeDir = mkdtempSync(join(tmpdir(), "ctx-fakehome-"));
-  sessionDBDir = join(fakeHomeDir, ".claude", "context-mode", "sessions");
+  sessionDBDir = join(fakeHomeDir, ".claude", "context-mode-opencode", "sessions");
 });
 
 afterAll(() => {
@@ -98,7 +98,7 @@ describe("Issue #117 — Session hooks without build/session/", () => {
 
     expect(result.exitCode).toBe(0);
 
-    // Bundle-first fix: DB is created in ~/.claude/context-mode/sessions/
+    // Bundle-first fix: DB is created in ~/.claude/context-mode-opencode/sessions/
     expect(getDBFiles().length).toBeGreaterThan(0);
   });
 

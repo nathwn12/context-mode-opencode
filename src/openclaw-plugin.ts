@@ -1,5 +1,5 @@
 /**
- * OpenClaw TypeScript plugin entry point for context-mode.
+ * OpenClaw TypeScript plugin entry point for context-mode-opencode.
  *
  * Exports an object with { id, name, configSchema, register(api) } for
  * declarative metadata and config validation before code execution.
@@ -13,7 +13,7 @@
  *   - after_compaction hook          — Increment compact count
  *   - before_prompt_build (p=10)  — Resume snapshot injection into system context
  *   - before_prompt_build (p=5)   — Routing instruction injection into system context
- *   - context-mode engine      — Context engine with compaction management
+ *   - context-mode-opencode engine      — Context engine with compaction management
  *   - /ctx-stats command       — Auto-reply command for session statistics
  *   - /ctx-doctor command      — Auto-reply command for diagnostics
  *   - /ctx-upgrade command     — Auto-reply command for upgrade
@@ -151,7 +151,7 @@ const configSchema = {
     enabled: {
       type: "boolean" as const,
       default: true,
-      description: "Enable or disable the context-mode plugin.",
+      description: "Enable or disable the context-mode-opencode plugin.",
     },
   },
   additionalProperties: false,
@@ -163,7 +163,7 @@ function getSessionDir(): string {
   const dir = join(
     homedir(),
     ".openclaw",
-    "context-mode",
+    "context-mode-opencode",
     "sessions",
   );
   mkdirSync(dir, { recursive: true });
@@ -208,7 +208,7 @@ let _latestPluginRoot = "";
  * Each call creates isolated closures (db, sessionId, hooks) — no shared state.
  */
 export default {
-  id: "context-mode",
+  id: "context-mode-opencode",
   name: "Context Mode",
   configSchema,
 
@@ -224,10 +224,10 @@ export default {
     // info/error always emit; debug only when api.logger.debug is present
     // (i.e. OpenClaw running with --log-level debug or lower).
     const log = {
-      info: (...args: unknown[]) => api.logger?.info("[context-mode]", ...args),
-      error: (...args: unknown[]) => api.logger?.error("[context-mode]", ...args),
-      debug: (...args: unknown[]) => api.logger?.debug?.("[context-mode]", ...args),
-      warn: (...args: unknown[]) => api.logger?.warn?.("[context-mode]", ...args),
+      info: (...args: unknown[]) => api.logger?.info("[context-mode-opencode]", ...args),
+      error: (...args: unknown[]) => api.logger?.error("[context-mode-opencode]", ...args),
+      debug: (...args: unknown[]) => api.logger?.debug?.("[context-mode-opencode]", ...args),
+      warn: (...args: unknown[]) => api.logger?.warn?.("[context-mode-opencode]", ...args),
     };
 
     // Get shared DB singleton (lazy-init on first register() call)
@@ -295,7 +295,7 @@ export default {
         if (decision.action === "deny" || decision.action === "ask") {
           return {
             block: true,
-            blockReason: decision.reason ?? "Blocked by context-mode",
+            blockReason: decision.reason ?? "Blocked by context-mode-opencode",
           };
         }
 
@@ -400,7 +400,7 @@ export default {
         }
       },
       {
-        name: "context-mode.session-new",
+        name: "context-mode-opencode.session-new",
         description:
           "Session initialization — cleans up old sessions on /new command",
       },
@@ -419,7 +419,7 @@ export default {
         }
       },
       {
-        name: "context-mode.session-reset",
+        name: "context-mode-opencode.session-reset",
         description: "Session cleanup on /reset command",
       },
     );
@@ -438,7 +438,7 @@ export default {
         }
       },
       {
-        name: "context-mode.session-stop",
+        name: "context-mode-opencode.session-stop",
         description: "Session cleanup on /stop command",
       },
     );
@@ -588,9 +588,9 @@ export default {
 
     // ── 9. Context engine — Compaction management ──────────
 
-    api.registerContextEngine("context-mode", () => ({
+    api.registerContextEngine("context-mode-opencode", () => ({
       info: {
-        id: "context-mode",
+        id: "context-mode-opencode",
         name: "Context Mode",
         ownsCompaction: false,
       },
@@ -607,7 +607,7 @@ export default {
         // No-op: session continuity is handled by before_compaction / after_compaction hooks.
         // Returning ownsCompaction: false + compacted: false lets the host platform (OpenClaw)
         // manage conversation truncation, preserving Anthropic thinking/redacted_thinking blocks.
-        // See: https://github.com/mksglu/context-mode/issues/191
+        // See: https://github.com/nathwn12/context-mode-opencode/issues/191
         return { ok: true, compacted: false };
       },
     }));
@@ -622,7 +622,7 @@ export default {
     if (api.registerCommand) {
       api.registerCommand({
         name: "ctx-stats",
-        description: "Show context-mode session statistics",
+        description: "Show context-mode-opencode session statistics",
         handler: () => {
           const text = buildStatsText(_latestDb!, _latestSessionId);
           return { text };
@@ -631,7 +631,7 @@ export default {
 
       api.registerCommand({
         name: "ctx-doctor",
-        description: "Run context-mode diagnostics",
+        description: "Run context-mode-opencode diagnostics",
         handler: () => {
           const bundlePath = resolve(_latestPluginRoot, "cli.bundle.mjs");
           const fallbackPath = resolve(_latestPluginRoot, "build", "cli.js");
@@ -641,7 +641,7 @@ export default {
             text: [
               "## ctx-doctor",
               "",
-              "Run this command to diagnose context-mode:",
+              "Run this command to diagnose context-mode-opencode:",
               "",
               "```",
               cmd,
@@ -653,7 +653,7 @@ export default {
 
       api.registerCommand({
         name: "ctx-upgrade",
-        description: "Upgrade context-mode to the latest version",
+        description: "Upgrade context-mode-opencode to the latest version",
         handler: () => {
           const bundlePath = resolve(_latestPluginRoot, "cli.bundle.mjs");
           const fallbackPath = resolve(_latestPluginRoot, "build", "cli.js");
@@ -663,7 +663,7 @@ export default {
             text: [
               "## ctx-upgrade",
               "",
-              "Run this command to upgrade context-mode:",
+              "Run this command to upgrade context-mode-opencode:",
               "",
               "```",
               cmd,
@@ -685,7 +685,7 @@ function buildStatsText(db: SessionDB, sessionId: string): string {
     const events = db.getEvents(sessionId);
     const stats = db.getSessionStats(sessionId);
     const lines: string[] = [
-      "## context-mode stats",
+      "## context-mode-opencode stats",
       "",
       `- Session: \`${sessionId.slice(0, 8)}…\``,
       `- Events captured: ${events.length}`,
@@ -707,6 +707,6 @@ function buildStatsText(db: SessionDB, sessionId: string): string {
 
     return lines.join("\n");
   } catch {
-    return "context-mode stats unavailable (session DB error)";
+    return "context-mode-opencode stats unavailable (session DB error)";
   }
 }

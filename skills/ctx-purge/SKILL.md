@@ -1,9 +1,9 @@
 ---
 name: ctx-purge
 description: |
-  Purge the context-mode knowledge base. Permanently deletes all indexed content
+  Purge the context-mode-opencode knowledge base. Permanently deletes all indexed content
   and resets session stats. This is destructive and cannot be undone.
-  Trigger: /context-mode:ctx-purge
+  Trigger: /context-mode-opencode:ctx-purge
 user-invocable: true
 ---
 
@@ -18,7 +18,7 @@ Permanently deletes ALL session data for this project: knowledge base, session e
    - Session events DB (analytics, metadata, resume snapshots)
    - Session events markdown file
    - In-memory session stats
-2. Call the `mcp__context-mode__ctx_purge` MCP tool with `confirm: true`.
+2. Call the `mcp__context-mode-opencode__ctx_purge` MCP tool with `confirm: true`.
 3. Report the result to the user — the response lists exactly what was deleted.
 
 ## When to Use
@@ -31,5 +31,5 @@ Permanently deletes ALL session data for this project: knowledge base, session e
 
 - `ctx_purge` is the **only** way to delete session data. No other mechanism exists.
 - `ctx_stats` is read-only — shows statistics only.
-- `/clear` and `/compact` do NOT affect any context-mode data.
+- `/clear` and `/compact` do NOT affect any context-mode-opencode data.
 - There is no undo. Re-index content if you need it again.

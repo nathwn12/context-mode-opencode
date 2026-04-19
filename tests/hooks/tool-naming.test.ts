@@ -49,7 +49,7 @@ beforeAll(async () => {
 });
 
 // MCP readiness sentinel — routing.mjs checks process.ppid in-process
-const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 
 beforeEach(() => {
   if (typeof resetGuidanceThrottle === "function") resetGuidanceThrottle();
@@ -67,43 +67,43 @@ afterEach(() => {
 describe("getToolName", () => {
   it("returns correct name for claude-code", () => {
     expect(getToolName("claude-code", "ctx_fetch_and_index")).toBe(
-      "mcp__plugin_context-mode_context-mode__ctx_fetch_and_index",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_fetch_and_index",
     );
   });
 
   it("returns correct name for gemini-cli", () => {
     expect(getToolName("gemini-cli", "ctx_fetch_and_index")).toBe(
-      "mcp__context-mode__ctx_fetch_and_index",
+      "mcp__context-mode-opencode__ctx_fetch_and_index",
     );
   });
 
   it("returns correct name for antigravity", () => {
     expect(getToolName("antigravity", "ctx_execute")).toBe(
-      "mcp__context-mode__ctx_execute",
+      "mcp__context-mode-opencode__ctx_execute",
     );
   });
 
   it("returns correct name for opencode", () => {
     expect(getToolName("opencode", "ctx_search")).toBe(
-      "context-mode_ctx_search",
+      "context-mode-opencode_ctx_search",
     );
   });
 
   it("returns correct name for vscode-copilot", () => {
     expect(getToolName("vscode-copilot", "ctx_batch_execute")).toBe(
-      "context-mode_ctx_batch_execute",
+      "context-mode-opencode_ctx_batch_execute",
     );
   });
 
   it("returns correct name for kiro", () => {
     expect(getToolName("kiro", "ctx_execute_file")).toBe(
-      "@context-mode/ctx_execute_file",
+      "@context-mode-opencode/ctx_execute_file",
     );
   });
 
   it("returns correct name for zed", () => {
     expect(getToolName("zed", "ctx_index")).toBe(
-      "mcp:context-mode:ctx_index",
+      "mcp:context-mode-opencode:ctx_index",
     );
   });
 
@@ -127,7 +127,7 @@ describe("getToolName", () => {
 
   it("falls back to claude-code for unknown platforms", () => {
     expect(getToolName("unknown-platform", "ctx_search")).toBe(
-      "mcp__plugin_context-mode_context-mode__ctx_search",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_search",
     );
   });
 });
@@ -135,8 +135,8 @@ describe("getToolName", () => {
 describe("createToolNamer", () => {
   it("returns a function that produces correct names", () => {
     const t = createToolNamer("gemini-cli");
-    expect(t("ctx_execute")).toBe("mcp__context-mode__ctx_execute");
-    expect(t("ctx_search")).toBe("mcp__context-mode__ctx_search");
+    expect(t("ctx_execute")).toBe("mcp__context-mode-opencode__ctx_execute");
+    expect(t("ctx_search")).toBe("mcp__context-mode-opencode__ctx_search");
   });
 });
 
@@ -166,12 +166,12 @@ describe("createRoutingBlock", () => {
   it("produces block with platform-specific tool names for gemini-cli", () => {
     const t = createToolNamer("gemini-cli");
     const block = createRoutingBlock(t);
-    expect(block).toContain("mcp__context-mode__ctx_batch_execute");
-    expect(block).toContain("mcp__context-mode__ctx_search");
-    expect(block).toContain("mcp__context-mode__ctx_execute");
-    expect(block).toContain("mcp__context-mode__ctx_fetch_and_index");
+    expect(block).toContain("mcp__context-mode-opencode__ctx_batch_execute");
+    expect(block).toContain("mcp__context-mode-opencode__ctx_search");
+    expect(block).toContain("mcp__context-mode-opencode__ctx_execute");
+    expect(block).toContain("mcp__context-mode-opencode__ctx_fetch_and_index");
     // Must NOT contain claude-code prefix
-    expect(block).not.toContain("mcp__plugin_context-mode_context-mode__");
+    expect(block).not.toContain("mcp__plugin_context-mode-opencode_context-mode-opencode__");
   });
 
   it("produces block with bare names for cursor", () => {
@@ -187,7 +187,7 @@ describe("createReadGuidance", () => {
   it("uses kiro-style tool names for kiro platform", () => {
     const t = createToolNamer("kiro");
     const guidance = createReadGuidance(t);
-    expect(guidance).toContain("@context-mode/ctx_execute_file");
+    expect(guidance).toContain("@context-mode-opencode/ctx_execute_file");
   });
 });
 
@@ -195,7 +195,7 @@ describe("createGrepGuidance", () => {
   it("uses opencode-style tool names for opencode platform", () => {
     const t = createToolNamer("opencode");
     const guidance = createGrepGuidance(t);
-    expect(guidance).toContain("context-mode_ctx_execute");
+    expect(guidance).toContain("context-mode-opencode_ctx_execute");
   });
 });
 
@@ -203,8 +203,8 @@ describe("createBashGuidance", () => {
   it("uses zed-style tool names for zed platform", () => {
     const t = createToolNamer("zed");
     const guidance = createBashGuidance(t);
-    expect(guidance).toContain("mcp:context-mode:ctx_batch_execute");
-    expect(guidance).toContain("mcp:context-mode:ctx_execute");
+    expect(guidance).toContain("mcp:context-mode-opencode:ctx_batch_execute");
+    expect(guidance).toContain("mcp:context-mode-opencode:ctx_execute");
   });
 });
 
@@ -215,28 +215,28 @@ describe("createBashGuidance", () => {
 describe("backward compat static exports", () => {
   it("ROUTING_BLOCK uses claude-code naming", () => {
     expect(ROUTING_BLOCK).toContain(
-      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
     );
     expect(ROUTING_BLOCK).toContain(
-      "mcp__plugin_context-mode_context-mode__ctx_search",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_search",
     );
   });
 
   it("READ_GUIDANCE uses claude-code naming", () => {
     expect(READ_GUIDANCE).toContain(
-      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
     );
   });
 
   it("GREP_GUIDANCE uses claude-code naming", () => {
     expect(GREP_GUIDANCE).toContain(
-      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute",
     );
   });
 
   it("BASH_GUIDANCE uses claude-code naming", () => {
     expect(BASH_GUIDANCE).toContain(
-      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
     );
   });
 });
@@ -251,16 +251,16 @@ describe("routePreToolUse with platform parameter", () => {
     expect(result).not.toBeNull();
     expect(result!.action).toBe("modify");
     const cmd = (result!.updatedInput as Record<string, string>).command;
-    expect(cmd).toContain("mcp__context-mode__ctx_fetch_and_index");
-    expect(cmd).toContain("mcp__context-mode__ctx_execute");
-    expect(cmd).not.toContain("mcp__plugin_context-mode_context-mode__");
+    expect(cmd).toContain("mcp__context-mode-opencode__ctx_fetch_and_index");
+    expect(cmd).toContain("mcp__context-mode-opencode__ctx_execute");
+    expect(cmd).not.toContain("mcp__plugin_context-mode-opencode_context-mode-opencode__");
   });
 
   it("curl block message uses claude-code tool names when platform is omitted", () => {
     const result = routePreToolUse("Bash", { command: "curl https://example.com" }, "/tmp");
     expect(result).not.toBeNull();
     const cmd = (result!.updatedInput as Record<string, string>).command;
-    expect(cmd).toContain("mcp__plugin_context-mode_context-mode__ctx_fetch_and_index");
+    expect(cmd).toContain("mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_fetch_and_index");
   });
 
   it("inline HTTP block uses cursor bare names when platform=cursor", () => {
@@ -278,8 +278,8 @@ describe("routePreToolUse with platform parameter", () => {
     const result = routePreToolUse("WebFetch", { url: "https://example.com" }, "/tmp", "kiro");
     expect(result).not.toBeNull();
     expect(result!.action).toBe("deny");
-    expect(result!.reason).toContain("@context-mode/ctx_fetch_and_index");
-    expect(result!.reason).toContain("@context-mode/ctx_search");
+    expect(result!.reason).toContain("@context-mode-opencode/ctx_fetch_and_index");
+    expect(result!.reason).toContain("@context-mode-opencode/ctx_search");
   });
 
   it("Task is no longer routed — returns null (#241)", () => {
@@ -293,15 +293,15 @@ describe("routePreToolUse with platform parameter", () => {
     const result = routePreToolUse("Read", { file_path: "/tmp/a.ts" }, "/tmp", "vscode-copilot");
     expect(result).not.toBeNull();
     expect(result!.action).toBe("context");
-    expect(result!.additionalContext).toContain("context-mode_ctx_execute_file");
-    expect(result!.additionalContext).not.toContain("mcp__plugin_context-mode_context-mode__");
+    expect(result!.additionalContext).toContain("context-mode-opencode_ctx_execute_file");
+    expect(result!.additionalContext).not.toContain("mcp__plugin_context-mode-opencode_context-mode-opencode__");
   });
 
   it("Grep guidance uses zed tool names when platform=zed", () => {
     const result = routePreToolUse("Grep", { pattern: "TODO" }, "/tmp", "zed");
     expect(result).not.toBeNull();
     expect(result!.action).toBe("context");
-    expect(result!.additionalContext).toContain("mcp:context-mode:ctx_execute");
+    expect(result!.additionalContext).toContain("mcp:context-mode-opencode:ctx_execute");
   });
 
   it("Bash guidance uses openclaw bare names when platform=openclaw", () => {
@@ -318,7 +318,7 @@ describe("routePreToolUse with platform parameter", () => {
     expect(result).not.toBeNull();
     expect(result!.action).toBe("modify");
     const cmd = (result!.updatedInput as Record<string, string>).command;
-    expect(cmd).toContain("mcp__context-mode__ctx_execute");
-    expect(cmd).not.toContain("mcp__plugin_context-mode_context-mode__");
+    expect(cmd).toContain("mcp__context-mode-opencode__ctx_execute");
+    expect(cmd).not.toContain("mcp__plugin_context-mode-opencode_context-mode-opencode__");
   });
 });

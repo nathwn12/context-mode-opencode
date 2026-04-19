@@ -1,10 +1,10 @@
-# context-mode
+# context-mode-opencode
 
 > An MCP (Model Context Protocol) server and Claude Code plugin that solves context window flooding. Version 0.9.22 achieves ~98% context reduction (315 KB to 5.4 KB) by keeping raw tool outputs in isolated subprocesses and indexing them into SQLite FTS5 with BM25 ranking. Large command outputs, log files, API responses, and documentation never enter the context window -- only concise summaries and search results do.
 
 ## Architecture Overview
 
-context-mode operates as a Claude Code plugin that intercepts data-heavy tool calls (Bash, Read, WebFetch, Grep) and redirects them through sandboxed execution. Raw data stays in subprocesses; only printed summaries enter the LLM context. A persistent FTS5 knowledge base indexes all sandboxed output for on-demand retrieval via BM25-ranked search with three-tier fallback (Porter stemming, trigram substring, fuzzy Levenshtein correction).
+context-mode-opencode operates as a Claude Code plugin that intercepts data-heavy tool calls (Bash, Read, WebFetch, Grep) and redirects them through sandboxed execution. Raw data stays in subprocesses; only printed summaries enter the LLM context. A persistent FTS5 knowledge base indexes all sandboxed output for on-demand retrieval via BM25-ranked search with three-tier fallback (Porter stemming, trigram substring, fuzzy Levenshtein correction).
 
 ### Core Components
 
@@ -23,7 +23,7 @@ context-mode operates as a Claude Code plugin that intercepts data-heavy tool ca
 
 ## MCP Tools
 
-context-mode exposes 6 MCP tools. All tool names are prefixed with `mcp__plugin_context-mode_context-mode__` when called from Claude Code.
+context-mode-opencode exposes 6 MCP tools. All tool names are prefixed with `mcp__plugin_context-mode-opencode_context-mode-opencode__` when called from Claude Code.
 
 ### execute
 
@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS vocabulary (
 
 **Performance configuration:** WAL mode for concurrent reads, `synchronous=NORMAL` for write performance, Database constructor timeout 5000 ms, prepared statements cached for all queries.
 
-**Database file naming:** `context-mode-{PID}.db` in the OS temp directory. Cleaned on exit. Stale DB cleanup runs at startup: scans for `context-mode-*.db` files, extracts PID from filename, sends signal 0 to check if process is alive, deletes DB files (including `-wal` and `-shm` companions) for dead processes.
+**Database file naming:** `context-mode-opencode-{PID}.db` in the OS temp directory. Cleaned on exit. Stale DB cleanup runs at startup: scans for `context-mode-opencode-*.db` files, extracts PID from filename, sends signal 0 to check if process is alive, deletes DB files (including `-wal` and `-shm` companions) for dead processes.
 
 ### BM25 Ranking
 
@@ -584,7 +584,7 @@ Emits XML routing rules as `additionalContext` at session start. Registered with
 ```xml
 <context_window_protection>
   <priority_instructions>
-    Raw tool output floods your context window. You MUST use context-mode
+    Raw tool output floods your context window. You MUST use context-mode-opencode
     MCP tools to keep raw data in the sandbox.
   </priority_instructions>
 
@@ -619,9 +619,9 @@ Emits XML routing rules as `additionalContext` at session start. Registered with
       { "matcher": "Read", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
       { "matcher": "Grep", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
       { "matcher": "Task", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
-      { "matcher": "mcp__plugin_context-mode_context-mode__execute", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
-      { "matcher": "mcp__plugin_context-mode_context-mode__execute_file", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
-      { "matcher": "mcp__plugin_context-mode_context-mode__batch_execute", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] }
+      { "matcher": "mcp__plugin_context-mode-opencode_context-mode-opencode__execute", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
+      { "matcher": "mcp__plugin_context-mode-opencode_context-mode-opencode__execute_file", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] },
+      { "matcher": "mcp__plugin_context-mode-opencode_context-mode-opencode__batch_execute", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse.mjs" }] }
     ],
     "SessionStart": [
       { "matcher": "", "hooks": [{ "type": "command", "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/sessionstart.mjs" }] }
@@ -632,9 +632,9 @@ Emits XML routing rules as `additionalContext` at session start. Registered with
 
 ## Skills
 
-context-mode ships 4 skills:
+context-mode-opencode ships 4 skills:
 
-### context-mode (primary skill)
+### context-mode-opencode (primary skill)
 
 The main skill providing workflow instructions for the execute/index/search pipeline. Contains tool selection hierarchy, usage patterns, and best practices for context-efficient workflows.
 
@@ -672,11 +672,11 @@ Self-update from GitHub:
 
 ```json
 {
-  "name": "context-mode",
+  "name": "context-mode-opencode",
   "version": "0.9.22",
   "description": "Claude Code MCP plugin that saves 98% of your context window.",
   "mcpServers": {
-    "context-mode": {
+    "context-mode-opencode": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/start.mjs"]
     }
@@ -729,8 +729,8 @@ Self-update from GitHub:
 | React useEffect docs | Context7 | 5.9 KB | 1,494 B | 75% | 16 |
 | Next.js App Router docs | Context7 | 6.5 KB | 3,311 B | 50% | 5 |
 | Tailwind CSS docs | Context7 | 4.0 KB | 620 B | 85% | 5 |
-| Skill prompt (main) | context-mode | 4.4 KB | 932 B | 79% | 15 |
-| Skill references (4 files) | context-mode | 33.2 KB | 2,412 B | 93% | 51 |
+| Skill prompt (main) | context-mode-opencode | 4.4 KB | 932 B | 79% | 15 |
+| Skill references (4 files) | context-mode-opencode | 33.2 KB | 2,412 B | 93% | 51 |
 
 ### Aggregate Metrics
 

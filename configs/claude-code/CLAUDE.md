@@ -1,6 +1,6 @@
-# context-mode — MANDATORY routing rules
+# context-mode-opencode — MANDATORY routing rules
 
-You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
+You have context-mode-opencode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
 
 ## Think in Code — MANDATORY
 
@@ -49,7 +49,7 @@ Grep results can flood context. Use `ctx_execute(language: "shell", code: "grep 
 
 ## Subagent routing
 
-When spawning subagents (Agent/Task tool), the routing block is automatically injected into their prompt. Bash-type subagents are upgraded to general-purpose so they have access to MCP tools. You do NOT need to manually instruct subagents about context-mode.
+When spawning subagents (Agent/Task tool), the routing block is automatically injected into their prompt. Bash-type subagents are upgraded to general-purpose so they have access to MCP tools. You do NOT need to manually instruct subagents about context-mode-opencode.
 
 ## Output constraints
 

@@ -20,12 +20,12 @@ We investigated this and pushed a fix in #{PR_NUMBER}.
 This lands on the `next` branch and will ship in the next release. Once it's out, could you please test it in your setup and confirm it resolves the issue? 🙏
 
 ```
-npm update -g context-mode
+npm update -g @nathwn12/context-mode-opencode
 # or for plugin users:
-/context-mode:ctx-upgrade
+/context-mode-opencode:ctx-upgrade
 ```
 
-Thanks for reporting this — it helped improve context-mode for everyone!
+Thanks for reporting this — it helped improve context-mode-opencode for everyone!
 ```
 
 ### Needs More Information
@@ -35,7 +35,7 @@ Hey @{author}, thanks for opening this!
 
 To investigate further, could you share:
 - Your platform (Claude Code / Gemini CLI / OpenCode / etc.)
-- context-mode version (`ctx doctor` or `npm list -g context-mode`)
+- context-mode-opencode version (`ctx doctor` or `npm list -g context-mode-opencode`)
 - The exact command or action that triggers this
 - Any error messages or unexpected output
 
@@ -99,7 +99,7 @@ Merged into `next` — this will ship in the next release.
 
 Could you please test it in your setup once the release is out? You know this area best, so your verification would be really valuable. 🙏
 
-Thanks for making context-mode better!
+Thanks for making context-mode-opencode better!
 ```
 
 ### After Merge (With Follow-Up Fixes)
@@ -187,9 +187,9 @@ Let me know how you'd like to proceed!
 
 Please update and test:
 ```
-npm update -g context-mode
+npm update -g @nathwn12/context-mode-opencode
 # or for plugin users:
-/context-mode:ctx-upgrade
+/context-mode-opencode:ctx-upgrade
 ```
 
 Let us know if this resolves your issue!

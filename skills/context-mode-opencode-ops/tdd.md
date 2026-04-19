@@ -6,7 +6,7 @@ If you skip TDD, your work will be REJECTED. There are no exceptions.
 Do NOT write implementation code before you have a failing test.
 </tdd_enforcement>
 
-> Source: [mattpocock/skills/tdd](https://github.com/mattpocock/skills/tree/main/tdd) — embedded with context-mode enforcement.
+> Source: [mattpocock/skills/tdd](https://github.com/mattpocock/skills/tree/main/tdd) — embedded with context-mode-opencode enforcement.
 
 ## Philosophy
 
@@ -287,7 +287,7 @@ After TDD cycle, look for:
 
 ---
 
-## context-mode Specific Rules
+## context-mode-opencode Specific Rules
 
 ### CONTRIBUTING.md Is the Authority
 

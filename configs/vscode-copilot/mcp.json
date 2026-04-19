@@ -1,8 +1,8 @@
 {
   "servers": {
-    "context-mode": {
+    "context-mode-opencode": {
       "command": "npx",
-      "args": ["-y", "context-mode"]
+      "args": ["-y", "@nathwn12/context-mode-opencode"]
     }
   }
 }

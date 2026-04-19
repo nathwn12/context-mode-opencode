@@ -101,7 +101,7 @@ describe("VS Code Copilot hooks", () => {
   beforeAll(() => {
     tempDir = mkdtempSync(join(tmpdir(), "vscode-hook-test-"));
     const hash = createHash("sha256").update(tempDir).digest("hex").slice(0, 16);
-    const sessionsDir = join(homedir(), ".vscode", "context-mode", "sessions");
+    const sessionsDir = join(homedir(), ".vscode", "context-mode-opencode", "sessions");
     dbPath = join(sessionsDir, `${hash}.db`);
     eventsPath = join(sessionsDir, `${hash}-events.md`);
   });
@@ -113,7 +113,7 @@ describe("VS Code Copilot hooks", () => {
   });
 
   // MCP readiness sentinel — subprocess hooks check process.ppid (= this test's pid)
-  const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.pid}`);
+  const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.pid}`);
 
   // Clean file-based guidance throttle markers between tests.
   // Subprocess hooks use process.ppid (= this test's pid) for marker dir.
@@ -121,7 +121,7 @@ describe("VS Code Copilot hooks", () => {
   beforeEach(() => {
     const wid = process.env.VITEST_WORKER_ID;
     const suffix = wid ? `${process.pid}-w${wid}` : String(process.pid);
-    const guidanceDir = resolve(tmpdir(), `context-mode-guidance-${suffix}`);
+    const guidanceDir = resolve(tmpdir(), `context-mode-opencode-guidance-${suffix}`);
     try { rmSync(guidanceDir, { recursive: true, force: true }); } catch { /* best effort */ }
     writeFileSync(mcpSentinel, String(process.pid));
   });
@@ -154,7 +154,7 @@ describe("VS Code Copilot hooks", () => {
 
       expect(result.exitCode).toBe(0);
       const out = JSON.parse(result.stdout);
-      expect(out.hookSpecificOutput.updatedInput.command).toContain("context-mode");
+      expect(out.hookSpecificOutput.updatedInput.command).toContain("context-mode-opencode");
       expect(out.hookSpecificOutput.updatedInput.command).toContain("ctx_fetch_and_index");
     });
 
@@ -243,7 +243,7 @@ describe("VS Code Copilot hooks", () => {
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("SessionStart");
-      expect(result.stdout).toContain("context-mode");
+      expect(result.stdout).toContain("context-mode-opencode");
     });
 
     test("compact: outputs routing block", () => {

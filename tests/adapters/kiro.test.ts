@@ -157,10 +157,10 @@ describe("KiroAdapter", () => {
       );
     });
 
-    it("session dir is under ~/.kiro/context-mode/sessions/", () => {
+    it("session dir is under ~/.kiro/context-mode-opencode/sessions/", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir).toBe(
-        join(homedir(), ".kiro", "context-mode", "sessions"),
+        join(homedir(), ".kiro", "context-mode-opencode", "sessions"),
       );
     });
 

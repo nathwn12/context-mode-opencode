@@ -7,7 +7,7 @@ import { routePreToolUse, resetGuidanceThrottle } from "../hooks/core/routing.mj
 const PROJECT_DIR = "/tmp/test-project";
 
 // MCP readiness sentinel — routing.mjs checks process.ppid in-process
-const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 
 describe("guidance throttle", () => {
   beforeEach(() => {
@@ -103,7 +103,7 @@ describe("guidance throttle", () => {
     const path = require("node:path");
     const wid = process.env.VITEST_WORKER_ID;
     const suffix = wid ? `${process.ppid}-w${wid}` : String(process.ppid);
-    const dir = path.resolve(os.tmpdir(), `context-mode-guidance-${suffix}`);
+    const dir = path.resolve(os.tmpdir(), `context-mode-opencode-guidance-${suffix}`);
     try { fs.mkdirSync(dir, { recursive: true }); } catch {}
     try { fs.writeFileSync(path.resolve(dir, "read"), "", "utf-8"); } catch {}
 

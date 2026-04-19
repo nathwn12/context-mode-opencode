@@ -161,7 +161,7 @@ describe("CursorAdapter", () => {
 
     it("uses a dedicated Cursor session dir", () => {
       expect(adapter.getSessionDir()).toBe(
-        join(homedir(), ".cursor", "context-mode", "sessions"),
+        join(homedir(), ".cursor", "context-mode-opencode", "sessions"),
       );
     });
   });
@@ -225,8 +225,8 @@ describe("CursorAdapter", () => {
         JSON.stringify({
           version: 1,
           hooks: {
-            preToolUse: [{ type: "command", command: "context-mode hook cursor pretooluse" }],
-            sessionStart: [{ type: "command", command: "context-mode hook cursor sessionstart" }],
+            preToolUse: [{ type: "command", command: "context-mode-opencode hook cursor pretooluse" }],
+            sessionStart: [{ type: "command", command: "context-mode-opencode hook cursor sessionstart" }],
           },
         }, null, 2),
       );
@@ -247,8 +247,8 @@ describe("CursorAdapter", () => {
         resolve(".cursor", "mcp.json"),
         JSON.stringify({
           mcpServers: {
-            "context-mode": {
-              command: "context-mode",
+            "context-mode-opencode": {
+              command: "context-mode-opencode",
             },
           },
         }, null, 2),

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * context-mode CLI
+ * context-mode-opencode CLI
  *
  * Usage:
- *   context-mode                              → Start MCP server (stdio)
- *   context-mode doctor                       → Diagnose runtime issues, hooks, FTS5, version
- *   context-mode upgrade                      → Fix hooks, permissions, and settings
- *   context-mode hook <platform> <event>      → Dispatch a hook script (used by platform hook configs)
+ *   context-mode-opencode                              → Start MCP server (stdio)
+ *   context-mode-opencode doctor                       → Diagnose runtime issues, hooks, FTS5, version
+ *   context-mode-opencode upgrade                      → Fix hooks, permissions, and settings
+ *   context-mode-opencode hook <platform> <event>      → Dispatch a hook script (used by platform hook configs)
  *
  * Platform auto-detection: CLI detects which platform is running
  * (Claude Code, Gemini CLI, OpenCode, etc.) and uses the appropriate adapter.
@@ -32,7 +32,7 @@ import { detectPlatform, getAdapter } from "./adapters/detect.js";
 import type { HookAdapter } from "./adapters/types.js";
 
 /* -------------------------------------------------------
- * Hook dispatcher — `context-mode hook <platform> <event>`
+ * Hook dispatcher — `context-mode-opencode hook <platform> <event>`
  * ------------------------------------------------------- */
 
 const HOOK_MAP: Record<string, Record<string, string>> = {
@@ -135,10 +135,10 @@ function defaultPluginRoot(): string {
 function cachePluginRoot(platform: string): string {
   if (process.platform === "win32") {
     const localApp = process.env.LOCALAPPDATA;
-    if (localApp) return resolve(localApp, platform, "node_modules", "context-mode");
-    return resolve(homedir(), "AppData", "Local", platform, "node_modules", "context-mode");
+    if (localApp) return resolve(localApp, platform, "node_modules", "@nathwn12", "context-mode-opencode");
+    return resolve(homedir(), "AppData", "Local", platform, "node_modules", "@nathwn12", "context-mode-opencode");
   }
-  return resolve(homedir(), ".cache", platform, "node_modules", "context-mode");
+  return resolve(homedir(), ".cache", platform, "node_modules", "@nathwn12", "context-mode-opencode");
 }
 
 function getPluginRoot(): string {
@@ -164,7 +164,7 @@ async function fetchLatestVersion(): Promise<string> {
   // racing with process.exit() teardown on Node.js v24+.
   return new Promise((resolve) => {
     const req = httpsRequest(
-      "https://registry.npmjs.org/context-mode/latest",
+      "https://registry.npmjs.org/@nathwn12%2Fcontext-mode-opencode/latest",
       { headers: { Connection: "close" } },
       (res) => {
         let raw = "";
@@ -196,7 +196,7 @@ async function doctor(): Promise<number> {
   const detection = detectPlatform();
   const adapter = await getAdapter(detection.platform);
 
-  p.intro(color.bgMagenta(color.white(" context-mode doctor ")));
+  p.intro(color.bgMagenta(color.white(" context-mode-opencode doctor ")));
   p.log.info(
     `Platform: ${color.cyan(adapter.name)}` +
       color.dim(` (${detection.confidence} confidence — ${detection.reason})`),
@@ -374,7 +374,7 @@ async function doctor(): Promise<number> {
     p.log.warn(
       color.yellow("npm (MCP): WARN") +
         ` — local v${localVersion}, latest v${latestVersion}` +
-        color.dim("\n  Run: /context-mode:ctx-upgrade"),
+        color.dim("\n  Run: /context-mode-opencode:ctx-upgrade"),
     );
   }
 
@@ -392,7 +392,7 @@ async function doctor(): Promise<number> {
     p.log.warn(
       color.yellow(`${adapter.name}: WARN`) +
         ` — v${installedVersion}, latest v${latestVersion}` +
-        color.dim("\n  Run: /context-mode:ctx-upgrade"),
+        color.dim("\n  Run: /context-mode-opencode:ctx-upgrade"),
     );
   } else {
     p.log.info(
@@ -435,7 +435,7 @@ async function insight(port: number) {
   const cacheDir = join(dirname(sessDir), "insight-cache");
 
   if (!existsSync(join(insightSource, "server.mjs"))) {
-    console.error("Error: Insight source not found. Try upgrading context-mode.");
+    console.error("Error: Insight source not found. Try upgrading context-mode-opencode.");
     process.exit(1);
   }
 
@@ -473,7 +473,7 @@ async function insight(port: number) {
 
   // Start server
   const url = `http://localhost:${port}`;
-  console.log(`\n  context-mode Insight\n  ${url}\n`);
+  console.log(`\n  context-mode-opencode Insight\n  ${url}\n`);
 
   const child = spawn("node", [join(cacheDir, "server.mjs")], {
     cwd: cacheDir,
@@ -505,7 +505,7 @@ async function insight(port: number) {
     console.error(`\nError: Port ${port} appears to be in use. Either a previous dashboard is still running, or another service is using this port.`);
     console.error(`\nTo fix:`);
     console.error(`  Kill the existing process: ${process.platform === "win32" ? `netstat -ano | findstr :${port}` : `lsof -ti:${port} | xargs kill`}`);
-    console.error(`  Or use a different port:   context-mode insight ${port + 1}`);
+    console.error(`  Or use a different port:   context-mode-opencode insight ${port + 1}`);
     child.kill();
     process.exit(1);
   }
@@ -539,7 +539,7 @@ async function upgrade() {
   const detection = detectPlatform();
   const adapter = await getAdapter(detection.platform);
 
-  p.intro(color.bgCyan(color.black(" context-mode upgrade ")));
+  p.intro(color.bgCyan(color.black(" context-mode-opencode upgrade ")));
   p.log.info(
     `Platform: ${color.cyan(adapter.name)}` +
       color.dim(` (${detection.confidence} confidence)`),
@@ -552,12 +552,12 @@ async function upgrade() {
   // Step 1: Pull latest from GitHub
   p.log.step("Pulling latest from GitHub...");
   const localVersion = getLocalVersion();
-  const tmpDir = join(tmpdir(), `context-mode-upgrade-${Date.now()}`);
+  const tmpDir = join(tmpdir(), `context-mode-opencode-upgrade-${Date.now()}`);
 
-  s.start("Cloning mksglu/context-mode");
+  s.start("Cloning nathwn12/context-mode-opencode");
   try {
     execFileSync(
-      "git", ["clone", "--depth", "1", "https://github.com/mksglu/context-mode.git", tmpDir],
+      "git", ["clone", "--depth", "1", "https://github.com/nathwn12/context-mode-opencode.git", tmpDir],
       { stdio: "pipe", timeout: 30000 },
     );
     s.stop("Downloaded");
@@ -616,7 +616,7 @@ async function upgrade() {
     // Write .mcp.json with resolved absolute path (fixes #132)
     const mcpConfig = {
       mcpServers: {
-        "context-mode": {
+        "context-mode-opencode": {
           command: "node",
           args: [resolve(pluginRoot, "start.mjs")],
         },
@@ -687,7 +687,7 @@ async function upgrade() {
       const registryPath = resolve(homedir(), ".claude", "plugins", "installed_plugins.json");
       if (existsSync(registryPath)) {
         const registry = JSON.parse(readFileSync(registryPath, "utf-8"));
-        const entries = registry?.plugins?.["context-mode@context-mode"];
+        const entries = registry?.plugins?.["context-mode-opencode@context-mode-opencode"];
         if (Array.isArray(entries)) {
           for (const entry of entries) {
             const installPath = entry.installPath;

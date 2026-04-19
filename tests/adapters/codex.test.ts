@@ -205,7 +205,7 @@ describe("CodexAdapter", () => {
       expect(adapter.getSettingsPath()).toContain("config.toml");
     });
 
-    it("session dir is under ~/.codex/context-mode/sessions/", () => {
+    it("session dir is under ~/.codex/context-mode-opencode/sessions/", () => {
       expect(adapter.getSessionDir()).toContain(".codex");
       expect(adapter.getSessionDir()).toContain("sessions");
     });

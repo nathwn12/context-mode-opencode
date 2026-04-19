@@ -1,5 +1,5 @@
 /**
- * db-base — Reusable SQLite infrastructure for context-mode packages.
+ * db-base — Reusable SQLite infrastructure for context-mode-opencode packages.
  *
  * Provides lazy-loading of better-sqlite3, WAL pragma setup, prepared
  * statement caching interface, and DB file cleanup helpers. Both
@@ -310,11 +310,11 @@ export function closeDB(db: DatabaseInstance): void {
 // ─────────────────────────────────────────────────────────
 
 /**
- * Return the default per-process DB path for context-mode databases.
+ * Return the default per-process DB path for context-mode-opencode databases.
  * Uses the OS temp directory and embeds the current PID so multiple
  * server instances never share a file.
  */
-export function defaultDBPath(prefix: string = "context-mode"): string {
+export function defaultDBPath(prefix: string = "context-mode-opencode"): string {
   return join(tmpdir(), `${prefix}-${process.pid}.db`);
 }
 

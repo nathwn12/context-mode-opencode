@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 const HOOK_DIR = dirname(fileURLToPath(import.meta.url));
 const { loadSessionDB, loadSnapshot } = createSessionLoaders(HOOK_DIR);
 const OPTS = GEMINI_OPTS;
-const DEBUG_LOG = join(homedir(), ".gemini", "context-mode", "precompress-debug.log");
+const DEBUG_LOG = join(homedir(), ".gemini", "context-mode-opencode", "precompress-debug.log");
 
 try {
   const raw = await readStdin();

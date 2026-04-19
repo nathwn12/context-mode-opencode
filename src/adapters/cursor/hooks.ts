@@ -25,7 +25,7 @@ export const HOOK_SCRIPTS: Partial<Record<HookType, string>> = {
   [HOOK_TYPES.STOP]: "stop.mjs",
 };
 
-/** Canonical Cursor-native matchers for tools context-mode routes proactively. */
+/** Canonical Cursor-native matchers for tools context-mode-opencode routes proactively. */
 export const PRE_TOOL_USE_MATCHERS = [
   "Shell",
   "Read",
@@ -59,7 +59,7 @@ export interface CursorHookCommandEntry {
   failClosed?: boolean;
 }
 
-/** Check whether a native Cursor hook entry points to context-mode. */
+/** Check whether a native Cursor hook entry points to context-mode-opencode. */
 export function isContextModeHook(
   entry: CursorHookCommandEntry | { hooks?: Array<{ command?: string }> },
   hookType: HookType,
@@ -83,5 +83,5 @@ export function isContextModeHook(
 
 /** Build the CLI dispatcher command for a Cursor hook type. */
 export function buildHookCommand(hookType: HookType): string {
-  return `context-mode hook cursor ${hookType.toLowerCase()}`;
+  return `context-mode-opencode hook cursor ${hookType.toLowerCase()}`;
 }

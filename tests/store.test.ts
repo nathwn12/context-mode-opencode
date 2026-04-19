@@ -20,7 +20,7 @@ const fixtureDir = join(__dirname, "fixtures");
 function createStore(): ContentStore {
   const path = join(
     tmpdir(),
-    `context-mode-test-${Date.now()}-${Math.random().toString(36).slice(2)}.db`,
+    `context-mode-opencode-test-${Date.now()}-${Math.random().toString(36).slice(2)}.db`,
   );
   return new ContentStore(path);
 }
@@ -845,7 +845,7 @@ describe("Smart Chunk Titles", () => {
 describe("DB Cleanup", () => {
   test("cleanupStaleDBs removes files for dead PIDs", () => {
     const fakePid = 99999;
-    const fakePath = join(tmpdir(), `context-mode-${fakePid}.db`);
+    const fakePath = join(tmpdir(), `context-mode-opencode-${fakePid}.db`);
     writeFileSync(fakePath, "fake");
     writeFileSync(fakePath + "-wal", "fake");
     writeFileSync(fakePath + "-shm", "fake");
@@ -858,7 +858,7 @@ describe("DB Cleanup", () => {
   });
 
   test("cleanupStaleDBs does not remove current process DB", () => {
-    const myPath = join(tmpdir(), `context-mode-${process.pid}.db`);
+    const myPath = join(tmpdir(), `context-mode-opencode-${process.pid}.db`);
     writeFileSync(myPath, "current");
 
     cleanupStaleDBs();
@@ -874,7 +874,7 @@ describe("DB Cleanup", () => {
     store.index({ content: "# Test\n\nCleanup test content.", source: "cleanup-test" });
 
     // Get the DB path by creating a known-path store
-    const knownPath = join(tmpdir(), `context-mode-cleanup-test-${Date.now()}.db`);
+    const knownPath = join(tmpdir(), `context-mode-opencode-cleanup-test-${Date.now()}.db`);
     const knownStore = new ContentStore(knownPath);
     knownStore.index({ content: "# Data\n\nSome data.", source: "known" });
 
@@ -889,7 +889,7 @@ describe("DB Cleanup", () => {
   });
 
   test("store.cleanup() is safe to call multiple times", () => {
-    const path = join(tmpdir(), `context-mode-cleanup-idempotent-${Date.now()}.db`);
+    const path = join(tmpdir(), `context-mode-opencode-cleanup-idempotent-${Date.now()}.db`);
     const store = new ContentStore(path);
     store.cleanup();
     // Second call should not throw

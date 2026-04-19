@@ -45,7 +45,7 @@ describe("Gemini CLI hooks", () => {
   beforeAll(() => {
     tempDir = mkdtempSync(join(tmpdir(), "gemini-hook-test-"));
     const hash = createHash("sha256").update(tempDir).digest("hex").slice(0, 16);
-    const sessionsDir = join(homedir(), ".gemini", "context-mode", "sessions");
+    const sessionsDir = join(homedir(), ".gemini", "context-mode-opencode", "sessions");
     dbPath = join(sessionsDir, `${hash}.db`);
     eventsPath = join(sessionsDir, `${hash}-events.md`);
   });
@@ -131,14 +131,14 @@ describe("Gemini CLI hooks", () => {
 
       expect(result.exitCode).toBe(0);
       expect(result.stdout).toContain("SessionStart");
-      expect(result.stdout).toContain("context-mode");
+      expect(result.stdout).toContain("context-mode-opencode");
 
       // GEMINI.md writing depends on GeminiCLIAdapter.writeRoutingInstructions()
       // which is a best-effort operation (silently caught if adapter not built).
       // Only assert if the file was actually created.
       const geminiMdPath = join(tempDir, "GEMINI.md");
       if (existsSync(geminiMdPath)) {
-        expect(readFileSync(geminiMdPath, "utf-8")).toContain("context-mode");
+        expect(readFileSync(geminiMdPath, "utf-8")).toContain("context-mode-opencode");
       }
     });
 

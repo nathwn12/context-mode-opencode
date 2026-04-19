@@ -7,7 +7,7 @@
  * 3. Per-tool table only shown when 2+ different tools called
  * 4. No analytics JSON in default output
  * 5. Version shown at bottom
- * 6. Name is "context-mode", not "Think in Code"
+ * 6. Name is "context-mode-opencode", not "Think in Code"
  * 7. Under 15 lines for typical sessions
  * 8. Time gained is the hero metric
  */
@@ -57,7 +57,7 @@ describe("formatReport", () => {
       const report = makeReport();
       const output = formatReport(report, "1.0.71");
 
-      expect(output).toContain("context-mode -- session");
+      expect(output).toContain("context-mode-opencode -- session");
       expect(output).toContain("No tool calls yet.");
       expect(output).toContain("Tip:");
       expect(output).toContain("v1.0.71");
@@ -81,7 +81,7 @@ describe("formatReport", () => {
       expect(output).toContain("in context");
       expect(output).toContain("no savings yet");
       // Should NOT show before/after comparison
-      expect(output).not.toContain("Without context-mode");
+      expect(output).not.toContain("Without context-mode-opencode");
     });
 
     it("does not show fake percentages for fresh session", () => {
@@ -123,8 +123,8 @@ describe("formatReport", () => {
       });
       const output = formatReport(report, "1.0.71");
 
-      expect(output).toContain("Without context-mode:");
-      expect(output).toContain("With context-mode:");
+      expect(output).toContain("Without context-mode-opencode:");
+      expect(output).toContain("With context-mode-opencode:");
       expect(output).toContain("in your conversation");
       expect(output).toContain("never entered your conversation");
       expect(output).toContain("v1.0.71");
@@ -200,7 +200,7 @@ describe("formatReport", () => {
       const output = formatReport(report);
 
       // totalKeptOut = 10000 + 5000 = 15000
-      expect(output).toContain("Without context-mode:");
+      expect(output).toContain("Without context-mode-opencode:");
       expect(output).toContain("14.6 KB"); // 15000 / 1024 = 14.6 KB
       expect(output).toContain("never entered your conversation");
     });
@@ -215,8 +215,8 @@ describe("formatReport", () => {
         },
       });
       const output = formatReport(report);
-      const withoutLine = output.split("\n").find((l) => l.includes("Without context-mode"));
-      const withLine = output.split("\n").find((l) => l.includes("With context-mode"));
+      const withoutLine = output.split("\n").find((l) => l.includes("Without context-mode-opencode"));
+      const withLine = output.split("\n").find((l) => l.includes("With context-mode-opencode"));
       expect(withoutLine).toBeDefined();
       expect(withLine).toBeDefined();
 
@@ -410,7 +410,7 @@ describe("formatReport", () => {
   });
 
   describe("output constraints", () => {
-    it("uses 'context-mode' as name, not 'Think in Code'", () => {
+    it("uses 'context-mode-opencode' as name, not 'Think in Code'", () => {
       const report = makeReport({
         savings: {
           ...makeReport().savings,
@@ -421,7 +421,7 @@ describe("formatReport", () => {
       });
       const output = formatReport(report);
 
-      expect(output).toContain("context-mode");
+      expect(output).toContain("context-mode-opencode");
       expect(output).not.toContain("Think in Code");
     });
 
@@ -530,10 +530,10 @@ describe("formatReport", () => {
       expect(output).toContain("v1.0.71");
     });
 
-    it("falls back to 'context-mode' when version not provided", () => {
+    it("falls back to 'context-mode-opencode' when version not provided", () => {
       const report = makeReport();
       const output = formatReport(report);
-      expect(output).toContain("context-mode");
+      expect(output).toContain("context-mode-opencode");
     });
   });
 

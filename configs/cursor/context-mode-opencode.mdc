@@ -1,11 +1,11 @@
 ---
-description: context-mode routing rules for context window protection
+description: context-mode-opencode routing rules for context window protection
 alwaysApply: true
 ---
 
-# context-mode
+# context-mode-opencode
 
-Raw tool output floods your context window. Use context-mode MCP tools to keep raw data in the sandbox.
+Raw tool output floods your context window. Use context-mode-opencode MCP tools to keep raw data in the sandbox.
 
 ## Think in Code — MANDATORY
 
@@ -49,4 +49,4 @@ ALWAYS use the native file editing tools to create and modify files. NEVER use `
 
 ## /clear and /compact Preservation
 
-After /clear or /compact: knowledge base and session stats are preserved. Inform the user: "context-mode knowledge base preserved. Use `ctx purge` if you want to start fresh."
+After /clear or /compact: knowledge base and session stats are preserved. Inform the user: "context-mode-opencode knowledge base preserved. Use `ctx purge` if you want to start fresh."

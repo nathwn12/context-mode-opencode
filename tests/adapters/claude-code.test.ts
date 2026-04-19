@@ -129,7 +129,7 @@ describe("ClaudeCodeAdapter", () => {
       });
       expect(result).toEqual({
         permissionDecision: "deny",
-        reason: "Blocked by context-mode hook",
+        reason: "Blocked by context-mode-opencode hook",
       });
     });
 
@@ -193,17 +193,17 @@ describe("ClaudeCodeAdapter", () => {
       );
     });
 
-    it("session dir is under ~/.claude/context-mode/sessions/", () => {
+    it("session dir is under ~/.claude/context-mode-opencode/sessions/", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir).toBe(
-        join(homedir(), ".claude", "context-mode", "sessions"),
+        join(homedir(), ".claude", "context-mode-opencode", "sessions"),
       );
     });
 
     it("creates session dirs under fake HOME instead of the contributor real HOME", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir.startsWith(fakeHome)).toBe(true);
-      expect(sessionDir.startsWith(join(realHome, ".claude", "context-mode"))).toBe(false);
+      expect(sessionDir.startsWith(join(realHome, ".claude", "context-mode-opencode"))).toBe(false);
     });
 
     it("DB path uses sha256 hash of projectDir", () => {
@@ -214,7 +214,7 @@ describe("ClaudeCodeAdapter", () => {
         .slice(0, 16);
       const dbPath = adapter.getSessionDBPath(projectDir);
       expect(dbPath).toBe(
-        join(homedir(), ".claude", "context-mode", "sessions", `${hash}.db`),
+        join(homedir(), ".claude", "context-mode-opencode", "sessions", `${hash}.db`),
       );
     });
   });
@@ -310,11 +310,11 @@ describe("ClaudeCodeAdapter", () => {
           hooks: {
             PreToolUse: [{
               matcher: "Bash",
-              hooks: [{ type: "command", command: "context-mode hook claude-code pretooluse" }],
+              hooks: [{ type: "command", command: "context-mode-opencode hook claude-code pretooluse" }],
             }],
             SessionStart: [{
               matcher: "",
-              hooks: [{ type: "command", command: "context-mode hook claude-code sessionstart" }],
+              hooks: [{ type: "command", command: "context-mode-opencode hook claude-code sessionstart" }],
             }],
           },
         }),
@@ -375,7 +375,7 @@ describe("ClaudeCodeAdapter", () => {
       expect(changes).toContain("Removed 1 stale PreToolUse hook(s)");
     });
 
-    it("preserves non-context-mode hooks from other plugins", () => {
+    it("preserves non-context-mode-opencode hooks from other plugins", () => {
       const staleRoot = "/tmp/non-existent-old-version-dir";
       const otherPluginHook = {
         matcher: "Bash",
@@ -400,7 +400,7 @@ describe("ClaudeCodeAdapter", () => {
 
       const settings = JSON.parse(readFileSync(join(tempDir, "settings.json"), "utf-8"));
       const preToolUseEntries = settings.hooks.PreToolUse;
-      // Should have the other plugin's hook + the fresh context-mode hook
+      // Should have the other plugin's hook + the fresh context-mode-opencode hook
       expect(preToolUseEntries.length).toBe(2);
       expect(preToolUseEntries[0]).toEqual(otherPluginHook);
     });
@@ -435,7 +435,7 @@ describe("ClaudeCodeAdapter", () => {
           hooks: {
             SessionStart: [{
               matcher: "",
-              hooks: [{ type: "command", command: "context-mode hook claude-code sessionstart" }],
+              hooks: [{ type: "command", command: "context-mode-opencode hook claude-code sessionstart" }],
             }],
           },
         }),
@@ -561,7 +561,7 @@ describe("ClaudeCodeAdapter", () => {
       expect(command).toContain("sessionstart.mjs");
     });
 
-    it("removes existing valid context-mode hooks from settings.json when plugin hooks.json covers all required hooks", () => {
+    it("removes existing valid context-mode-opencode hooks from settings.json when plugin hooks.json covers all required hooks", () => {
       // Plugin hooks.json covers all required hooks (pluginRoot already has scripts from beforeEach)
       writeFileSync(
         join(pluginRoot, "hooks", "hooks.json"),
@@ -573,7 +573,7 @@ describe("ClaudeCodeAdapter", () => {
         }),
       );
 
-      // settings.json has VALID (non-stale) context-mode hooks — paths exist, so they won't be
+      // settings.json has VALID (non-stale) context-mode-opencode hooks — paths exist, so they won't be
       // removed by the stale-path filter. But they duplicate what hooks.json already registers,
       // causing two concurrent hook processes for every tool call (the root cause of #NNN).
       writeFileSync(

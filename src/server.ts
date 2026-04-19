@@ -44,16 +44,16 @@ const VERSION: string = (() => {
 
 // Prevent silent server death from unhandled async errors
 process.on("unhandledRejection", (err) => {
-  process.stderr.write(`[context-mode] unhandledRejection: ${err}\n`);
+  process.stderr.write(`[context-mode-opencode] unhandledRejection: ${err}\n`);
 });
 process.on("uncaughtException", (err) => {
-  process.stderr.write(`[context-mode] uncaughtException: ${err?.message ?? err}\n`);
+  process.stderr.write(`[context-mode-opencode] uncaughtException: ${err?.message ?? err}\n`);
 });
 
 const runtimes = detectRuntimes();
 const available = getAvailableLanguages(runtimes);
 const server = new McpServer({
-  name: "context-mode",
+  name: "context-mode-opencode",
   version: VERSION,
 });
 
@@ -88,7 +88,7 @@ let _store: ContentStore | null = null;
 
 /**
  * Auto-index session events files written by SessionStart hook.
- * Scans ~/.claude/context-mode/sessions/ for *-events.md files.
+ * Scans ~/.claude/context-mode-opencode/sessions/ for *-events.md files.
  * CLAUDE_PROJECT_DIR is NOT available to MCP servers — only to hooks —
  * so we glob-scan instead of computing a specific hash.
  * Files are consumed (deleted) after indexing to prevent double-indexing.
@@ -118,11 +118,11 @@ let _detectedAdapter: HookAdapter | null = null;
 
 /**
  * Get the platform-specific sessions directory from the detected adapter.
- * Falls back to ~/.claude/context-mode/sessions/ before adapter detection.
+ * Falls back to ~/.claude/context-mode-opencode/sessions/ before adapter detection.
  */
 function getSessionDir(): string {
   if (_detectedAdapter) return _detectedAdapter.getSessionDir();
-  const dir = join(homedir(), ".claude", "context-mode", "sessions");
+  const dir = join(homedir(), ".claude", "context-mode-opencode", "sessions");
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -164,9 +164,9 @@ function hashProjectDir(): string {
  * Derives content dir from the adapter's session dir so each platform
  * has its own isolated FTS5 DB — no cross-platform data sharing.
  *
- * Layout: ~/<configDir>/context-mode/content/<hash>.db
- *   e.g.  ~/.claude/context-mode/content/87c28c41ddb64d38.db
- *         ~/.cursor/context-mode/content/87c28c41ddb64d38.db
+ * Layout: ~/<configDir>/context-mode-opencode/content/<hash>.db
+ *   e.g.  ~/.claude/context-mode-opencode/content/87c28c41ddb64d38.db
+ *         ~/.cursor/context-mode-opencode/content/87c28c41ddb64d38.db
  */
 function getStorePath(): string {
   const hash = hashProjectDir();
@@ -190,7 +190,7 @@ function getStore(): ContentStore {
       cleanupStaleContentDBs(contentDir, 14);
       _store.cleanupStaleSources(14);
       // Also clean legacy shared dir from before platform isolation
-      const legacyDir = join(homedir(), ".context-mode", "content");
+      const legacyDir = join(homedir(), ".context-mode-opencode", "content");
       if (existsSync(legacyDir)) cleanupStaleContentDBs(legacyDir, 0);
     } catch { /* best-effort */ }
 
@@ -233,7 +233,7 @@ const VERSION_SILENT_MS = 60 * 60 * 1000; // 1 hour
 async function fetchLatestVersion(): Promise<string> {
   return new Promise((res) => {
     const req = httpsRequest(
-      "https://registry.npmjs.org/context-mode/latest",
+      "https://registry.npmjs.org/@nathwn12%2Fcontext-mode-opencode/latest",
       { headers: { Connection: "close" } },
       (resp) => {
         let raw = "";
@@ -257,7 +257,7 @@ function getUpgradeHint(): string {
   if (name === "Claude Code") return "/ctx-upgrade";
   if (name === "OpenClaw") return "npm run install:openclaw";
   if (name === "Pi") return "npm run build";
-  return "npm update -g context-mode";
+  return "npm update -g @nathwn12/context-mode-opencode";
 }
 
 function isOutdated(): boolean {
@@ -283,7 +283,7 @@ function trackResponse(toolName: string, response: ToolResult): ToolResult {
   if (shouldShowVersionWarning() && response.content.length > 0) {
     const hint = getUpgradeHint();
     response.content[0].text =
-      `⚠️ context-mode v${VERSION} outdated → v${_latestVersion} available. Upgrade: ${hint}\n\n` +
+      `⚠️ context-mode-opencode v${VERSION} outdated → v${_latestVersion} available. Upgrade: ${hint}\n\n` +
       response.content[0].text;
   }
 
@@ -1813,12 +1813,12 @@ server.registerTool(
   {
     title: "Run Diagnostics",
     description:
-      "Diagnose context-mode installation. Runs all checks server-side and " +
+      "Diagnose context-mode-opencode installation. Runs all checks server-side and " +
       "returns results as a markdown checklist. No CLI execution needed.",
     inputSchema: z.object({}),
   },
   async () => {
-    const lines: string[] = ["## context-mode doctor", ""];
+    const lines: string[] = ["## context-mode-opencode doctor", ""];
     // __pkg_dir is build/ for tsc, plugin root for bundle — resolve to plugin root
     const pluginRoot = existsSync(resolve(__pkg_dir, "package.json")) ? __pkg_dir : dirname(__pkg_dir);
 
@@ -1896,7 +1896,7 @@ server.registerTool(
   {
     title: "Upgrade Plugin",
     description:
-      "Upgrade context-mode to the latest version. Returns a shell command to execute. " +
+      "Upgrade context-mode-opencode to the latest version. Returns a shell command to execute. " +
       "You MUST run the returned command using your shell tool (Bash, shell_execute, " +
       "run_in_terminal, etc.) and display the output as a checklist. " +
       "Tell the user to restart their session after upgrade.",
@@ -1917,7 +1917,7 @@ server.registerTool(
     } else {
       // Inline fallback: neither CLI file exists (e.g. marketplace installs).
       // Generate a self-contained node -e script that performs the upgrade.
-      const repoUrl = "https://github.com/mksglu/context-mode.git";
+      const repoUrl = "https://github.com/nathwn12/context-mode-opencode.git";
       const copyDirs = ["build", "hooks", "skills", "scripts", ".claude-plugin"];
       const copyFiles = ["start.mjs", "server.bundle.mjs", "cli.bundle.mjs", "package.json"];
 
@@ -1948,7 +1948,7 @@ server.registerTool(
         `console.log("- [x] Copied build artifacts");`,
         `execFileSync("npm",["install","--production"],{cwd:P,stdio:"inherit"});`,
         `console.log("- [x] Installed production dependencies");`,
-        `console.log("## context-mode upgrade complete");`,
+        `console.log("## context-mode-opencode upgrade complete");`,
         `}catch(e){`,
         `console.error("- [ ] Upgrade failed:",e.message);`,
         `process.exit(1);`,
@@ -1977,7 +1977,7 @@ server.registerTool(
       "- `[x]` for success, `[ ]` for failure",
       "- Example format:",
       "  ```",
-      "  ## context-mode upgrade",
+      "  ## context-mode-opencode upgrade",
       "  - [x] Pulled latest from GitHub",
       "  - [x] Built and installed v0.9.24",
       "  - [x] npm global updated",
@@ -2034,9 +2034,9 @@ server.registerTool(
       if (found) deleted.push("knowledge base (FTS5)");
     }
 
-    // 2. Wipe legacy shared content DB (~/.context-mode/content/<hash>.db)
+    // 2. Wipe legacy shared content DB (~/.context-mode-opencode/content/<hash>.db)
     try {
-      const legacyPath = join(homedir(), ".context-mode", "content", `${hashProjectDir()}.db`);
+      const legacyPath = join(homedir(), ".context-mode-opencode", "content", `${hashProjectDir()}.db`);
       for (const suffix of ["", "-wal", "-shm"]) {
         try { unlinkSync(legacyPath + suffix); } catch { /* ignore */ }
       }
@@ -2089,7 +2089,7 @@ server.registerTool(
   {
     title: "Open Insight Dashboard",
     description:
-      "Opens the context-mode Insight dashboard in the browser. " +
+      "Opens the context-mode-opencode Insight dashboard in the browser. " +
       "Shows personal analytics: session activity, tool usage, error rate, " +
       "parallel work patterns, project focus, and actionable insights. " +
       "First run installs dependencies (~30s). Subsequent runs open instantly.",
@@ -2109,7 +2109,7 @@ server.registerTool(
     // Verify source exists
     if (!existsSync(join(insightSource, "server.mjs"))) {
       return trackResponse("ctx_insight", {
-        content: [{ type: "text" as const, text: "Error: Insight source not found in plugin. Try upgrading context-mode." }],
+        content: [{ type: "text" as const, text: "Error: Insight source not found in plugin. Try upgrading context-mode-opencode." }],
       });
     }
 
@@ -2270,7 +2270,7 @@ async function main() {
   }
 
   // MCP readiness sentinel path (#230)
-  const mcpSentinel = join(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+  const mcpSentinel = join(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 
   // Clean up own DB + backgrounded processes + preload script on shutdown
   const shutdown = () => {

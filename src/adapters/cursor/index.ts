@@ -143,7 +143,7 @@ export class CursorAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         permission: "deny",
-        user_message: response.reason ?? "Blocked by context-mode hook",
+        user_message: response.reason ?? "Blocked by context-mode-opencode hook",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -210,7 +210,7 @@ export class CursorAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".cursor", "context-mode", "sessions");
+    const dir = join(homedir(), ".cursor", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -306,7 +306,7 @@ export class CursorAdapter implements HookAdapter {
         check: "Native hook config",
         status: "fail",
         message: "No readable native Cursor hook config found in .cursor/hooks.json or ~/.cursor/hooks.json",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
     } else {
       const hooks = loaded.config.hooks ?? {};
@@ -327,7 +327,7 @@ export class CursorAdapter implements HookAdapter {
           message: hasHook
             ? `${hookType} hook configured`
             : `${hookType} hook not configured in ${loaded.path}`,
-          fix: hasHook ? undefined : "context-mode upgrade",
+          fix: hasHook ? undefined : "context-mode-opencode upgrade",
         });
       }
 
@@ -377,17 +377,17 @@ export class CursorAdapter implements HookAdapter {
         if (!servers) continue;
 
         const hasContextMode = Object.entries(servers).some(([name, value]) => {
-          if (name.includes("context-mode")) return true;
+          if (name.includes("context-mode-opencode")) return true;
           if (!value || typeof value !== "object") return false;
           const server = value as Record<string, unknown>;
-          return server.command === "context-mode";
+          return server.command === "context-mode-opencode";
         });
 
         if (hasContextMode) {
           return {
             check: "MCP registration",
             status: "pass",
-            message: `context-mode found in ${configPath}`,
+            message: `context-mode-opencode found in ${configPath}`,
           };
         }
       } catch {
@@ -398,7 +398,7 @@ export class CursorAdapter implements HookAdapter {
     return {
       check: "MCP registration",
       status: "warn",
-      message: "Could not find context-mode in .cursor/mcp.json or ~/.cursor/mcp.json",
+      message: "Could not find context-mode-opencode in .cursor/mcp.json or ~/.cursor/mcp.json",
     };
   }
 

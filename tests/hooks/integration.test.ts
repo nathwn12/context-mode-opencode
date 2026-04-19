@@ -32,10 +32,10 @@ const HOOK_PATH = join(__dirname, "..", "..", "hooks", "pretooluse.mjs");
 // Subprocess hooks use process.ppid (= this test's pid) + VITEST_WORKER_ID.
 const _wid = process.env.VITEST_WORKER_ID;
 const _guidanceSuffix = _wid ? `${process.pid}-w${_wid}` : String(process.pid);
-const _guidanceDir = resolve(tmpdir(), `context-mode-guidance-${_guidanceSuffix}`);
+const _guidanceDir = resolve(tmpdir(), `context-mode-opencode-guidance-${_guidanceSuffix}`);
 
 // MCP readiness sentinel — subprocess hooks check process.ppid (= this test's pid)
-const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.pid}`);
+const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.pid}`);
 
 beforeEach(() => {
   try { rmSync(_guidanceDir, { recursive: true, force: true }); } catch {}
@@ -122,7 +122,7 @@ describe("Bash: Redirected Commands", () => {
       tool_name: "Bash",
       tool_input: { command: "curl -s http://example.com" },
     });
-    assertRedirect(result, "context-mode");
+    assertRedirect(result, "context-mode-opencode");
   });
 
   test("Bash + wget: redirected to echo via updatedInput", () => {
@@ -130,7 +130,7 @@ describe("Bash: Redirected Commands", () => {
       tool_name: "Bash",
       tool_input: { command: "wget http://example.com/file.tar.gz" },
     });
-    assertRedirect(result, "context-mode");
+    assertRedirect(result, "context-mode-opencode");
   });
 
   test("Bash + node -e with inline HTTP call: redirected to echo", () => {
@@ -138,7 +138,7 @@ describe("Bash: Redirected Commands", () => {
       tool_name: "Bash",
       tool_input: { command: `node -e "fetch('http://api.example.com/data')"` },
     });
-    assertRedirect(result, "context-mode");
+    assertRedirect(result, "context-mode-opencode");
   });
 
   test("Bash + ./gradlew build: redirected to execute sandbox (Issue #38)", () => {
@@ -246,8 +246,8 @@ describe("Read", () => {
     assertHookSpecificOutput(result, "additionalContext");
     const parsed = JSON.parse(result.stdout);
     assert.ok(
-      parsed.hookSpecificOutput.additionalContext.includes("context-mode"),
-      "Expected nudge to mention context-mode",
+      parsed.hookSpecificOutput.additionalContext.includes("context-mode-opencode"),
+      "Expected nudge to mention context-mode-opencode",
     );
     assert.ok(
       parsed.hookSpecificOutput.additionalContext.includes("<context_guidance>"),
@@ -265,8 +265,8 @@ describe("Grep", () => {
     assertHookSpecificOutput(result, "additionalContext");
     const parsed = JSON.parse(result.stdout);
     assert.ok(
-      parsed.hookSpecificOutput.additionalContext.includes("context-mode"),
-      "Expected nudge to mention context-mode",
+      parsed.hookSpecificOutput.additionalContext.includes("context-mode-opencode"),
+      "Expected nudge to mention context-mode-opencode",
     );
     assert.ok(
       parsed.hookSpecificOutput.additionalContext.includes("<context_guidance>"),
@@ -363,7 +363,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP execute + shell + sudo denied", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_execute",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute",
         tool_input: { language: "shell", code: "sudo rm -rf /" },
       },
       secEnv,
@@ -376,7 +376,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP execute + python (non-shell) passthrough", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_execute",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute",
         tool_input: { language: "python", code: "print('hello')" },
       },
       secEnv,
@@ -388,7 +388,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP execute_file + .env path denied", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
         tool_input: { path: ".env", language: "shell", code: "cat" },
       },
       secEnv,
@@ -402,7 +402,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP execute_file + safe path passthrough", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
         tool_input: { path: "src/app.ts", language: "javascript", code: "console.log('ok')" },
       },
       secEnv,
@@ -414,7 +414,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP execute_file + safe path but sudo in shell code denied", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
         tool_input: { path: "src/app.sh", language: "shell", code: "sudo rm -rf /" },
       },
       secEnv,
@@ -427,7 +427,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP batch_execute with sudo in one command denied", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
         tool_input: {
           commands: [
             { label: "list", command: "ls -la" },
@@ -445,7 +445,7 @@ describe("Security Policy Enforcement", () => {
   test("Security: MCP batch_execute with all allowed commands passthrough", () => {
     const result = runHook(
       {
-        tool_name: "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+        tool_name: "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
         tool_input: {
           commands: [
             { label: "list", command: "ls -la" },
@@ -463,11 +463,11 @@ describe("Security Policy Enforcement", () => {
 describe("Plugin Tool Name Format in ROUTING_BLOCK", () => {
   // When installed via Claude Code plugin marketplace, tool names follow:
   //   mcp__plugin_<plugin-id>_<server-name>__<tool-name>
-  // For context-mode: mcp__plugin_context-mode_context-mode__<tool-name>
-  // The short form mcp__context-mode__* only works for direct MCP registration.
+  // For context-mode-opencode: mcp__plugin_context-mode-opencode_context-mode-opencode__<tool-name>
+  // The short form mcp__context-mode-opencode__* only works for direct MCP registration.
 
-  const PLUGIN_PREFIX = "mcp__plugin_context-mode_context-mode__";
-  const SHORT_PREFIX = "mcp__context-mode__";
+  const PLUGIN_PREFIX = "mcp__plugin_context-mode-opencode_context-mode-opencode__";
+  const SHORT_PREFIX = "mcp__context-mode-opencode__";
 
   test("Agent routing block uses plugin-format tool names", () => {
     const result = runHook({ tool_name: "Agent", tool_input: { prompt: "Do something." } });
@@ -527,7 +527,7 @@ describe("Skill Commands", () => {
     assert.ok(existsSync(skillMd), "skills/ctx-doctor/SKILL.md must exist");
     const content = readFileSync(skillMd, "utf-8");
     assert.ok(content.includes("name: ctx-doctor"), "SKILL.md name must be ctx-doctor");
-    assert.ok(content.includes("/context-mode:ctx-doctor"), "Trigger must reference ctx-doctor");
+    assert.ok(content.includes("/context-mode-opencode:ctx-doctor"), "Trigger must reference ctx-doctor");
   });
 
   test("ctx-upgrade skill directory exists with valid SKILL.md", () => {
@@ -535,7 +535,7 @@ describe("Skill Commands", () => {
     assert.ok(existsSync(skillMd), "skills/ctx-upgrade/SKILL.md must exist");
     const content = readFileSync(skillMd, "utf-8");
     assert.ok(content.includes("name: ctx-upgrade"), "SKILL.md name must be ctx-upgrade");
-    assert.ok(content.includes("/context-mode:ctx-upgrade"), "Trigger must reference ctx-upgrade");
+    assert.ok(content.includes("/context-mode-opencode:ctx-upgrade"), "Trigger must reference ctx-upgrade");
   });
 
   test("ctx-stats skill directory exists with valid SKILL.md", () => {
@@ -543,7 +543,7 @@ describe("Skill Commands", () => {
     assert.ok(existsSync(skillMd), "skills/ctx-stats/SKILL.md must exist");
     const content = readFileSync(skillMd, "utf-8");
     assert.ok(content.includes("name: ctx-stats"), "SKILL.md name must be ctx-stats");
-    assert.ok(content.includes("/context-mode:ctx-stats"), "Trigger must reference ctx-stats");
+    assert.ok(content.includes("/context-mode-opencode:ctx-stats"), "Trigger must reference ctx-stats");
   });
 
   test("old skill directories (doctor, upgrade, stats) no longer exist", () => {
@@ -570,6 +570,6 @@ describe("UTF-8 BOM handling (core/stdin.mjs path)", () => {
       tool_name: "Bash",
       tool_input: { command: "curl -s http://example.com" },
     }, undefined, { bom: true });
-    assertRedirect(result, "context-mode");
+    assertRedirect(result, "context-mode-opencode");
   });
 });

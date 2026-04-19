@@ -11,7 +11,7 @@
  *   - PreCompact: stdout on exit 0
  *   - Session ID: transcript_path UUID > session_id > CLAUDE_SESSION_ID > ppid
  *   - Config: ~/.claude/settings.json
- *   - Session dir: ~/.claude/context-mode/sessions/
+ *   - Session dir: ~/.claude/context-mode-opencode/sessions/
  */
 
 import { createHash } from "node:crypto";
@@ -156,7 +156,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         permissionDecision: "deny",
-        reason: response.reason ?? "Blocked by context-mode hook",
+        reason: response.reason ?? "Blocked by context-mode-opencode hook",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -202,7 +202,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".claude", "context-mode", "sessions");
+    const dir = join(homedir(), ".claude", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -231,9 +231,9 @@ export class ClaudeCodeAdapter implements HookAdapter {
       "Read",
       "Grep",
       "Task",
-      "mcp__plugin_context-mode_context-mode__ctx_execute",
-      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
-      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
+      "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
     ];
 
     return {
@@ -316,7 +316,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
         check: "PreToolUse hook",
         status: "fail",
         message: "Could not read ~/.claude/settings.json",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
       return results;
     }
@@ -335,7 +335,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
       message: hasPreToolUse
         ? "PreToolUse hook configured"
         : "No PreToolUse hooks found",
-      fix: hasPreToolUse ? undefined : "context-mode upgrade",
+      fix: hasPreToolUse ? undefined : "context-mode-opencode upgrade",
     });
 
     // Check SessionStart (settings.json first, then plugin hooks.json fallback)
@@ -346,7 +346,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
       message: hasSessionStart
         ? "SessionStart hook configured"
         : "No SessionStart hooks found",
-      fix: hasSessionStart ? undefined : "context-mode upgrade",
+      fix: hasSessionStart ? undefined : "context-mode-opencode upgrade",
     });
 
     return results;
@@ -419,7 +419,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
     }
 
     const pluginKey = Object.keys(enabledPlugins).find((k) =>
-      k.startsWith("context-mode"),
+      k.startsWith("context-mode-opencode"),
     );
 
     if (pluginKey && enabledPlugins[pluginKey]) {
@@ -433,7 +433,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
     return {
       check: "Plugin registration",
       status: "warn",
-      message: "context-mode not in enabledPlugins (might be using standalone MCP mode)",
+      message: "context-mode-opencode not in enabledPlugins (might be using standalone MCP mode)",
     };
   }
 
@@ -449,7 +449,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
       const ipRaw = JSON.parse(readFileSync(ipPath, "utf-8"));
       const plugins = ipRaw.plugins ?? {};
       for (const [key, entries] of Object.entries(plugins)) {
-        if (!key.toLowerCase().includes("context-mode")) continue;
+        if (!key.toLowerCase().includes("context-mode-opencode")) continue;
         const arr = entries as Array<Record<string, unknown>>;
         if (arr.length > 0 && typeof arr[0].version === "string") {
           return arr[0].version;
@@ -469,8 +469,8 @@ export class ClaudeCodeAdapter implements HookAdapter {
         base,
         "plugins",
         "cache",
-        "context-mode",
-        "context-mode",
+        "context-mode-opencode",
+        "context-mode-opencode",
       );
       try {
         const entries = readdirSync(cacheDir);
@@ -500,7 +500,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
     const hooks = (settings.hooks ?? {}) as Record<string, unknown>;
     const changes: string[] = [];
 
-    // Remove stale context-mode hook entries across ALL hook types (fixes #187).
+    // Remove stale context-mode-opencode hook entries across ALL hook types (fixes #187).
     // After a marketplace auto-update or version change, settings.json may contain
     // hardcoded paths pointing to deleted version directories (e.g., .../0.9.17/hooks/...).
     // Clean these before registering fresh entries to prevent SessionStart errors.
@@ -510,7 +510,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
 
       const filtered = entries.filter((entry: Record<string, unknown>) => {
         const typedEntry = entry as { hooks?: Array<{ command?: string }> };
-        if (!isAnyContextModeHook(typedEntry)) return true; // preserve non-context-mode hooks
+        if (!isAnyContextModeHook(typedEntry)) return true; // preserve non-context-mode-opencode hooks
 
         // Keep CLI dispatcher entries (path-independent, never stale)
         const commands = typedEntry.hooks ?? [];
@@ -543,7 +543,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
         this.checkHookType(undefined, pluginHooks, ht),
       );
       if (allCovered) {
-        // Remove ALL existing context-mode hooks from settings.json — hooks.json
+        // Remove ALL existing context-mode-opencode hooks from settings.json — hooks.json
         // is the source of truth. Keeping them causes duplicate concurrent hook
         // processes (one from settings.json, one from hooks.json), which triggers
         // "non-blocking hook error" warnings on every tool call.
@@ -664,7 +664,7 @@ export class ClaudeCodeAdapter implements HookAdapter {
       );
       const ipRaw = JSON.parse(readFileSync(ipPath, "utf-8"));
       for (const [key, entries] of Object.entries(ipRaw.plugins || {})) {
-        if (!key.toLowerCase().includes("context-mode")) continue;
+        if (!key.toLowerCase().includes("context-mode-opencode")) continue;
         for (const entry of entries as Array<Record<string, unknown>>) {
           entry.installPath = pluginRoot;
           entry.version = version;

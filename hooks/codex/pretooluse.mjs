@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import "../suppress-stderr.mjs";
 /**
- * Codex CLI preToolUse hook for context-mode.
+ * Codex CLI preToolUse hook for context-mode-opencode.
  *
  * Codex PreToolUse supports deny only — additionalContext, updatedInput,
  * ask, and allow are rejected by codex-rs output_parser.rs.

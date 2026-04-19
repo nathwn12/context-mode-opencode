@@ -46,10 +46,10 @@ describe("Cursor hooks", () => {
   beforeAll(() => {
     tempDir = mkdtempSync(join(tmpdir(), "cursor-hook-test-"));
     const hash = createHash("sha256").update(tempDir).digest("hex").slice(0, 16);
-    const sessionsDir = join(homedir(), ".cursor", "context-mode", "sessions");
+    const sessionsDir = join(homedir(), ".cursor", "context-mode-opencode", "sessions");
     dbPath = join(sessionsDir, `${hash}.db`);
     eventsPath = join(sessionsDir, `${hash}-events.md`);
-    realDbPath = join(realHome, ".cursor", "context-mode", "sessions", `${hash}.db`);
+    realDbPath = join(realHome, ".cursor", "context-mode-opencode", "sessions", `${hash}.db`);
   });
 
   afterAll(() => {
@@ -59,7 +59,7 @@ describe("Cursor hooks", () => {
   });
 
   // MCP readiness sentinel — subprocess hooks check process.ppid (= this test's pid)
-  const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.pid}`);
+  const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.pid}`);
   beforeEach(() => { writeFileSync(mcpSentinel, String(process.pid)); });
   afterEach(() => { try { unlinkSync(mcpSentinel); } catch {} });
 
@@ -198,7 +198,7 @@ describe("Cursor hooks", () => {
 
       expect(result.exitCode).toBe(0);
       const payload = JSON.parse(result.stdout) as Record<string, unknown>;
-      expect(String(payload.additional_context)).toContain("context-mode");
+      expect(String(payload.additional_context)).toContain("context-mode-opencode");
     });
 
     test("accepts live Cursor payloads that only provide workspace_roots", () => {
@@ -218,7 +218,7 @@ describe("Cursor hooks", () => {
 
       expect(result.exitCode).toBe(0);
       const payload = JSON.parse(result.stdout) as Record<string, unknown>;
-      expect(String(payload.additional_context)).toContain("context-mode");
+      expect(String(payload.additional_context)).toContain("context-mode-opencode");
     });
   });
 
@@ -342,7 +342,7 @@ describe("Cursor hooks", () => {
 
       expect(result.exitCode).toBe(0);
       const payload = JSON.parse(result.stdout) as Record<string, unknown>;
-      expect(String(payload.additional_context)).toContain("context-mode");
+      expect(String(payload.additional_context)).toContain("context-mode-opencode");
     });
   });
 });

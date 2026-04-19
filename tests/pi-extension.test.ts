@@ -8,7 +8,7 @@ import "./setup-home";
  * and invoke them with simulated events.
  *
  * Test slices:
- *   1. Tool name mapping (Pi names → context-mode canonical names)
+ *   1. Tool name mapping (Pi names → context-mode-opencode canonical names)
  *   2. Event extraction from tool_result
  *   3. PreToolUse routing enforcement (tool_call)
  *   4. Session lifecycle
@@ -107,7 +107,7 @@ describe("Pi Extension", () => {
   // ═══════════════════════════════════════════════════════════
 
   describe("Slice 1: Tool name mapping", () => {
-    it("maps Pi 'bash' to context-mode 'Bash'", async () => {
+    it("maps Pi 'bash' to context-mode-opencode 'Bash'", async () => {
       await registerPiExtension(api);
 
       // Trigger a tool_result event with Pi's "bash" tool name
@@ -122,7 +122,7 @@ describe("Pi Extension", () => {
       // extractEvents recognized "Bash" and produced git events
     });
 
-    it("maps Pi 'read' to context-mode 'Read'", async () => {
+    it("maps Pi 'read' to context-mode-opencode 'Read'", async () => {
       await registerPiExtension(api);
 
       await api._trigger("tool_result", {

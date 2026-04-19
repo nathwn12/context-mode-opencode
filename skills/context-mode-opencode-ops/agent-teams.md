@@ -102,7 +102,7 @@ Spawn the **pair** (Architect + Staff Engineer) for each affected platform:
 When creating agents, use this structure in the Agent tool prompt:
 
 ```
-You are the {Platform/Domain} {Role} for context-mode.
+You are the {Platform/Domain} {Role} for context-mode-opencode.
 
 ## Context
 - Issue/PR: #{number} — {title}
@@ -145,7 +145,7 @@ Report back with ONE of:
 - FINDINGS: {investigation results}
 
 ## Tools Available
-- Use context-mode MCP tools (ctx_execute, ctx_batch_execute) for large output
+- Use context-mode-opencode MCP tools (ctx_execute, ctx_batch_execute) for large output
 - Use Grep/Glob for targeted searches
 - Use Read only for files you need to Edit
 - Run tests with: npx vitest run {test file}

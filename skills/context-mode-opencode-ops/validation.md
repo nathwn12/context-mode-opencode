@@ -49,7 +49,7 @@ When a claim cannot be verified, comment on the issue BEFORE implementing:
 ```markdown
 We want to address this but need to verify the underlying behavior first.
 Could you provide:
-1. Output from: `npx context-mode doctor` (or run `ctx-debug.sh`)
+1. Output from: `npx context-mode-opencode doctor` (or run `ctx-debug.sh`)
 2. Exact reproduction steps
 3. Platform version, adapter, and OS
 
@@ -79,7 +79,7 @@ LLMs frequently hallucinate environment variables. Every ENV var in an issue or 
 For EACH environment variable mentioned:
 
 ```
-Step 1: GREP — Does it exist in context-mode source?
+Step 1: GREP — Does it exist in context-mode-opencode source?
   → rg "{ENV_VAR}" src/
   → If found: VERIFIED (we already use it)
   → If not found: continue to Step 2
@@ -213,10 +213,10 @@ rg 'path\s*=.*"/' src/ --type ts
 
 ```javascript
 // WRONG — hardcoded /tmp
-const tmpFile = "/tmp/context-mode-output.txt";
+const tmpFile = "/tmp/context-mode-opencode-output.txt";
 
 // CORRECT — uses OS temp dir
-const tmpFile = path.join(os.tmpdir(), "context-mode-output.txt");
+const tmpFile = path.join(os.tmpdir(), "context-mode-opencode-output.txt");
 ```
 
 Grep for hardcoded temp:

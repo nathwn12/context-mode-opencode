@@ -33,7 +33,7 @@ export type HookType = (typeof HOOK_TYPES)[keyof typeof HOOK_TYPES];
 // ─────────────────────────────────────────────────────────
 
 /**
- * Required hooks that must be active for context-mode to function.
+ * Required hooks that must be active for context-mode-opencode to function.
  * OpenCode uses TS plugin paradigm — no scripts, just event hooks.
  */
 export const REQUIRED_HOOKS: HookType[] = [
@@ -50,9 +50,9 @@ export const OPTIONAL_HOOKS: HookType[] = [
 ];
 
 /**
- * Check if an OpenCode plugin entry is the context-mode plugin.
+ * Check if an OpenCode plugin entry is the context-mode-opencode plugin.
  * OpenCode plugins are registered as strings in the plugin array.
  */
 export function isContextModePlugin(pluginEntry: string): boolean {
-  return pluginEntry.includes("context-mode");
+  return pluginEntry.includes("context-mode-opencode");
 }

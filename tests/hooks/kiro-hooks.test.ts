@@ -51,7 +51,7 @@ describe("Kiro hooks", () => {
   beforeAll(() => {
     tempDir = mkdtempSync(join(tmpdir(), "kiro-hook-test-"));
     const hash = createHash("sha256").update(tempDir).digest("hex").slice(0, 16);
-    const sessionsDir = join(homedir(), ".kiro", "context-mode", "sessions");
+    const sessionsDir = join(homedir(), ".kiro", "context-mode-opencode", "sessions");
     dbPath = join(sessionsDir, `${hash}.db`);
   });
 
@@ -61,7 +61,7 @@ describe("Kiro hooks", () => {
   });
 
   // MCP readiness sentinel — subprocess hooks check process.ppid (= this test's pid)
-  const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.pid}`);
+  const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.pid}`);
   beforeEach(() => { writeFileSync(mcpSentinel, String(process.pid)); });
   afterEach(() => { try { unlinkSync(mcpSentinel); } catch {} });
 

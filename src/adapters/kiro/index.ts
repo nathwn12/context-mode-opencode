@@ -9,7 +9,7 @@
  *   - MCP: full support via mcpServers in mcp.json
  *   - Hook exit codes: 0=allow, 2=block
  *   - Cannot modify tool input (exit codes only)
- *   - Session dir: ~/.kiro/context-mode/sessions/
+ *   - Session dir: ~/.kiro/context-mode-opencode/sessions/
  *   - Routing file: KIRO.md
  *
  * Sources:
@@ -126,7 +126,7 @@ export class KiroAdapter implements HookAdapter {
     // The actual hook script handles exit codes directly.
     switch (response.decision) {
       case "deny":
-        return { exitCode: 2, stderr: response.reason ?? "Blocked by context-mode" };
+        return { exitCode: 2, stderr: response.reason ?? "Blocked by context-mode-opencode" };
       case "context":
         return { exitCode: 0, stdout: response.additionalContext ?? "" };
       default:
@@ -153,7 +153,7 @@ export class KiroAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".kiro", "context-mode", "sessions");
+    const dir = join(homedir(), ".kiro", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -224,9 +224,9 @@ export class KiroAdapter implements HookAdapter {
           check: `Hook: ${hookType}`,
           status: found ? "pass" : "fail",
           message: found
-            ? `context-mode ${hookType} hook found`
-            : `context-mode ${hookType} hook not configured`,
-          ...(found ? {} : { fix: `Run: context-mode upgrade` }),
+            ? `context-mode-opencode ${hookType} hook found`
+            : `context-mode-opencode ${hookType} hook not configured`,
+          ...(found ? {} : { fix: `Run: context-mode-opencode upgrade` }),
         });
       }
 
@@ -240,8 +240,8 @@ export class KiroAdapter implements HookAdapter {
           check: `Hook: ${hookType}`,
           status: found ? "pass" : "warn",
           message: found
-            ? `context-mode ${hookType} hook found`
-            : `context-mode ${hookType} hook not configured (optional)`,
+            ? `context-mode-opencode ${hookType} hook found`
+            : `context-mode-opencode ${hookType} hook not configured (optional)`,
         });
       }
     } catch {
@@ -249,7 +249,7 @@ export class KiroAdapter implements HookAdapter {
         check: "Hook configuration",
         status: "warn",
         message: "Could not read ~/.kiro/agents/default.json",
-        fix: "Run: context-mode upgrade",
+        fix: "Run: context-mode-opencode upgrade",
       });
     }
 
@@ -262,19 +262,19 @@ export class KiroAdapter implements HookAdapter {
       const config = JSON.parse(raw);
       const mcpServers = config?.mcpServers ?? {};
 
-      if ("context-mode" in mcpServers) {
+      if ("context-mode-opencode" in mcpServers) {
         return {
           check: "MCP registration",
           status: "pass",
-          message: "context-mode found in mcpServers config",
+          message: "context-mode-opencode found in mcpServers config",
         };
       }
 
       return {
         check: "MCP registration",
         status: "fail",
-        message: "context-mode not found in mcpServers",
-        fix: "Add context-mode to mcpServers in ~/.kiro/settings/mcp.json",
+        message: "context-mode-opencode not found in mcpServers",
+        fix: "Add context-mode-opencode to mcpServers in ~/.kiro/settings/mcp.json",
       };
     } catch {
       return {
@@ -291,7 +291,7 @@ export class KiroAdapter implements HookAdapter {
         homedir(),
         ".kiro",
         "extensions",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -384,7 +384,7 @@ export class KiroAdapter implements HookAdapter {
     try {
       return readFileSync(instructionsPath, "utf-8");
     } catch {
-      return "# context-mode\n\nUse context-mode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of run_command/view_file for data-heavy operations.";
+      return "# context-mode-opencode\n\nUse context-mode-opencode MCP tools (execute, execute_file, batch_execute, fetch_and_index, search) instead of run_command/view_file for data-heavy operations.";
     }
   }
 }

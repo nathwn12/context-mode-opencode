@@ -51,7 +51,7 @@ export const HOOK_SCRIPTS: Record<string, string> = {
 // Hook validation
 // ─────────────────────────────────────────────────────────
 
-/** Required hooks that must be configured for context-mode to function. */
+/** Required hooks that must be configured for context-mode-opencode to function. */
 export const REQUIRED_HOOKS: HookType[] = [
   HOOK_TYPES.PRE_TOOL_USE,
   HOOK_TYPES.SESSION_START,
@@ -64,9 +64,9 @@ export const OPTIONAL_HOOKS: HookType[] = [
 ];
 
 /**
- * Check if a hook entry points to a context-mode hook script.
+ * Check if a hook entry points to a context-mode-opencode hook script.
  * Matches both legacy format (node .../pretooluse.mjs) and
- * CLI dispatcher format (context-mode hook vscode-copilot pretooluse).
+ * CLI dispatcher format (context-mode-opencode hook vscode-copilot pretooluse).
  */
 export function isContextModeHook(
   entry: { hooks?: Array<{ command?: string }> },
@@ -95,5 +95,5 @@ export function buildHookCommand(hookType: HookType, pluginRoot?: string): strin
   if (pluginRoot) {
     return `node "${pluginRoot}/hooks/${scriptName}"`;
   }
-  return `context-mode hook vscode-copilot ${hookType.toLowerCase()}`;
+  return `context-mode-opencode hook vscode-copilot ${hookType.toLowerCase()}`;
 }

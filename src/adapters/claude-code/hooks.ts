@@ -35,16 +35,16 @@ export type HookType = (typeof HOOK_TYPES)[keyof typeof HOOK_TYPES];
 // PreToolUse matchers
 // ─────────────────────────────────────────────────────────
 
-/** Tools that context-mode's PreToolUse hook intercepts. */
+/** Tools that context-mode-opencode's PreToolUse hook intercepts. */
 export const PRE_TOOL_USE_MATCHERS = [
   "Bash",
   "WebFetch",
   "Read",
   "Grep",
   "Agent",
-  "mcp__plugin_context-mode_context-mode__ctx_execute",
-  "mcp__plugin_context-mode_context-mode__ctx_execute_file",
-  "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+  "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute",
+  "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_execute_file",
+  "mcp__plugin_context-mode-opencode_context-mode-opencode__ctx_batch_execute",
 ] as const;
 
 /**
@@ -58,7 +58,7 @@ export const PRE_TOOL_USE_MATCHER_PATTERN = PRE_TOOL_USE_MATCHERS.join("|");
 // ─────────────────────────────────────────────────────────
 
 /**
- * Tools that context-mode's PostToolUse hook should fire on.
+ * Tools that context-mode-opencode's PostToolUse hook should fire on.
  * Only tools that extractEvents() actually handles — all others
  * produce zero events and cause false "hook error" display.
  */
@@ -104,7 +104,7 @@ export const HOOK_SCRIPTS: Record<HookType, string> = {
 // Hook validation
 // ─────────────────────────────────────────────────────────
 
-/** Required hooks that must be configured for context-mode to function. */
+/** Required hooks that must be configured for context-mode-opencode to function. */
 export const REQUIRED_HOOKS: HookType[] = [
   HOOK_TYPES.PRE_TOOL_USE,
   HOOK_TYPES.SESSION_START,
@@ -118,9 +118,9 @@ export const OPTIONAL_HOOKS: HookType[] = [
 ];
 
 /**
- * Check if a hook entry points to a context-mode hook script.
+ * Check if a hook entry points to a context-mode-opencode hook script.
  * Matches both legacy format (node .../pretooluse.mjs) and
- * CLI dispatcher format (context-mode hook claude-code pretooluse).
+ * CLI dispatcher format (context-mode-opencode hook claude-code pretooluse).
  */
 export function isContextModeHook(
   entry: { hooks?: Array<{ command?: string }> },
@@ -145,7 +145,7 @@ export function buildHookCommand(hookType: HookType, pluginRoot?: string): strin
     const scriptName = HOOK_SCRIPTS[hookType];
     return `node "${pluginRoot}/hooks/${scriptName}"`;
   }
-  return `context-mode hook claude-code ${hookType.toLowerCase()}`;
+  return `context-mode-opencode hook claude-code ${hookType.toLowerCase()}`;
 }
 
 /**
@@ -162,8 +162,8 @@ export function extractHookScriptPath(command: string): string | null {
 }
 
 /**
- * Check if a hook entry is a context-mode hook (any hook type).
- * Broader than `isContextModeHook` — matches any context-mode script name
+ * Check if a hook entry is a context-mode-opencode hook (any hook type).
+ * Broader than `isContextModeHook` — matches any context-mode-opencode script name
  * without requiring a specific hookType.
  */
 export function isAnyContextModeHook(
@@ -174,7 +174,7 @@ export function isAnyContextModeHook(
     entry.hooks?.some((h) =>
       h.command != null &&
       (scriptNames.some((s) => h.command!.includes(s)) ||
-        h.command.includes("context-mode hook")),
+        h.command.includes("context-mode-opencode hook")),
     ) ?? false
   );
 }

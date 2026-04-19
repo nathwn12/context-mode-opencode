@@ -18,7 +18,7 @@
  *   - CRITICAL: matchers are parsed but IGNORED (all hooks fire on all tools)
  *   - Config: .github/hooks/*.json (primary), also reads .claude/settings.json
  *   - Env detection: VSCODE_PID, TERM_PROGRAM=vscode
- *   - Session dir: ~/.vscode/context-mode/sessions/ (fallback)
+ *   - Session dir: ~/.vscode/context-mode-opencode/sessions/ (fallback)
  *   - Preview status — API may change
  */
 
@@ -163,7 +163,7 @@ export class VSCodeCopilotAdapter implements HookAdapter {
     if (response.decision === "deny") {
       return {
         permissionDecision: "deny",
-        reason: response.reason ?? "Blocked by context-mode hook",
+        reason: response.reason ?? "Blocked by context-mode-opencode hook",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -232,17 +232,17 @@ export class VSCodeCopilotAdapter implements HookAdapter {
   getSettingsPath(): string {
     // VS Code Copilot primarily uses .github/hooks/*.json
     // but also reads .claude/settings.json
-    return resolve(".github", "hooks", "context-mode.json");
+    return resolve(".github", "hooks", "context-mode-opencode.json");
   }
 
   getSessionDir(): string {
-    // Prefer .github/context-mode/sessions/ if .github exists,
-    // otherwise fall back to ~/.vscode/context-mode/sessions/
-    const githubDir = resolve(".github", "context-mode", "sessions");
+    // Prefer .github/context-mode-opencode/sessions/ if .github exists,
+    // otherwise fall back to ~/.vscode/context-mode-opencode/sessions/
+    const githubDir = resolve(".github", "context-mode-opencode", "sessions");
     const fallbackDir = join(
       homedir(),
       ".vscode",
-      "context-mode",
+      "context-mode-opencode",
       "sessions",
     );
 
@@ -317,7 +317,7 @@ export class VSCodeCopilotAdapter implements HookAdapter {
   }
 
   readSettings(): Record<string, unknown> | null {
-    // Try .github/hooks/context-mode.json first, then .claude/settings.json
+    // Try .github/hooks/context-mode-opencode.json first, then .claude/settings.json
     const paths = [
       this.getSettingsPath(),
       resolve(".claude", "settings.json"),
@@ -358,13 +358,13 @@ export class VSCodeCopilotAdapter implements HookAdapter {
         check: "Hooks directory",
         status: "fail",
         message: ".github/hooks/ directory not found",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
       return results;
     }
 
-    // Check for context-mode hook config
-    const hookConfigPath = resolve(hooksDir, "context-mode.json");
+    // Check for context-mode-opencode hook config
+    const hookConfigPath = resolve(hooksDir, "context-mode-opencode.json");
     try {
       const raw = readFileSync(hookConfigPath, "utf-8");
       const config = JSON.parse(raw) as Record<string, unknown>;
@@ -375,14 +375,14 @@ export class VSCodeCopilotAdapter implements HookAdapter {
         results.push({
           check: "PreToolUse hook",
           status: "pass",
-          message: "PreToolUse hook configured in context-mode.json",
+          message: "PreToolUse hook configured in context-mode-opencode.json",
         });
       } else {
         results.push({
           check: "PreToolUse hook",
           status: "fail",
-          message: "PreToolUse not found in context-mode.json",
-          fix: "context-mode upgrade",
+          message: "PreToolUse not found in context-mode-opencode.json",
+          fix: "context-mode-opencode upgrade",
         });
       }
 
@@ -391,22 +391,22 @@ export class VSCodeCopilotAdapter implements HookAdapter {
         results.push({
           check: "SessionStart hook",
           status: "pass",
-          message: "SessionStart hook configured in context-mode.json",
+          message: "SessionStart hook configured in context-mode-opencode.json",
         });
       } else {
         results.push({
           check: "SessionStart hook",
           status: "fail",
-          message: "SessionStart not found in context-mode.json",
-          fix: "context-mode upgrade",
+          message: "SessionStart not found in context-mode-opencode.json",
+          fix: "context-mode-opencode upgrade",
         });
       }
     } catch {
       results.push({
         check: "Hook configuration",
         status: "fail",
-        message: "Could not read .github/hooks/context-mode.json",
-        fix: "context-mode upgrade",
+        message: "Could not read .github/hooks/context-mode-opencode.json",
+        fix: "context-mode-opencode upgrade",
       });
     }
 
@@ -439,13 +439,13 @@ export class VSCodeCopilotAdapter implements HookAdapter {
       const servers = config.servers as Record<string, unknown> | undefined;
       if (servers) {
         const hasPlugin = Object.keys(servers).some((k) =>
-          k.includes("context-mode"),
+          k.includes("context-mode-opencode"),
         );
         if (hasPlugin) {
           return {
             check: "MCP registration",
             status: "pass",
-            message: "context-mode found in .vscode/mcp.json",
+            message: "context-mode-opencode found in .vscode/mcp.json",
           };
         }
       }
@@ -453,8 +453,8 @@ export class VSCodeCopilotAdapter implements HookAdapter {
       return {
         check: "MCP registration",
         status: "fail",
-        message: "context-mode not found in .vscode/mcp.json",
-        fix: "Add context-mode server to .vscode/mcp.json",
+        message: "context-mode-opencode not found in .vscode/mcp.json",
+        fix: "Add context-mode-opencode server to .vscode/mcp.json",
       };
     } catch {
       return {
@@ -466,7 +466,7 @@ export class VSCodeCopilotAdapter implements HookAdapter {
   }
 
   getInstalledVersion(): string {
-    // Check VS Code extensions for context-mode
+    // Check VS Code extensions for context-mode-opencode
     const extensionDirs = [
       join(homedir(), ".vscode", "extensions"),
       join(homedir(), ".vscode-insiders", "extensions"),
@@ -485,7 +485,7 @@ export class VSCodeCopilotAdapter implements HookAdapter {
             e.identifier !== null &&
             (
               e.identifier as Record<string, unknown>
-            ).id?.toString().includes("context-mode"),
+            ).id?.toString().includes("context-mode-opencode"),
         );
         if (contextMode && typeof contextMode.version === "string") {
           return contextMode.version;
@@ -529,10 +529,10 @@ export class VSCodeCopilotAdapter implements HookAdapter {
       changes.push(`Configured ${hookType} hook`);
     }
 
-    // Write to .github/hooks/context-mode.json
+    // Write to .github/hooks/context-mode-opencode.json
     const outputDir = resolve(".github", "hooks");
     mkdirSync(outputDir, { recursive: true });
-    const outputPath = resolve(outputDir, "context-mode.json");
+    const outputPath = resolve(outputDir, "context-mode-opencode.json");
     writeFileSync(
       outputPath,
       JSON.stringify(hookConfig, null, 2) + "\n",

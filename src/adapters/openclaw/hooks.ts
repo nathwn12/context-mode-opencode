@@ -46,7 +46,7 @@ export type LifecycleHook = (typeof LIFECYCLE_HOOKS)[keyof typeof LIFECYCLE_HOOK
 // ─────────────────────────────────────────────────────────
 
 /**
- * Required hooks that must be active for context-mode to function.
+ * Required hooks that must be active for context-mode-opencode to function.
  * OpenClaw registers these via api.registerHook() in the plugin entry point.
  */
 export const REQUIRED_HOOKS: HookEvent[] = [
@@ -63,9 +63,9 @@ export const OPTIONAL_HOOKS: HookEvent[] = [
 ];
 
 /**
- * Check if a plugin entry is the context-mode plugin.
+ * Check if a plugin entry is the context-mode-opencode plugin.
  * OpenClaw plugins are registered by id in plugins.entries.
  */
 export function isContextModePlugin(pluginId: string): boolean {
-  return pluginId.includes("context-mode");
+  return pluginId.includes("context-mode-opencode");
 }

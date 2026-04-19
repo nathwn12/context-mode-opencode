@@ -15,7 +15,7 @@ gh-cli-cache/
 tasks/
 .playwright-mcp/
 AGENTS.md
-context-mode-guidance-*/
+context-mode-opencode-guidance-*/
 .claude/worktrees/
 .claude-worktrees/
 .vibetree/

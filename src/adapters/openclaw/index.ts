@@ -13,7 +13,7 @@
  *   - Session ID: event context (no specific env var)
  *   - Project dir: process.cwd()
  *   - Config: openclaw.json plugins.entries, ~/.openclaw/extensions/
- *   - Session dir: ~/.openclaw/context-mode/sessions/
+ *   - Session dir: ~/.openclaw/context-mode-opencode/sessions/
  */
 
 import { createHash } from "node:crypto";
@@ -154,7 +154,7 @@ export class OpenClawAdapter implements HookAdapter {
       // OpenClaw plugin paradigm: return { block, blockReason } to block
       return {
         block: true,
-        blockReason: response.reason ?? "Blocked by context-mode hook",
+        blockReason: response.reason ?? "Blocked by context-mode-opencode hook",
       };
     }
     if (response.decision === "modify" && response.updatedInput) {
@@ -202,7 +202,7 @@ export class OpenClawAdapter implements HookAdapter {
   }
 
   getSessionDir(): string {
-    const dir = join(homedir(), ".openclaw", "context-mode", "sessions");
+    const dir = join(homedir(), ".openclaw", "context-mode-opencode", "sessions");
     mkdirSync(dir, { recursive: true });
     return dir;
   }
@@ -234,7 +234,7 @@ export class OpenClawAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: "context-mode-opencode",
             },
           ],
         },
@@ -245,7 +245,7 @@ export class OpenClawAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: "context-mode-opencode",
             },
           ],
         },
@@ -256,7 +256,7 @@ export class OpenClawAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: "context-mode",
+              command: "context-mode-opencode",
             },
           ],
         },
@@ -303,38 +303,38 @@ export class OpenClawAdapter implements HookAdapter {
         check: "Plugin configuration",
         status: "fail",
         message: "Could not read openclaw.json",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
       return results;
     }
 
-    // Check for context-mode in plugins.entries
+    // Check for context-mode-opencode in plugins.entries
     const plugins = settings.plugins as Record<string, unknown> | undefined;
     const entries = plugins?.entries as Record<string, unknown> | undefined;
 
     if (entries) {
-      const hasPlugin = Object.keys(entries).some((k) => k.includes("context-mode"));
+      const hasPlugin = Object.keys(entries).some((k) => k.includes("context-mode-opencode"));
       results.push({
         check: "Plugin registration",
         status: hasPlugin ? "pass" : "fail",
         message: hasPlugin
-          ? "context-mode found in plugins.entries"
-          : "context-mode not found in plugins.entries",
+          ? "context-mode-opencode found in plugins.entries"
+          : "context-mode-opencode not found in plugins.entries",
         fix: hasPlugin
           ? undefined
-          : "context-mode upgrade",
+          : "context-mode-opencode upgrade",
       });
 
       // Check if enabled
       if (hasPlugin) {
-        const entry = entries["context-mode"] as Record<string, unknown> | undefined;
+        const entry = entries["context-mode-opencode"] as Record<string, unknown> | undefined;
         const isEnabled = entry?.enabled !== false;
         results.push({
           check: "Plugin enabled",
           status: isEnabled ? "pass" : "warn",
           message: isEnabled
-            ? "context-mode plugin is enabled"
-            : "context-mode plugin is disabled",
+            ? "context-mode-opencode plugin is enabled"
+            : "context-mode-opencode plugin is disabled",
         });
       }
     } else {
@@ -342,24 +342,24 @@ export class OpenClawAdapter implements HookAdapter {
         check: "Plugin registration",
         status: "fail",
         message: "No plugins.entries found in openclaw.json",
-        fix: "context-mode upgrade",
+        fix: "context-mode-opencode upgrade",
       });
     }
 
     // Check context engine slot
     const slots = plugins?.slots as Record<string, unknown> | undefined;
-    if (slots?.contextEngine === "context-mode") {
+    if (slots?.contextEngine === "context-mode-opencode") {
       results.push({
         check: "Context engine",
         status: "pass",
-        message: "context-mode registered as context engine (owns compaction)",
+        message: "context-mode-opencode registered as context engine (owns compaction)",
       });
     } else {
       results.push({
         check: "Context engine",
         status: "warn",
         message:
-          "context-mode not set as context engine — compaction will use default engine",
+          "context-mode-opencode not set as context engine — compaction will use default engine",
       });
     }
 
@@ -380,12 +380,12 @@ export class OpenClawAdapter implements HookAdapter {
     const entries = plugins?.entries as Record<string, unknown> | undefined;
 
     if (entries) {
-      const hasPlugin = Object.keys(entries).some((k) => k.includes("context-mode"));
+      const hasPlugin = Object.keys(entries).some((k) => k.includes("context-mode-opencode"));
       if (hasPlugin) {
         return {
           check: "Plugin registration",
           status: "pass",
-          message: "context-mode found in plugins.entries",
+          message: "context-mode-opencode found in plugins.entries",
         };
       }
     }
@@ -393,19 +393,19 @@ export class OpenClawAdapter implements HookAdapter {
     return {
       check: "Plugin registration",
       status: "fail",
-      message: "context-mode not found in openclaw.json plugins.entries",
-      fix: "context-mode upgrade",
+      message: "context-mode-opencode not found in openclaw.json plugins.entries",
+      fix: "context-mode-opencode upgrade",
     };
   }
 
   getInstalledVersion(): string {
-    // Check ~/.openclaw/extensions/context-mode/ for the plugin
+    // Check ~/.openclaw/extensions/context-mode-opencode/ for the plugin
     try {
       const pkgPath = resolve(
         homedir(),
         ".openclaw",
         "extensions",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -418,7 +418,7 @@ export class OpenClawAdapter implements HookAdapter {
     try {
       const pkgPath = resolve(
         "node_modules",
-        "context-mode",
+        "context-mode-opencode",
         "package.json",
       );
       const pkg = JSON.parse(readFileSync(pkgPath, "utf-8"));
@@ -447,17 +447,17 @@ export class OpenClawAdapter implements HookAdapter {
     }
     const entries = plugins.entries as Record<string, unknown>;
 
-    // Add context-mode to plugins.entries
-    if (!entries["context-mode"]) {
-      entries["context-mode"] = { enabled: true };
-      changes.push("Added context-mode to plugins.entries");
+    // Add context-mode-opencode to plugins.entries
+    if (!entries["context-mode-opencode"]) {
+      entries["context-mode-opencode"] = { enabled: true };
+      changes.push("Added context-mode-opencode to plugins.entries");
     } else {
-      const entry = entries["context-mode"] as Record<string, unknown>;
+      const entry = entries["context-mode-opencode"] as Record<string, unknown>;
       if (entry.enabled === false) {
         entry.enabled = true;
-        changes.push("Enabled context-mode plugin");
+        changes.push("Enabled context-mode-opencode plugin");
       } else {
-        changes.push("context-mode already configured in plugins.entries");
+        changes.push("context-mode-opencode already configured in plugins.entries");
       }
     }
 
@@ -467,9 +467,9 @@ export class OpenClawAdapter implements HookAdapter {
     }
     const slots = plugins.slots as Record<string, unknown>;
     if (!slots.contextEngine) {
-      slots.contextEngine = "context-mode";
-      changes.push("Set context-mode as context engine (owns compaction)");
-    } else if (slots.contextEngine !== "context-mode") {
+      slots.contextEngine = "context-mode-opencode";
+      changes.push("Set context-mode-opencode as context engine (owns compaction)");
+    } else if (slots.contextEngine !== "context-mode-opencode") {
       changes.push(
         `Context engine already set to "${slots.contextEngine}" — not overwriting`,
       );

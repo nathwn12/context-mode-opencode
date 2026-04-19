@@ -34,7 +34,7 @@ const askDecision = {
 const modifyDecision = {
   action: "modify",
   updatedInput: {
-    command: 'echo "context-mode: curl/wget blocked."',
+    command: 'echo "context-mode-opencode: curl/wget blocked."',
   },
 };
 

@@ -1,6 +1,6 @@
-# context-mode
+# context-mode-opencode
 
-Raw tool output floods your context window. Use context-mode MCP tools to keep raw data in the sandbox.
+Raw tool output floods your context window. Use context-mode-opencode MCP tools to keep raw data in the sandbox.
 
 ## Think in Code — MANDATORY
 

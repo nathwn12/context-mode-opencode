@@ -1,10 +1,10 @@
 {
   "$schema": "https://app.kilo.ai/config.json",
   "mcp": {
-    "context-mode": {
+    "context-mode-opencode": {
       "type": "local",
-      "command": ["context-mode"]
+      "command": ["context-mode-opencode"]
     }
   },
-  "plugin": ["context-mode"]
+  "plugin": ["context-mode-opencode"]
 }

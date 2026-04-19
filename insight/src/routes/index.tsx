@@ -371,7 +371,7 @@ function Dashboard() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Code className="h-4 w-4 text-purple-500" />
-              <CardTitle className="text-sm">context-mode Tools</CardTitle>
+              <CardTitle className="text-sm">context-mode-opencode Tools</CardTitle>
             </div>
             <CardDescription>How you use the sandbox</CardDescription>
           </CardHeader>

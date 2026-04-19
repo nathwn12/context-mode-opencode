@@ -1,17 +1,17 @@
 {
-  "name": "context-mode",
-  "description": "Context-mode hooks for context window protection",
+  "name": "context-mode-opencode",
+  "description": "Context-mode-opencode hooks for context window protection",
   "hooks": {
     "preToolUse": [
       {
         "matcher": "*",
-        "command": "context-mode hook kiro pretooluse"
+        "command": "context-mode-opencode hook kiro pretooluse"
       }
     ],
     "postToolUse": [
       {
         "matcher": "*",
-        "command": "context-mode hook kiro posttooluse"
+        "command": "context-mode-opencode hook kiro posttooluse"
       }
     ]
   }

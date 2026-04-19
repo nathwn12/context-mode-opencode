@@ -1,21 +1,21 @@
 {
-  "name": "context-mode",
+  "name": "context-mode-opencode",
   "owner": {
-    "name": "Mert Koseoğlu",
-    "email": "code.bm.ksglu@gmail.com"
+    "name": "blitzmid123",
+    "url": "https://www.npmjs.com/~blitzmid123"
   },
   "metadata": {
-    "description": "Claude Code plugins by Mert Koseoğlu",
+    "description": "Claude Code plugins by blitzmid123",
     "version": "1.0.89"
   },
   "plugins": [
     {
-      "name": "context-mode",
+      "name": "context-mode-opencode",
       "source": "./",
       "description": "Claude Code MCP plugin that saves 98% of your context window. Sandboxed code execution in 11 languages, FTS5 knowledge base with BM25 ranking, and intent-driven search.",
       "version": "1.0.89",
       "author": {
-        "name": "Mert Koseoğlu"
+        "name": "blitzmid123"
       },
       "category": "development",
       "keywords": [

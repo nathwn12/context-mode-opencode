@@ -163,17 +163,17 @@ describe("VSCodeCopilotAdapter", () => {
   // ── Config paths ──────────────────────────────────────
 
   describe("config paths", () => {
-    it("settings path is .github/hooks/context-mode.json", () => {
+    it("settings path is .github/hooks/context-mode-opencode.json", () => {
       expect(adapter.getSettingsPath()).toBe(
-        resolve(".github", "hooks", "context-mode.json"),
+        resolve(".github", "hooks", "context-mode-opencode.json"),
       );
     });
 
-    it("session dir is under ~/.vscode/context-mode/sessions/ or .github/", () => {
+    it("session dir is under ~/.vscode/context-mode-opencode/sessions/ or .github/", () => {
       // The adapter uses .github/ if it exists, otherwise ~/.vscode/
-      // We just verify it returns a valid path containing context-mode/sessions
+      // We just verify it returns a valid path containing context-mode-opencode/sessions
       const sessionDir = adapter.getSessionDir();
-      expect(sessionDir).toContain("context-mode");
+      expect(sessionDir).toContain("context-mode-opencode");
       expect(sessionDir).toContain("sessions");
     });
   });

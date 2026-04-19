@@ -19,7 +19,7 @@ import { OpenClawSessionDB } from "../../src/adapters/openclaw/session-db.js";
 import { extractWorkspace, WorkspaceRouter } from "../../src/openclaw/workspace-router.js";
 
 // MCP readiness sentinel — routing.mjs checks process.ppid in-process
-const mcpSentinel = resolve(tmpdir(), `context-mode-mcp-ready-${process.ppid}`);
+const mcpSentinel = resolve(tmpdir(), `context-mode-opencode-mcp-ready-${process.ppid}`);
 beforeEach(() => { writeFileSync(mcpSentinel, String(process.pid)); });
 afterEach(() => { try { unlinkSync(mcpSentinel); } catch {} });
 
@@ -192,7 +192,7 @@ describe("OpenClawPlugin", () => {
   describe("object export", () => {
     it("exports object with id, name, configSchema, register", async () => {
       const { default: plugin } = await import("../../src/openclaw-plugin.js");
-      expect(plugin.id).toBe("context-mode");
+      expect(plugin.id).toBe("context-mode-opencode");
       expect(plugin.name).toBe("Context Mode");
       expect(plugin.configSchema).toBeDefined();
       expect(plugin.configSchema.type).toBe("object");
@@ -234,16 +234,16 @@ describe("OpenClawPlugin", () => {
       expect(lifecycleEvents).toContain("before_prompt_build");
     });
 
-    it("registers context-mode context engine", async () => {
+    it("registers context-mode-opencode context engine", async () => {
       const mock = await createTestPlugin(join(tempDir, "reg-engine"));
       expect(mock.contextEngines).toHaveLength(1);
-      expect(mock.contextEngines[0].id).toBe("context-mode");
+      expect(mock.contextEngines[0].id).toBe("context-mode-opencode");
     });
 
     it("hooks have proper metadata names", async () => {
       const mock = await createTestPlugin(join(tempDir, "reg-meta"));
       for (const hook of mock.hooks) {
-        expect(hook.meta.name).toMatch(/^context-mode\./);
+        expect(hook.meta.name).toMatch(/^context-mode-opencode\./);
         expect(hook.meta.description.length).toBeGreaterThan(0);
       }
     });
@@ -277,7 +277,7 @@ describe("OpenClawPlugin", () => {
       const mock = await createTestPlugin(join(tempDir, "cmd-stats-run"));
       const statsCmd = mock.commands.find((c) => c.name === "ctx-stats");
       const result = await statsCmd!.handler({});
-      expect(result.text).toContain("context-mode stats");
+      expect(result.text).toContain("context-mode-opencode stats");
       expect(result.text).toContain("Events captured:");
     });
 
@@ -314,7 +314,7 @@ describe("OpenClawPlugin", () => {
 
       // Routing replaces the curl command with an informative echo
       expect(params.command).toMatch(/^echo /);
-      expect(params.command).toContain("context-mode");
+      expect(params.command).toContain("context-mode-opencode");
     });
 
     it("modifies wget commands to block them", async () => {
@@ -327,7 +327,7 @@ describe("OpenClawPlugin", () => {
       await beforeHook!.handler(event);
 
       expect(params.command).toMatch(/^echo /);
-      expect(params.command).toContain("context-mode");
+      expect(params.command).toContain("context-mode-opencode");
     });
 
     it("passes through normal tool calls", async () => {
@@ -424,7 +424,7 @@ describe("OpenClawPlugin", () => {
 
       const result = promptHook!.handler() as { appendSystemContext: string };
       expect(result).toHaveProperty("appendSystemContext");
-      expect(result.appendSystemContext).toContain("context-mode");
+      expect(result.appendSystemContext).toContain("context-mode-opencode");
     });
 
     it("has priority 5", async () => {
@@ -442,7 +442,7 @@ describe("OpenClawPlugin", () => {
     it("creates engine with ownsCompaction: false (host owns compaction to preserve thinking blocks)", async () => {
       const mock = await createTestPlugin(join(tempDir, "engine-info"));
       const engine = mock.contextEngines[0].factory();
-      expect(engine.info.id).toBe("context-mode");
+      expect(engine.info.id).toBe("context-mode-opencode");
       expect(engine.info.name).toBe("Context Mode");
       expect(engine.info.ownsCompaction).toBe(false);
     });
@@ -604,7 +604,7 @@ describe("OpenClawPlugin", () => {
 
       // Before hook replaces the command
       await beforeHook!.handler(event);
-      expect(params.command).toContain("context-mode");
+      expect(params.command).toContain("context-mode-opencode");
     });
   });
 });
@@ -618,7 +618,7 @@ describe("Plugin exports", () => {
 
   test("plugin exports id, name, configSchema, register", async () => {
     const { default: plugin } = await import("../../src/openclaw-plugin.js");
-    assert.equal(plugin.id, "context-mode");
+    assert.equal(plugin.id, "context-mode-opencode");
     assert.equal(plugin.name, "Context Mode");
     assert.ok(plugin.configSchema);
     assert.equal(typeof plugin.register, "function");

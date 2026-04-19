@@ -126,10 +126,10 @@ describe("AntigravityAdapter", () => {
       );
     });
 
-    it("session dir is under ~/.gemini/context-mode/sessions/", () => {
+    it("session dir is under ~/.gemini/context-mode-opencode/sessions/", () => {
       const sessionDir = adapter.getSessionDir();
       expect(sessionDir).toBe(
-        join(homedir(), ".gemini", "context-mode", "sessions"),
+        join(homedir(), ".gemini", "context-mode-opencode", "sessions"),
       );
     });
 

@@ -1,9 +1,9 @@
 ---
 name: ctx-doctor
 description: |
-  Run context-mode diagnostics. Checks runtimes, hooks, FTS5,
+  Run context-mode-opencode diagnostics. Checks runtimes, hooks, FTS5,
   plugin registration, npm and marketplace versions.
-  Trigger: /context-mode:ctx-doctor
+  Trigger: /context-mode-opencode:ctx-doctor
 user-invocable: true
 ---
 

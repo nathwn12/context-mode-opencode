@@ -1,12 +1,12 @@
 # OpenClaw Adapter
 
-context-mode plugin for the [OpenClaw](https://github.com/openclaw) gateway, targeting **Pi Agent** sessions.
+context-mode-opencode plugin for the [OpenClaw](https://github.com/openclaw) gateway, targeting **Pi Agent** sessions.
 
 ## Overview
 
 **OpenClaw** is the gateway/platform that manages agent sessions, extensions, and tool routing. **Pi Agent** is OpenClaw's coding agent — it runs within OpenClaw and provides Read, Write, Edit, and Bash tools for software development tasks.
 
-The context-mode adapter hooks into Pi Agent sessions specifically, intercepting tool calls to route data-heavy operations through the sandbox and tracking session events for compaction recovery.
+The context-mode-opencode adapter hooks into Pi Agent sessions specifically, intercepting tool calls to route data-heavy operations through the sandbox and tracking session events for compaction recovery.
 
 ### Supported Configurations
 
@@ -42,13 +42,13 @@ See [`scripts/install-openclaw-plugin.sh`](../../scripts/install-openclaw-plugin
 ### Troubleshooting
 
 **"openclaw.json not found"**
-OpenClaw creates this file on first launch. Start OpenClaw once (`openclaw gateway start`), then re-run the install script. This is the most common issue for users who install context-mode before ever starting OpenClaw.
+OpenClaw creates this file on first launch. Start OpenClaw once (`openclaw gateway start`), then re-run the install script. This is the most common issue for users who install context-mode-opencode before ever starting OpenClaw.
 
 **"OPENCLAW_STATE_DIR (/path) does not exist. Is OpenClaw installed?"**
 The state directory doesn't exist at the expected path. If you installed OpenClaw via npm (not git clone), check where it stores state — common locations are `~/.openclaw` or `/openclaw`. Pass the correct path: `npm run install:openclaw -- /path/to/state`.
 
 **Plugin installed but not loading**
-Clear the jiti cache (`rm -f /tmp/jiti/context-mode-*.cjs`) and restart the gateway. If the issue persists, verify the plugin appears in `openclaw plugins list`.
+Clear the jiti cache (`rm -f /tmp/jiti/context-mode-opencode-*.cjs`) and restart the gateway. If the issue persists, verify the plugin appears in `openclaw plugins list`.
 
 ## Hook Registration
 

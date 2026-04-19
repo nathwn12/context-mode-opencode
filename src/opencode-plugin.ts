@@ -1,12 +1,12 @@
 /**
- * OpenCode TypeScript plugin entry point for context-mode.
+ * OpenCode TypeScript plugin entry point for context-mode-opencode.
  *
  * Provides three hooks:
  *   - tool.execute.before  — Routing enforcement (deny/modify/passthrough)
  *   - tool.execute.after   — Session event capture
  *   - experimental.session.compacting — Compaction snapshot generation
  *
- * Loaded by OpenCode via: import("context-mode/plugin").ContextModePlugin(ctx)
+ * Loaded by OpenCode via: import("context-mode-opencode/plugin").ContextModePlugin(ctx)
  *
  * Constraints:
  *   - No SessionStart hook (OpenCode doesn't support it — #14808, #5409)
@@ -119,7 +119,7 @@ export const ContextModePlugin = async (ctx: PluginContext) => {
 
       if (decision.action === "deny" || decision.action === "ask") {
         // Throw to block — OpenCode catches this and denies the tool call
-        throw new Error(decision.reason ?? "Blocked by context-mode");
+        throw new Error(decision.reason ?? "Blocked by context-mode-opencode");
       }
 
       if (decision.action === "modify" && decision.updatedInput) {

@@ -86,12 +86,12 @@ jobs:
           plugins = cfg.get('plugins', {})
           allow = plugins.get('allow', [])
           entries = plugins.get('entries', {})
-          assert 'context-mode' in allow, f'context-mode not in plugins.allow: {allow}'
-          assert 'context-mode' in entries, f'context-mode not in plugins.entries: {entries}'
-          assert entries['context-mode'].get('enabled') is True, 'plugin not enabled'
-          print('PASS: openclaw.json contains context-mode plugin entry')
+          assert 'context-mode-opencode' in allow, f'context-mode-opencode not in plugins.allow: {allow}'
+          assert 'context-mode-opencode' in entries, f'context-mode-opencode not in plugins.entries: {entries}'
+          assert entries['context-mode-opencode'].get('enabled') is True, 'plugin not enabled'
+          print('PASS: openclaw.json contains context-mode-opencode plugin entry')
           "
-          test -f "$OPENCLAW_STATE_DIR/extensions/context-mode/openclaw.plugin.json" \
+          test -f "$OPENCLAW_STATE_DIR/extensions/context-mode-opencode/openclaw.plugin.json" \
             && echo "PASS: openclaw.plugin.json exists" \
             || (echo "FAIL: openclaw.plugin.json missing" && exit 1)
 
@@ -106,7 +106,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: session-dbs-${{ matrix.os }}
-          path: ~/.openclaw/context-mode/sessions/
+          path: ~/.openclaw/context-mode-opencode/sessions/
           if-no-files-found: ignore
 
       - name: Upload OpenClaw logs on failure

@@ -6,6 +6,18 @@ import { join, parse, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { OpenCodeAdapter } from "../../src/adapters/opencode/index.js";
 
+const OPENCODE_PACKAGE = "@nathwn12/context-mode-opencode";
+const OPENCODE_MCP_CONFIG = {
+  "context-mode": {
+    type: "local",
+    command: ["npx", "-y", OPENCODE_PACKAGE],
+  },
+};
+const OPENCODE_CONFIGURED_CHANGES = [
+  `Added ${OPENCODE_PACKAGE} to plugin array`,
+  `Set context-mode MCP server to npx ${OPENCODE_PACKAGE}`,
+];
+
 function env(home: string) {
   const root = parse(home).root;
   return {
@@ -97,7 +109,7 @@ describe("OpenCodeAdapter", () => {
         adapter.formatPreToolUseResponse({
           decision: "deny",
         }),
-      ).toThrow("Blocked by context-mode hook");
+      ).toThrow("Blocked by context-mode-opencode hook");
     });
 
     it("returns args object for modify", () => {
@@ -182,10 +194,10 @@ describe("OpenCodeAdapter", () => {
       let expectedDir: string;
       if (process.platform === "win32") {
         const configDir = process.env.APPDATA || join(homedir(), "AppData", "Roaming");
-        expectedDir = join(configDir, "opencode", "context-mode", "sessions");
+        expectedDir = join(configDir, "opencode", "context-mode-opencode", "sessions");
       } else {
         const configDir = process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
-        expectedDir = join(configDir, "opencode", "context-mode", "sessions");
+        expectedDir = join(configDir, "opencode", "context-mode-opencode", "sessions");
       }
       expect(sessionDir).toBe(expectedDir);
     });
@@ -218,15 +230,18 @@ describe("OpenCodeAdapter", () => {
       expect(run.status).toBe(0);
       expect(JSON.parse(run.stdout)).toEqual({
         backup: file + ".bak",
-        changes: ["Added context-mode to plugin array"],
+        changes: OPENCODE_CONFIGURED_CHANGES,
       });
       expect(() => readFileSync(resolve(dir, "opencode.json"), "utf-8")).toThrow();
-      expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({ plugin: ["context-mode"] });
+      expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({
+        plugin: [OPENCODE_PACKAGE],
+        mcp: OPENCODE_MCP_CONFIG,
+      });
 
       rmSync(root, { recursive: true, force: true });
     });
 
-    it("readSettings prioritizes config with context-mode plugin", () => {
+    it("readSettings prioritizes config with context-mode-opencode plugin", () => {
       const root = mkdtempSync(join(tmpdir(), "opencode-adapter-"));
       const dir = join(root, "project");
       const home = join(root, "home");
@@ -236,7 +251,7 @@ describe("OpenCodeAdapter", () => {
       mkdirSync(dir, { recursive: true });
       mkdirSync(conf, { recursive: true });
       writeFileSync(join(conf, "opencode.json"), JSON.stringify({ plugin: ["other-plugin"] }, null, 2) + "\n");
-      writeFileSync(resolve(dir, "opencode.json"), JSON.stringify({ plugin: ["context-mode"] }, null, 2) + "\n");
+      writeFileSync(resolve(dir, "opencode.json"), JSON.stringify({ plugin: [OPENCODE_PACKAGE] }, null, 2) + "\n");
       const run = spawnSync(
         process.execPath,
         [
@@ -300,7 +315,7 @@ describe("OpenCodeAdapter", () => {
         join(dir, "opencode.jsonc"),
         `{
   // This is a line comment
-  "plugin": ["context-mode"],
+  "plugin": ["@nathwn12/context-mode-opencode"],
   /* Block comment */
   "version": "1.0"
 }
@@ -316,7 +331,7 @@ describe("OpenCodeAdapter", () => {
         { cwd: dir, env: env(join(root, "home")), encoding: "utf-8" },
       );
       expect(run.status).toBe(0);
-      expect(JSON.parse(run.stdout)).toEqual({ plugin: ["context-mode"], version: "1.0" });
+      expect(JSON.parse(run.stdout)).toEqual({ plugin: [OPENCODE_PACKAGE], version: "1.0" });
       rmSync(root, { recursive: true, force: true });
     });
 
@@ -366,10 +381,11 @@ describe("OpenCodeAdapter", () => {
         { cwd: dir, env: env(join(root, "home")), encoding: "utf-8" },
       );
       expect(run.status).toBe(0);
-      expect(JSON.parse(run.stdout)).toEqual(["Added context-mode to plugin array"]);
+      expect(JSON.parse(run.stdout)).toEqual(OPENCODE_CONFIGURED_CHANGES);
       // Should write back to .jsonc (same file it read)
       expect(JSON.parse(readFileSync(join(dir, "opencode.jsonc"), "utf-8"))).toEqual({
-        plugin: ["context-mode"],
+        plugin: [OPENCODE_PACKAGE],
+        mcp: OPENCODE_MCP_CONFIG,
       });
       rmSync(root, { recursive: true, force: true });
     });
@@ -423,9 +439,12 @@ describe("OpenCodeAdapter", () => {
       );
 
       expect(run.status).toBe(0);
-      expect(JSON.parse(run.stdout)).toEqual(["Added context-mode to plugin array"]);
+      expect(JSON.parse(run.stdout)).toEqual(OPENCODE_CONFIGURED_CHANGES);
       expect(() => readFileSync(resolve(dir, "opencode.json"), "utf-8")).toThrow();
-      expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({ plugin: ["context-mode"] });
+      expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({
+        plugin: [OPENCODE_PACKAGE],
+        mcp: OPENCODE_MCP_CONFIG,
+      });
 
       rmSync(root, { recursive: true, force: true });
     });
@@ -470,10 +489,10 @@ describe("OpenCodeAdapter for KiloCode", () => {
       let expectedDir: string;
       if (process.platform === "win32") {
         const configDir = process.env.APPDATA || join(homedir(), "AppData", "Roaming");
-        expectedDir = join(configDir, "kilo", "context-mode", "sessions");
+        expectedDir = join(configDir, "kilo", "context-mode-opencode", "sessions");
       } else {
         const configDir = process.env.XDG_CONFIG_HOME || join(homedir(), ".config");
-        expectedDir = join(configDir, "kilo", "context-mode", "sessions");
+        expectedDir = join(configDir, "kilo", "context-mode-opencode", "sessions");
       }
       expect(sessionDir).toBe(expectedDir);
     });

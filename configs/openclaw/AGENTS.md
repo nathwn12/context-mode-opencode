@@ -1,6 +1,6 @@
-# context-mode — MANDATORY routing rules
+# context-mode-opencode — MANDATORY routing rules
 
-You have context-mode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
+You have context-mode-opencode MCP tools available. These rules are NOT optional — they protect your context window from flooding. A single unrouted command can dump 56 KB into context and waste the entire session.
 
 ## Think in Code — MANDATORY
 
@@ -9,7 +9,7 @@ When you need to analyze, count, filter, compare, search, parse, transform, or p
 ## BLOCKED commands — do NOT attempt these
 
 ### curl / wget — BLOCKED
-Any shell command containing `curl` or `wget` will be intercepted and blocked by the context-mode plugin. Do NOT retry.
+Any shell command containing `curl` or `wget` will be intercepted and blocked by the context-mode-opencode plugin. Do NOT retry.
 Instead use:
 - `ctx_fetch_and_index(url, source)` to fetch and index web pages
 - `ctx_execute(language: "javascript", code: "const r = await fetch(...)")` to run HTTP calls in sandbox
