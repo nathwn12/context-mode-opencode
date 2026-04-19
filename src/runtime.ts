@@ -58,9 +58,25 @@ function bunExists(): boolean {
 }
 
 function bunCommand(): string {
-  if (commandExists("bun")) return "bun";
+  if (commandExists("bun")) {
+    // On Windows, resolve the full path — `spawn("bun")` fails without
+    // the `.exe` extension or an absolute path in some environments.
+    if (isWindows) {
+      try {
+        const result = execSync("where bun", { encoding: "utf-8", stdio: "pipe" });
+        const candidates = result.trim().split(/\r?\n/).map(p => p.trim()).filter(Boolean);
+        for (const p of candidates) {
+          if (p.toLowerCase().includes("windowsapps")) continue;
+          return p;
+        }
+      } catch { /* fall through */ }
+    }
+    return "bun";
+  }
   const home = process.env.HOME ?? process.env.USERPROFILE ?? "";
-  return `${home}/.bun/bin/bun`;
+  return isWindows
+    ? `${home}\\.bun\\bin\\bun.exe`
+    : `${home}/.bun/bin/bun`;
 }
 
 /**
