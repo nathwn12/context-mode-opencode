@@ -138,8 +138,11 @@ export class PolyglotExecutor {
   }
 
   #writeScript(tmpDir: string, code: string, language: Language): string {
+    // Use .cjs for JavaScript when using Bun, since Bun's `bun run` defaults to
+    // ESM for .js files but the generated scripts use CommonJS (require).
+    const jsExt = this.#runtimes.javascript?.endsWith("bun") ? "cjs" : "js";
     const extMap: Record<Language, string> = {
-      javascript: "js",
+      javascript: jsExt,
       typescript: "ts",
       python: "py",
       shell: "sh",
