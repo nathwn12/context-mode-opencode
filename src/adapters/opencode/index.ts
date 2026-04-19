@@ -84,8 +84,9 @@ interface OpenCodeHookInput {
 import { HOOK_TYPES as OPENCODE_HOOK_NAMES } from "./hooks.js";
 
 const OPENCODE_PACKAGE = "@nathwn12/context-mode-opencode";
+const OPENCODE_PLUGIN = "context-mode-opencode";
 const OPENCODE_MCP_SERVER = "context-mode";
-const OPENCODE_NPX_COMMAND = ["npx", "-y", OPENCODE_PACKAGE] as const;
+const OPENCODE_COMMAND = [OPENCODE_PLUGIN] as const;
 
 // ─────────────────────────────────────────────────────────
 // Adapter implementation
@@ -292,7 +293,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: OPENCODE_PACKAGE,
+              command: OPENCODE_PLUGIN,
             },
           ],
         },
@@ -303,7 +304,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: OPENCODE_PACKAGE,
+              command: OPENCODE_PLUGIN,
             },
           ],
         },
@@ -314,7 +315,7 @@ export class OpenCodeAdapter implements HookAdapter {
           hooks: [
             {
               type: "plugin",
-              command: OPENCODE_PACKAGE,
+              command: OPENCODE_PLUGIN,
             },
           ],
         },
@@ -471,10 +472,10 @@ export class OpenCodeAdapter implements HookAdapter {
     // Add the npm package to the plugin array.
     const plugins = (settings.plugin ?? []) as string[];
     if (!plugins.some((p) => p.includes("context-mode-opencode"))) {
-      plugins.push(OPENCODE_PACKAGE);
-      changes.push(`Added ${OPENCODE_PACKAGE} to plugin array`);
+      plugins.push(OPENCODE_PLUGIN);
+      changes.push(`Added ${OPENCODE_PLUGIN} to plugin array`);
     } else {
-      changes.push(`${OPENCODE_PACKAGE} already in plugin array`);
+      changes.push(`${OPENCODE_PLUGIN} already in plugin array`);
     }
 
     settings.plugin = plugins;
@@ -484,12 +485,12 @@ export class OpenCodeAdapter implements HookAdapter {
       : {};
     const desiredMcp = {
       type: "local",
-      command: [...OPENCODE_NPX_COMMAND],
+      command: [...OPENCODE_COMMAND],
     };
     const currentMcp = mcp[OPENCODE_MCP_SERVER];
     if (JSON.stringify(currentMcp) !== JSON.stringify(desiredMcp)) {
       mcp[OPENCODE_MCP_SERVER] = desiredMcp;
-      changes.push(`Set ${OPENCODE_MCP_SERVER} MCP server to npx ${OPENCODE_PACKAGE}`);
+      changes.push(`Set ${OPENCODE_MCP_SERVER} MCP server to ${OPENCODE_PLUGIN}`);
     } else {
       changes.push(`${OPENCODE_MCP_SERVER} MCP server already configured`);
     }

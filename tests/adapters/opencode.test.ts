@@ -7,15 +7,16 @@ import { spawnSync } from "node:child_process";
 import { OpenCodeAdapter } from "../../src/adapters/opencode/index.js";
 
 const OPENCODE_PACKAGE = "@nathwn12/context-mode-opencode";
+const OPENCODE_PLUGIN = "context-mode-opencode";
 const OPENCODE_MCP_CONFIG = {
   "context-mode": {
     type: "local",
-    command: ["npx", "-y", OPENCODE_PACKAGE],
+    command: [OPENCODE_PLUGIN],
   },
 };
 const OPENCODE_CONFIGURED_CHANGES = [
-  `Added ${OPENCODE_PACKAGE} to plugin array`,
-  `Set context-mode MCP server to npx ${OPENCODE_PACKAGE}`,
+  `Added ${OPENCODE_PLUGIN} to plugin array`,
+  `Set context-mode MCP server to ${OPENCODE_PLUGIN}`,
 ];
 
 function env(home: string) {
@@ -234,7 +235,7 @@ describe("OpenCodeAdapter", () => {
       });
       expect(() => readFileSync(resolve(dir, "opencode.json"), "utf-8")).toThrow();
       expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({
-        plugin: [OPENCODE_PACKAGE],
+        plugin: [OPENCODE_PLUGIN],
         mcp: OPENCODE_MCP_CONFIG,
       });
 
@@ -251,7 +252,7 @@ describe("OpenCodeAdapter", () => {
       mkdirSync(dir, { recursive: true });
       mkdirSync(conf, { recursive: true });
       writeFileSync(join(conf, "opencode.json"), JSON.stringify({ plugin: ["other-plugin"] }, null, 2) + "\n");
-      writeFileSync(resolve(dir, "opencode.json"), JSON.stringify({ plugin: [OPENCODE_PACKAGE] }, null, 2) + "\n");
+      writeFileSync(resolve(dir, "opencode.json"), JSON.stringify({ plugin: [OPENCODE_PLUGIN] }, null, 2) + "\n");
       const run = spawnSync(
         process.execPath,
         [
@@ -315,7 +316,7 @@ describe("OpenCodeAdapter", () => {
         join(dir, "opencode.jsonc"),
         `{
   // This is a line comment
-  "plugin": ["@nathwn12/context-mode-opencode"],
+   "plugin": ["${OPENCODE_PACKAGE}"],
   /* Block comment */
   "version": "1.0"
 }
@@ -384,7 +385,7 @@ describe("OpenCodeAdapter", () => {
       expect(JSON.parse(run.stdout)).toEqual(OPENCODE_CONFIGURED_CHANGES);
       // Should write back to .jsonc (same file it read)
       expect(JSON.parse(readFileSync(join(dir, "opencode.jsonc"), "utf-8"))).toEqual({
-        plugin: [OPENCODE_PACKAGE],
+        plugin: [OPENCODE_PLUGIN],
         mcp: OPENCODE_MCP_CONFIG,
       });
       rmSync(root, { recursive: true, force: true });
@@ -442,7 +443,7 @@ describe("OpenCodeAdapter", () => {
       expect(JSON.parse(run.stdout)).toEqual(OPENCODE_CONFIGURED_CHANGES);
       expect(() => readFileSync(resolve(dir, "opencode.json"), "utf-8")).toThrow();
       expect(JSON.parse(readFileSync(file, "utf-8"))).toEqual({
-        plugin: [OPENCODE_PACKAGE],
+        plugin: [OPENCODE_PLUGIN],
         mcp: OPENCODE_MCP_CONFIG,
       });
 

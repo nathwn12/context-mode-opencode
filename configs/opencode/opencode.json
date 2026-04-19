@@ -3,8 +3,8 @@
   "mcp": {
     "context-mode": {
       "type": "local",
-      "command": ["npx", "-y", "@nathwn12/context-mode-opencode"]
+      "command": ["context-mode-opencode"]
     }
   },
-  "plugin": ["@nathwn12/context-mode-opencode"]
+  "plugin": ["context-mode-opencode"]
 }

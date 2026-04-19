@@ -305,14 +305,14 @@ Full configs: [`configs/cursor/hooks.json`](configs/cursor/hooks.json) | [`confi
    ```json
    {
      "$schema": "https://opencode.ai/config.json",
-     "mcp": {
-       "context-mode": {
-         "type": "local",
-         "command": ["npx", "-y", "@nathwn12/context-mode-opencode"]
-       }
-     },
-     "plugin": ["@nathwn12/context-mode-opencode"]
-   }
+      "mcp": {
+        "context-mode": {
+          "type": "local",
+          "command": ["context-mode-opencode"]
+        }
+      },
+      "plugin": ["context-mode-opencode"]
+    }
    ```
 
    The `mcp` entry registers the 6 sandbox tools. The `plugin` entry enables hooks — OpenCode calls the plugin's TypeScript functions directly before and after each tool execution, blocking dangerous commands and enforcing sandbox routing.
