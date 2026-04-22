@@ -1,6 +1,6 @@
 {
   "name": "context-mode-opencode",
-  "version": "1.0.90",
+  "version": "1.0.91",
   "description": "Context-mode-opencode extension for Pi coding agent — session continuity and context window protection",
   "main": "index.ts",
   "dependencies": {
