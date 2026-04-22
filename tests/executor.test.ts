@@ -7,6 +7,7 @@ import { PolyglotExecutor } from "../src/executor.js";
 import {
   detectRuntimes,
   buildCommand,
+  resolveWindowsBunCommand,
   getRuntimeSummary,
   type RuntimeMap,
 } from "../src/runtime.js";
@@ -47,6 +48,40 @@ describe("Runtime Detection", () => {
     assert.equal(cmd[0], "/home/user/.bun/bin/bun");
     assert.equal(cmd[1], "run");
     assert.equal(cmd[2], "/tmp/test.js");
+  });
+
+  test("buildCommand: javascript with bun.exe runtime uses 'run' subcommand", async () => {
+    const bunRuntimes: RuntimeMap = { ...runtimes, javascript: "C:\\Users\\me\\scoop\\apps\\bun\\current\\bun.exe" };
+    const cmd = buildCommand(bunRuntimes, "javascript", "C:\\tmp\\test.js");
+    assert.equal(cmd[0], "C:\\Users\\me\\scoop\\apps\\bun\\current\\bun.exe");
+    assert.equal(cmd[1], "run");
+    assert.equal(cmd[2], "C:\\tmp\\test.js");
+  });
+
+  test("resolveWindowsBunCommand prefers a real Bun path over WindowsApps", async () => {
+    const resolved = resolveWindowsBunCommand({
+      whereOutput: [
+        "C:\\Users\\me\\AppData\\Local\\Microsoft\\WindowsApps\\bun.exe",
+        "C:\\Users\\me\\scoop\\shims\\bun.exe",
+        "C:\\Users\\me\\.bun\\bin\\bun.exe",
+      ].join("\r\n"),
+      existsSync: (p: string) => p.toLowerCase() === "c:\\users\\me\\.bun\\bin\\bun.exe",
+      userProfile: "C:\\Users\\me",
+      localAppData: "C:\\Users\\me\\AppData\\Local",
+    });
+
+    assert.equal(resolved, "C:\\Users\\me\\.bun\\bin\\bun.exe");
+  });
+
+  test("resolveWindowsBunCommand falls back to known install paths", async () => {
+    const resolved = resolveWindowsBunCommand({
+      whereOutput: "C:\\Users\\me\\AppData\\Local\\Microsoft\\WindowsApps\\bun.exe",
+      existsSync: (p: string) => p.toLowerCase() === "c:\\users\\me\\.bun\\bin\\bun.exe",
+      userProfile: "C:\\Users\\me",
+      localAppData: "C:\\Users\\me\\AppData\\Local",
+    });
+
+    assert.equal(resolved, "C:\\Users\\me\\.bun\\bin\\bun.exe");
   });
 
   test("detects Shell runtime (non-empty string)", async () => {
@@ -362,7 +397,7 @@ describe("Shell Execution", () => {
       code: 'printf "banana\\napple\\ncherry" | sort',
     });
     assert.equal(r.exitCode, 0);
-    const lines = r.stdout.trim().split("\n");
+    const lines = r.stdout.trim().split(/\r?\n/);
     assert.equal(lines[0], "apple");
     assert.equal(lines[1], "banana");
     assert.equal(lines[2], "cherry");
@@ -1473,4 +1508,3 @@ describe("Windows Shell Support", () => {
     assert.equal(cmd[1], "/tmp/script.sh");
   });
 });
-

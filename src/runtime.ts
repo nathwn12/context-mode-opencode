@@ -48,35 +48,95 @@ function commandExists(cmd: string): boolean {
 }
 
 function bunExists(): boolean {
-  if (commandExists("bun")) return true;
-  // Bun installs to ~/.bun/bin which may not be in PATH in MCP server environments
   if (!isWindows) {
+    if (commandExists("bun")) return true;
+    // Bun installs to ~/.bun/bin which may not be in PATH in MCP server environments
     const home = process.env.HOME ?? process.env.USERPROFILE ?? "";
     if (home && existsSync(`${home}/.bun/bin/bun`)) return true;
+    return false;
   }
-  return false;
+
+  return resolveWindowsBunCommand() !== null;
 }
 
 function bunCommand(): string {
-  if (commandExists("bun")) {
-    // On Windows, resolve the full path — `spawn("bun")` fails without
-    // the `.exe` extension or an absolute path in some environments.
-    if (isWindows) {
-      try {
-        const result = execSync("where bun", { encoding: "utf-8", stdio: "pipe" });
-        const candidates = result.trim().split(/\r?\n/).map(p => p.trim()).filter(Boolean);
-        for (const p of candidates) {
-          if (p.toLowerCase().includes("windowsapps")) continue;
-          return p;
-        }
-      } catch { /* fall through */ }
-    }
+  if (isWindows) {
+    const resolved = resolveWindowsBunCommand();
+    if (resolved) return resolved;
+  } else if (commandExists("bun")) {
     return "bun";
   }
   const home = process.env.HOME ?? process.env.USERPROFILE ?? "";
   return isWindows
     ? `${home}\\.bun\\bin\\bun.exe`
     : `${home}/.bun/bin/bun`;
+}
+
+export function resolveWindowsBunCommand(opts?: {
+  whereOutput?: string;
+  existsSync?: (path: string) => boolean;
+  userProfile?: string;
+  localAppData?: string;
+}): string | null {
+  const exists = opts?.existsSync ?? existsSync;
+  const userProfile = opts?.userProfile ?? process.env.USERPROFILE ?? process.env.HOME ?? "";
+  const localAppData = opts?.localAppData ?? process.env.LOCALAPPDATA ?? "";
+
+  const candidates = new Set<string>();
+  const add = (value: string) => {
+    const v = value.trim();
+    if (!v) return;
+    candidates.add(v);
+  };
+
+  const preferred = new Set<string>();
+  const addPreferred = (value: string) => {
+    const v = value.trim();
+    if (!v) return;
+    preferred.add(v);
+  };
+
+  if (opts?.whereOutput !== undefined) {
+    for (const line of opts.whereOutput.split(/\r?\n/)) add(line);
+  } else {
+    try {
+      const result = execSync("where bun", { encoding: "utf-8", stdio: "pipe" });
+      for (const line of result.split(/\r?\n/)) add(line);
+    } catch {
+      // ignore; fall through to explicit paths
+    }
+  }
+
+  if (localAppData) {
+    addPreferred(`${localAppData}\\bun\\bun.exe`);
+    addPreferred(`${localAppData}\\Programs\\bun\\bun.exe`);
+    add(`${localAppData}\\Microsoft\\WindowsApps\\bun.exe`);
+  }
+  if (userProfile) {
+    addPreferred(`${userProfile}\\.bun\\bin\\bun.exe`);
+    addPreferred(`${userProfile}\\AppData\\Local\\bun\\bun.exe`);
+    addPreferred(`${userProfile}\\scoop\\apps\\bun\\current\\bun.exe`);
+    add(`${userProfile}\\scoop\\shims\\bun.exe`);
+  }
+  const programFiles = process.env.ProgramFiles ?? process.env.PROGRAMFILES ?? "";
+  const programFilesX86 = process.env["ProgramFiles(x86)"] ?? process.env.PROGRAMFILESX86 ?? "";
+  if (programFiles) addPreferred(`${programFiles}\\bun\\bun.exe`);
+  if (programFilesX86) addPreferred(`${programFilesX86}\\bun\\bun.exe`);
+
+  const blocked = /windowsapps|microsoft\\windowsapps/i;
+
+  // Prefer real Bun installation locations before PATH shims/aliases.
+  for (const candidate of preferred) {
+    if (blocked.test(candidate)) continue;
+    if (exists(candidate)) return candidate;
+  }
+
+  // If only PATH shims exist, fall back to the first non-WindowsApps entry.
+  for (const candidate of candidates) {
+    if (blocked.test(candidate)) continue;
+    if (exists(candidate)) return candidate;
+  }
+  return null;
 }
 
 /**
@@ -249,9 +309,10 @@ export function buildCommand(
   language: Language,
   filePath: string,
 ): string[] {
+  const isBunRuntime = (cmd: string) => /(^|[\\/])bun(\.exe)?$/i.test(cmd);
   switch (language) {
     case "javascript":
-      return runtimes.javascript.endsWith("bun")
+      return isBunRuntime(runtimes.javascript)
         ? [runtimes.javascript, "run", filePath]
         : [runtimes.javascript, filePath];
 
@@ -261,7 +322,7 @@ export function buildCommand(
           "No TypeScript runtime available. Install one of: bun (recommended), tsx (npm i -g tsx), or ts-node.",
         );
       }
-      if (runtimes.typescript?.endsWith("bun")) return [runtimes.typescript, "run", filePath];
+      if (runtimes.typescript && isBunRuntime(runtimes.typescript)) return [runtimes.typescript, "run", filePath];
       if (runtimes.typescript === "tsx") return ["tsx", filePath];
       return ["ts-node", filePath];
 
